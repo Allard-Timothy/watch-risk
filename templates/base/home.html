@@ -1,0 +1,23 @@
+{% extends "base/base.html" %}
+
+{% block title %}WatchRisk{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="display-5">Pre-purchase risk reports for luxury watch buyers.</h1>
+    <p class="lead">
+      Upload listing details and photos. Get a buyer-risk report that flags missing evidence,
+      visible concerns, and seller questions before you send money.
+    </p>
+    <p class="text-muted">
+      WatchRisk does not authenticate watches or issue certificates.
+    </p>
+    {% if request.user.is_authenticated %}
+      <a class="btn btn-primary" href="{% url 'cases:create' %}">Create watch case</a>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'login' %}">Log in to start</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

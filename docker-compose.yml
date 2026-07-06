@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: watchrisk-postgres
+    environment:
+      POSTGRES_DB: watchrisk
+      POSTGRES_USER: watchrisk
+      POSTGRES_PASSWORD: watchrisk
+    ports:
+      - "5432:5432"
+    volumes:
+      - watchrisk-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  watchrisk-postgres-data:

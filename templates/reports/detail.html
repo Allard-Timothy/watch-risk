@@ -1,0 +1,27 @@
+{% extends "base/base.html" %}
+
+{% block title %}Report | WatchRisk{% endblock %}
+
+{% block content %}
+<h1>Buyer-risk report</h1>
+
+<div class="alert alert-warning">
+  This is a photo-based buyer-risk report. It is not an authentication certificate.
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <h2 class="h5">Summary</h2>
+    <p><strong>Risk:</strong> {{ report.risk_level }}</p>
+    <p><strong>Confidence:</strong> {{ report.confidence }}</p>
+    <p>{{ report.report_text }}</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="h5">Structured report JSON</h2>
+    <pre><code>{{ report.report_json|pprint }}</code></pre>
+  </div>
+</div>
+{% endblock %}

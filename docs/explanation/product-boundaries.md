@@ -1,0 +1,52 @@
+# Product boundaries
+
+WatchRisk helps buyers evaluate risk before purchase. It does not authenticate watches.
+
+## Why this boundary exists
+
+Photo-based review has real limits.
+
+A watch can look fine in listing photos and still have:
+
+- movement issues
+- swapped parts
+- service parts
+- undisclosed polishing
+- aftermarket components
+- misleading papers
+- stolen-property issues
+- seller fraud
+
+A buyer-risk report can reduce obvious mistakes. It cannot remove purchase risk.
+
+## Product promise
+
+WatchRisk should promise:
+
+> We help buyers identify missing evidence, visible concerns, seller-risk signals, and next questions before purchase.
+
+It should not promise:
+
+> We determine whether the watch is authentic.
+
+## Report outcome language
+
+Allowed:
+
+- low visible risk
+- medium visible risk
+- high visible risk
+- cannot assess
+- missing evidence
+- request more photos
+- use independent inspection
+
+Avoid:
+
+- authentic
+- genuine
+- fake
+- counterfeit
+- certified
+- verified
+- guaranteed
