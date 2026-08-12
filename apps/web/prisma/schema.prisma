@@ -1,0 +1,165 @@
+// WatchRisk data model (initial).
+//
+// This schema mirrors the entities described in docs/architecture-typescript.md
+// and docs/reference/data-model.md. It intentionally does not wire real auth,
+// storage, payments, or model calls yet. No migrations are created in this step;
+// the database is not connected. See lib/db/client.ts for the placeholder client.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CaseStatus {
+  DRAFT
+  READY_FOR_PAYMENT
+  PAID
+  ANALYZING
+  COMPLETE
+  ERROR
+}
+
+enum PhotoType {
+  DIAL
+  REHAUT
+  DATE_CYCLOPS
+  BEZEL
+  CROWN_GUARDS
+  CASEBACK
+  BRACELET
+  CLASP
+  END_LINKS
+  MOVEMENT
+  PAPERS
+  OTHER
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CANNOT_ASSESS
+}
+
+enum ConfidenceLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum AnalysisRunStatus {
+  PENDING
+  RUNNING
+  COMPLETE
+  FAILED
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  name      String?
+  cases     WatchCase[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model WatchCase {
+  id             String          @id @default(cuid())
+  userId         String?
+  user           User?           @relation(fields: [userId], references: [id])
+  brand          String
+  model          String?
+  reference      String?
+  claimedYear    String?
+  askingPrice    Decimal?
+  sellerPlatform String?
+  listingUrl     String?
+  listingText    String?
+  sellerClaims   String?
+  status         CaseStatus      @default(DRAFT)
+  images         CaseImage[]
+  analysisRuns   AnalysisRun[]
+  reports        Report[]
+  payments       PaymentRecord[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model CaseImage {
+  id           String     @id @default(cuid())
+  caseId       String
+  case         WatchCase  @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  storagePath  String
+  claimedType  PhotoType?
+  detectedType String?
+  qualityScore Float?
+  usable       Boolean    @default(true)
+  analysisJson Json?
+  createdAt    DateTime   @default(now())
+
+  @@index([caseId])
+}
+
+model AnalysisRun {
+  id             String            @id @default(cuid())
+  caseId         String
+  case           WatchCase         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  status         AnalysisRunStatus @default(PENDING)
+  modelUsed      String?
+  promptVersion  String?
+  rawModelOutput Json?
+  error          String?
+  report         Report?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([caseId])
+}
+
+model Report {
+  id             String          @id @default(cuid())
+  caseId         String
+  case           WatchCase       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  analysisRunId  String?         @unique
+  analysisRun    AnalysisRun?    @relation(fields: [analysisRunId], references: [id])
+  riskLevel      RiskLevel
+  confidence     ConfidenceLevel
+  reportJson     Json
+  reportText     String
+  rawModelOutput Json?
+  modelUsed      String
+  promptVersion  String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([caseId])
+}
+
+model PaymentRecord {
+  id                      String        @id @default(cuid())
+  caseId                  String
+  case                    WatchCase     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  amountCents             Int           @default(0)
+  currency                String        @default("usd")
+  status                  PaymentStatus @default(CREATED)
+  rawEvent                Json?
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+
+  @@index([caseId])
+}
