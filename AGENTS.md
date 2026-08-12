@@ -79,8 +79,15 @@ Startup/run caveats (non-obvious):
   `uv run python manage.py migrate` yourself. Migrations are committed under
   `apps/*/migrations/`.
 - `apps/web` uses pnpm 11 (pinned via `packageManager`). Build-script approval
-  lives in `apps/web/pnpm-workspace.yaml` under `allowBuilds` (e.g. `sharp: true`);
-  the legacy `pnpm.onlyBuiltDependencies` field is ignored by pnpm 11.
+  lives in `apps/web/pnpm-workspace.yaml` under `allowBuilds` (e.g. `sharp: true`,
+  `prisma: true`); the legacy `pnpm.onlyBuiltDependencies` field is ignored by
+  pnpm 11.
+- `apps/web` uses Prisma pinned to v6. Do not bump to v7 without a rewrite: v7
+  removed `datasource.url` from the schema and requires a `prisma.config.ts`
+  adapter-based client. The Prisma client is generated into `node_modules` by the
+  `postinstall` hook (runs on every `pnpm install`); it does not need a database
+  or `DATABASE_URL` to generate. The data model is not wired to a database yet
+  (no migrations, `lib/db/client.ts` is a lazy placeholder).
 - The Django app has no self-signup UI; log in with an existing/superuser account
   at `/accounts/login/`. Create one with `uv run python manage.py createsuperuser`.
 - Report generation is not wired to the UI yet. Create a case at `/cases/new/`,
