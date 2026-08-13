@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { CaseForm } from "@/components/case-form";
 
 export const metadata: Metadata = {
-  title: "New case | WatchRisk",
+  title: "New case | WatchTell",
   description:
     "Record a luxury watch listing to start a photo-based buyer-risk review.",
 };

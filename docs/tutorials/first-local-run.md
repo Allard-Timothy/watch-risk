@@ -1,6 +1,6 @@
 # Tutorial: first local run
 
-This tutorial gets WatchRisk running locally for the first time.
+This tutorial gets WatchTell running locally for the first time.
 
 At the end, you will have:
 

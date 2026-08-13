@@ -1,5 +1,5 @@
 /**
- * Shared domain types for the WatchRisk web app.
+ * Shared domain types for the WatchTell web app.
  *
  * These are derived from the Zod validation schemas so the runtime validators
  * and the compile-time types cannot drift apart. Import from here when you only
