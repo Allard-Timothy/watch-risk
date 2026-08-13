@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const reportHighlights = [
   "Spot missing listing evidence",
   "Organize visible concerns",
@@ -19,9 +21,12 @@ export default function HomePage() {
           photo-based buyer-risk report.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <span className="rounded-md bg-foreground px-5 py-3 text-sm font-semibold text-background">
-            Case workflow coming next
-          </span>
+          <Link
+            href="/cases/new"
+            className="rounded-md bg-foreground px-5 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent/40"
+          >
+            Start a case
+          </Link>
           <span className="rounded-md border border-border bg-card px-5 py-3 text-sm text-muted-foreground">
             Independent inspection recommended
           </span>
