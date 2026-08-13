@@ -1,4 +1,4 @@
-// WatchRisk data model (initial).
+// WatchTell data model (initial).
 //
 // This schema mirrors the entities described in docs/architecture-typescript.md
 // and docs/reference/data-model.md. It intentionally does not wire real auth,

@@ -1,6 +1,6 @@
-# WatchRisk PyCharm Context Pack
+# WatchTell PyCharm Context Pack
 
-This folder is meant to be copied into the root of the WatchRisk repo.
+This folder is meant to be copied into the root of the WatchTell repo.
 
 It gives PyCharm AI Assistant, Junie, Cursor, Codex, or another coding assistant enough local context to rewrite the app as a TypeScript-first product.
 

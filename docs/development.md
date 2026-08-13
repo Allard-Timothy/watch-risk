@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide explains how to run and work on WatchRisk locally.
+This guide explains how to run and work on WatchTell locally.
 
 It is a practical guide for contributors. It assumes basic Python, Django, Postgres, and command-line experience.
 

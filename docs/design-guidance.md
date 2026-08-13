@@ -8,7 +8,7 @@ Use this image as the visual guidance reference:
 assets/watchdesk-risk-report-dashboard.png
 ```
 
-This image was created as the earlier WatchDesk risk-analysis report dashboard direction.
+This image was created as an earlier risk-analysis report dashboard direction.
 
 It should guide:
 

@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 
-{% block title %}WatchRisk{% endblock %}
+{% block title %}WatchTell{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -11,7 +11,7 @@
       visible concerns, and seller questions before you send money.
     </p>
     <p class="text-muted">
-      WatchRisk does not authenticate watches or issue certificates.
+      WatchTell does not authenticate watches or issue certificates.
     </p>
     {% if request.user.is_authenticated %}
       <a class="btn btn-primary" href="{% url 'cases:create' %}">Create watch case</a>

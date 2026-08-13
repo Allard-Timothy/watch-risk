@@ -7,7 +7,7 @@ import { sampleReportInput, sampleReportMeta } from "@/lib/reports/sample-case";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Buyer-risk report | WatchRisk",
+  title: "Buyer-risk report | WatchTell",
   description:
     "Placeholder photo-based buyer-risk report built from deterministic rules and sample data.",
 };

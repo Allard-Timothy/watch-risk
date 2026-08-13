@@ -2,7 +2,7 @@
 
 ## Core rule
 
-WatchRisk produces buyer-risk reports. It does not authenticate watches.
+WatchTell produces buyer-risk reports. It does not authenticate watches.
 
 ## Forbidden final-output words
 

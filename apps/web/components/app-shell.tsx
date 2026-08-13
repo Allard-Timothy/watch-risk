@@ -9,7 +9,7 @@ export function AppShell({ children }: AppShellProps) {
     <div className="min-h-screen">
       <header className="border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-10">
-          <span className="font-serif text-2xl tracking-tight">WatchRisk</span>
+          <span className="font-serif text-2xl tracking-tight">WatchTell</span>
           <span className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
             Buyer-risk reports
           </span>
