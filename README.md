@@ -1,201 +1,74 @@
 # WatchTell
 
-Pre-purchase risk reports for luxury watch buyers.
+WatchTell is a pre-purchase, photo-based buyer-risk assessment app for luxury
+watch listings. Buyers submit listing details, seller claims, price, reference
+information, and photos, and the app produces a buyer-risk report that flags
+missing evidence, visible concerns, seller-risk signals, and questions to ask
+before purchase.
 
-WatchTell is a mobile-first web app that helps buyers evaluate luxury watch listings before purchase. Users upload listing photos, seller claims, pricing details, and reference information. The app generates a buyer-risk report that flags missing evidence, visible inconsistencies, seller-risk signals, and recommended next questions.
+WatchTell does not authenticate, certify, or verify watches, and it is not a
+substitute for a watchmaker or brand service center. See
+[`.cursor/rules/watchrisk.mdc`](.cursor/rules/watchrisk.mdc) and
+[`docs/report-rules.md`](docs/report-rules.md) for the product and language
+rules.
 
-WatchTell does not authenticate watches. It does not certify watches. It provides a photo-based buyer-risk assessment.
+## Stack
 
-## Current product scope
+- Next.js (App Router) + TypeScript
+- Tailwind CSS, shadcn/ui-ready structure
+- Zod validation
+- Prisma + Postgres (data model defined; not wired to a database yet)
+- Stripe / OpenAI / Google Cloud Storage: placeholder modules only
 
-The first version focuses on one workflow:
+The app lives at the repository root. The earlier Django scaffold has been
+removed in favor of this TypeScript-first stack.
 
-> A buyer is considering a watch listing and wants to know whether the deal is worth pursuing before sending money.
+## Requirements
 
-The report should help the buyer answer:
+- Node.js 20.9 or newer
+- pnpm (this repo pins pnpm 11 via `packageManager`)
+- Docker (optional, only for a local Postgres via `docker-compose.yml`)
 
-- Are the uploaded photos good enough to make a basic risk decision?
-- What required evidence is missing?
-- Are there visible inconsistencies?
-- Does the claimed reference appear consistent with the visible details?
-- Is the price suspicious, fair, or high relative to the claim?
-- What should the buyer ask the seller next?
-- Should the buyer proceed, negotiate, request inspection, or walk away?
-
-## Non-goals
-
-The first version will not:
-
-- authenticate watches
-- issue certificates
-- guarantee authenticity
-- act as a marketplace
-- replace a watchmaker or brand service center
-- support every brand and reference
-- train a custom computer vision model
-- provide counterfeit improvement guidance
-
-## Core architecture
-
-```mermaid
-flowchart TD
-    U[Buyer] --> B[Browser]
-
-    B --> D[Django web app<br/>Cloud Run]
-
-    D --> DB[(Cloud SQL Postgres)]
-    D --> GCS[(Cloud Storage<br/>Uploaded images)]
-    D --> ST[Stripe Checkout]
-    D --> CT[Cloud Tasks]
-
-    ST --> WH[Stripe webhook<br/>Django endpoint]
-    WH --> DB
-
-    CT --> AJ[Analysis job endpoint<br/>Django]
-    AJ --> GCS
-    AJ --> OAI[OpenAI API]
-    AJ --> DB
-
-    DB --> R[Buyer-risk report]
-    D --> R
-    R --> B
-```
-
-## Tech stack
-
-| Area | Choice |
-|---|---|
-| Language | Python |
-| Web framework | Django |
-| Frontend | Django templates + HTMX |
-| Styling | Bootstrap first, Tailwind later if needed |
-| Database | Postgres |
-| Database hosting | Cloud SQL |
-| File storage | Google Cloud Storage in production, local media in development |
-| Runtime | Cloud Run |
-| Async jobs | Cloud Tasks in production, management command locally |
-| Payments | Stripe Checkout |
-| AI provider | OpenAI API |
-| Secrets | Google Secret Manager |
-
-## Django apps
-
-Initial app layout:
-
-```text
-apps/
-  accounts/
-  cases/
-  uploads/
-  analysis/
-  reports/
-  billing/
-  admin_tools/
-```
-
-### `accounts`
-
-User registration, login, profile, and account-level settings.
-
-### `cases`
-
-Stores the watch listing under review.
-
-### `uploads`
-
-Stores uploaded image metadata and classification results.
-
-### `analysis`
-
-Handles AI calls, structured schemas, prompt versions, deterministic rules, and report generation.
-
-### `reports`
-
-Stores generated buyer-risk reports.
-
-### `billing`
-
-Stripe Checkout sessions, webhook handling, paid state, refunds, and entitlement checks.
-
-### `admin_tools`
-
-Internal screens for reviewing cases, rerunning analysis, correcting reports, and building evaluation data.
-
-## Report language rules
-
-The product must avoid unsupported authentication claims.
-
-Allowed language:
-
-- “No obvious photo-based red flags detected.”
-- “The submitted images are insufficient for a low-risk buying decision.”
-- “The visible details appear broadly consistent with the claimed reference.”
-- “Movement authenticity cannot be assessed from the submitted photos.”
-- “Request additional photos before proceeding.”
-- “Use escrow or an independent watchmaker inspection.”
-
-Avoid:
-
-- “Authentic”
-- “Genuine”
-- “Fake”
-- “Counterfeit”
-- “Passed”
-- “Certified”
-- “Verified Rolex”
-- “Guaranteed”
-
-## Local development
-
-See [`docs/development.md`](docs/development.md).
-
-Fast path:
+## Run locally
 
 ```bash
+pnpm install        # also runs `prisma generate` via postinstall
 cp .env.example .env
+pnpm dev            # http://localhost:3000
+```
+
+Key routes: `/` (landing), `/cases/new` (case intake), `/reports/[reportId]`
+(placeholder buyer-risk report).
+
+## Checks
+
+```bash
+pnpm typecheck
+pnpm build
+```
+
+## Database (optional, not wired yet)
+
+Prisma is configured (`prisma/schema.prisma`) but the app does not query a
+database yet. A local Postgres is available via Docker for future work:
+
+```bash
 docker compose up -d db
-uv sync
-uv run python manage.py migrate
-uv run python manage.py createsuperuser
-uv run python manage.py runserver
+pnpm exec prisma validate
+pnpm exec prisma generate
 ```
 
-Open:
+`DATABASE_URL` in `.env.example` matches the `watchrisk` database defined in
+[`docker-compose.yml`](docker-compose.yml).
 
-```text
-http://localhost:8000
-```
+## Documentation
 
-Admin:
+See [`docs/`](docs/) — notably `product-brief.md`, `architecture-typescript.md`,
+`ai-contract.md`, `report-rules.md`, `migration-plan.md`, `design-guidance.md`,
+and `knowledge-architecture.md`.
 
-```text
-http://localhost:8000/admin/
-```
+## Current boundaries
 
-## Documentation structure
-
-Documentation follows the Divio/Diátaxis style:
-
-```text
-docs/
-  tutorials/
-    first-local-run.md
-  how-to/
-    add-a-new-watch-reference.md
-    run-analysis-job.md
-    configure-stripe-webhooks.md
-  reference/
-    environment-variables.md
-    data-model.md
-    report-schema.md
-  explanation/
-    architecture.md
-    product-boundaries.md
-    risk-scoring.md
-```
-
-## License
-
-Proprietary. All rights reserved.
-
-See [`LICENSE`](LICENSE).
+- No account or login flow
+- No database persistence yet
+- No file storage, payment, or model calls (placeholders only)
