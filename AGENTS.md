@@ -60,6 +60,10 @@ and the current uploaded project files take precedence.
 
 ## Cursor Cloud specific instructions
 
+Branching: base every branch off `main` and target pull requests at `main`.
+`ta/add-scaffolding` is retired as an integration branch — do not branch from it
+or target it.
+
 This repo hosts two apps mid-migration; both run in dev:
 
 - Django scaffold at the repo root (the current working product). Python 3.12
@@ -95,3 +99,7 @@ Startup/run caveats (non-obvious):
   (analysis is a deterministic placeholder; no real OpenAI/Stripe/GCS calls).
 - `ruff check .` currently reports pre-existing import-ordering issues in the
   scaffold; these are not caused by environment setup.
+- In `apps/web`, do not run `pnpm build` and then `pnpm dev` in the same
+  directory: the production build overwrites `.next` and breaks the dev server
+  (500s, e.g. missing `.next/dev/routes-manifest.json`). If dev starts 500ing
+  after a build, stop dev, `rm -rf apps/web/.next`, and restart `pnpm dev`.
