@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import type { ConfidenceLevel, ImageFinding, RiskLevel } from "@/lib/types";
-import { mockReport } from "@/lib/reports/mock-report";
+import { generateReport } from "@/lib/reports/generate-report";
+import { sampleReportInput, sampleReportMeta } from "@/lib/reports/sample-case";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Buyer-risk report | WatchRisk",
   description:
-    "Placeholder photo-based buyer-risk report built from sample data.",
+    "Placeholder photo-based buyer-risk report built from deterministic rules and sample data.",
 };
 
 const RISK_PRESENTATION: Record<
@@ -64,17 +65,21 @@ function ReportSection({
 }
 
 export default function ReportPage() {
-  const report = mockReport;
+  const watch = sampleReportInput;
+  const report = generateReport(watch);
   const risk = RISK_PRESENTATION[report.overallRisk];
   const providedPhotos = report.photoCompleteness.filter(
     (item) => item.present,
   ).length;
   const totalPhotos = report.photoCompleteness.length;
-  const price = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(report.watch.askingPrice);
+  const price =
+    watch.askingPrice === undefined
+      ? null
+      : new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0,
+        }).format(watch.askingPrice);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-6 sm:py-14">
@@ -88,14 +93,14 @@ export default function ReportPage() {
           </span>
         </div>
         <h1 className="mt-3 font-serif text-3xl leading-tight tracking-tight text-foreground sm:text-4xl">
-          {report.watch.brand} {report.watch.model}
+          {watch.brand} {watch.model}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Ref. {report.watch.reference} &middot; Claimed {report.watch.claimedYear}{" "}
-          &middot; {price} &middot; {report.watch.sellerPlatform}
+          Ref. {watch.reference} &middot; Claimed {watch.claimedYear}
+          {price ? <> &middot; {price}</> : null} &middot; {watch.sellerPlatform}
         </p>
         <p className="mt-1 font-mono text-xs text-muted-foreground">
-          Report {report.reportId} &middot; {report.generatedAt}
+          Report {sampleReportMeta.reportId} &middot; {sampleReportMeta.generatedAt}
         </p>
       </header>
 
@@ -171,60 +176,74 @@ export default function ReportPage() {
         </ReportSection>
 
         <ReportSection title="Missing evidence">
-          <ul className="space-y-2">
-            {report.missingEvidence.map((item) => (
-              <li key={item} className="flex gap-3 text-sm text-foreground">
-                <span aria-hidden="true" className="mt-1 text-amber-600">
-                  &#9679;
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+          {report.missingEvidence.length === 0 ? (
+            <p className="text-sm leading-6 text-muted-foreground">
+              The recommended photo areas were provided.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {report.missingEvidence.map((item) => (
+                <li key={item} className="flex gap-3 text-sm text-foreground">
+                  <span aria-hidden="true" className="mt-1 text-amber-600">
+                    &#9679;
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </ReportSection>
 
         <ReportSection title="Visible concerns">
-          <ul className="space-y-4">
-            {report.visibleConcerns.map((concern) => (
-              <li
-                key={concern.area}
-                className="rounded-lg border border-border bg-background p-4"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">
-                    {concern.area}
-                  </p>
-                  <span
-                    className={cn(
-                      "rounded-full border px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]",
-                      SEVERITY_BADGE[concern.severity],
-                    )}
-                  >
-                    {concern.severity}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-foreground">
-                  {concern.finding}
-                </p>
-                <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
-                  <div className="flex gap-2">
-                    <dt className="font-mono uppercase tracking-[0.12em]">
-                      Evidence
-                    </dt>
-                    <dd>{concern.visibleEvidence}</dd>
+          {report.visibleConcerns.length === 0 ? (
+            <p className="text-sm leading-6 text-muted-foreground">
+              No photo-based concerns were flagged by the automated checks. This
+              reflects only what the submitted photos can show; a visual review is
+              still recommended.
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {report.visibleConcerns.map((concern) => (
+                <li
+                  key={concern.area}
+                  className="rounded-lg border border-border bg-background p-4"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">
+                      {concern.area}
+                    </p>
+                    <span
+                      className={cn(
+                        "rounded-full border px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em]",
+                        SEVERITY_BADGE[concern.severity],
+                      )}
+                    >
+                      {concern.severity}
+                    </span>
                   </div>
-                  {concern.uncertainty ? (
+                  <p className="mt-2 text-sm leading-6 text-foreground">
+                    {concern.finding}
+                  </p>
+                  <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
                     <div className="flex gap-2">
                       <dt className="font-mono uppercase tracking-[0.12em]">
-                        Uncertainty
+                        Evidence
                       </dt>
-                      <dd>{concern.uncertainty}</dd>
+                      <dd>{concern.visibleEvidence}</dd>
                     </div>
-                  ) : null}
-                </dl>
-              </li>
-            ))}
-          </ul>
+                    {concern.uncertainty ? (
+                      <div className="flex gap-2">
+                        <dt className="font-mono uppercase tracking-[0.12em]">
+                          Uncertainty
+                        </dt>
+                        <dd>{concern.uncertainty}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                </li>
+              ))}
+            </ul>
+          )}
         </ReportSection>
 
         <ReportSection title="Reference consistency">
@@ -233,18 +252,20 @@ export default function ReportPage() {
           </p>
         </ReportSection>
 
-        <ReportSection title="Seller-risk signals">
-          <ul className="space-y-2">
-            {report.sellerRiskSignals.map((signal) => (
-              <li key={signal} className="flex gap-3 text-sm text-foreground">
-                <span aria-hidden="true" className="mt-1 text-muted-foreground">
-                  &#8250;
-                </span>
-                <span>{signal}</span>
-              </li>
-            ))}
-          </ul>
-        </ReportSection>
+        {report.sellerRiskSignals.length > 0 ? (
+          <ReportSection title="Seller-risk signals">
+            <ul className="space-y-2">
+              {report.sellerRiskSignals.map((signal) => (
+                <li key={signal} className="flex gap-3 text-sm text-foreground">
+                  <span aria-hidden="true" className="mt-1 text-muted-foreground">
+                    &#8250;
+                  </span>
+                  <span>{signal}</span>
+                </li>
+              ))}
+            </ul>
+          </ReportSection>
+        ) : null}
 
         <ReportSection title="Questions to ask the seller">
           <ol className="space-y-3">
