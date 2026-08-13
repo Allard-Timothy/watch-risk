@@ -73,5 +73,5 @@ Add tests for:
 
 Update:
 
-- `docs/reference/data-model.md`
+- `docs/architecture-typescript.md` (data model)
 - `docs/explanation/risk-scoring.md`
