@@ -1,4 +1,4 @@
-# WatchRisk project instructions
+# WatchTell project instructions
 
 ## Source of truth
 
@@ -10,7 +10,7 @@ and implementation order.
 
 ## Product
 
-WatchRisk is a pre-purchase buyer-risk assessment app for luxury watch listings.
+WatchTell is a pre-purchase buyer-risk assessment app for luxury watch listings.
 
 The product must not claim to authenticate watches, certify watches, verify
 watches, or guarantee authenticity.

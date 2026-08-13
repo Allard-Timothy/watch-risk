@@ -1,6 +1,6 @@
-# WatchRisk web
+# WatchTell web
 
-Initial TypeScript-first Next.js application for WatchRisk.
+Initial TypeScript-first Next.js application for WatchTell.
 
 This directory is intentionally isolated from the existing Django scaffold. The
 first step includes only the application shell, Tailwind theme, shadcn/ui-ready

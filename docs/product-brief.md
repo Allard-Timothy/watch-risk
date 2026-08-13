@@ -2,7 +2,7 @@
 
 ## Name
 
-Working name: WatchRisk.
+Working name: WatchTell.
 
 The name may change. Avoid names that imply brand affiliation, certification, or official authentication.
 
@@ -14,7 +14,7 @@ A buyer may need to know what evidence is missing before sending money.
 
 ## Solution
 
-WatchRisk provides a structured buyer-risk report for a watch listing.
+WatchTell provides a structured buyer-risk report for a watch listing.
 
 It reviews:
 
@@ -42,11 +42,11 @@ Secondary users later:
 
 ## MVP promise
 
-Upload a watch listing before you buy. WatchRisk will flag missing evidence, visible concerns, seller-risk signals, and questions to ask before sending money.
+Upload a watch listing before you buy. WatchTell will flag missing evidence, visible concerns, seller-risk signals, and questions to ask before sending money.
 
 ## Non-goals
 
-WatchRisk will not:
+WatchTell will not:
 
 - authenticate watches
 - issue certificates

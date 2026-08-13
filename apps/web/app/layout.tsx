@@ -6,7 +6,7 @@ import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "WatchRisk",
+  title: "WatchTell",
   description: "Photo-based buyer-risk reports for luxury watch listings.",
 };
 

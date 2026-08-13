@@ -1,6 +1,6 @@
 # Product boundaries
 
-WatchRisk helps buyers evaluate risk before purchase. It does not authenticate watches.
+WatchTell helps buyers evaluate risk before purchase. It does not authenticate watches.
 
 ## Why this boundary exists
 
@@ -21,7 +21,7 @@ A buyer-risk report can reduce obvious mistakes. It cannot remove purchase risk.
 
 ## Product promise
 
-WatchRisk should promise:
+WatchTell should promise:
 
 > We help buyers identify missing evidence, visible concerns, seller-risk signals, and next questions before purchase.
 

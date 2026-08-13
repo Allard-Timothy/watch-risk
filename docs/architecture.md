@@ -1,10 +1,10 @@
 # Architecture
 
-This document explains the basic architecture for WatchRisk.
+This document explains the basic architecture for WatchTell.
 
 ## System context
 
-WatchRisk is a paid web app for pre-purchase luxury watch listing review.
+WatchTell is a paid web app for pre-purchase luxury watch listing review.
 
 Users upload listing details and photos. The system stores the case, accepts payment, runs an asynchronous analysis job, and renders a buyer-risk report.
 

@@ -17,7 +17,7 @@ export default function HomePage() {
           Understand the listing before you send money.
         </h1>
         <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-          WatchRisk turns submitted listing details and photos into a structured,
+          WatchTell turns submitted listing details and photos into a structured,
           photo-based buyer-risk report.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
