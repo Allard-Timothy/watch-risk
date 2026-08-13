@@ -112,3 +112,12 @@ The first sellable version can be:
 - system generates draft report
 - owner reviews/edits report
 - user receives report
+
+## Later-phase: AI knowledge architecture
+
+After the paid placeholder workflow and initial integrations, evolve the AI
+layer toward structured claims, evidence, and provenance, temporal
+seller/factory intelligence, and materialized dossiers/snapshots consumed at
+runtime. This is later-phase architecture that extends the plan above — not
+immediate MVP scope, and it does not require crawling, scraping, embeddings, or
+vector search to begin. See `docs/knowledge-architecture.md`.

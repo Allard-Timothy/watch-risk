@@ -69,3 +69,11 @@ Apply these before final report text is produced:
 Use this language or close equivalent:
 
 > This report is a photo-based buyer-risk assessment. It is not an authentication certificate. It does not guarantee authenticity. Use an independent watchmaker, escrow, or brand service center when purchase risk is material.
+
+## Later-phase evidence model
+
+Longer term, report inputs will draw on structured WatchTell knowledge — claims,
+evidence, and provenance, temporal seller/factory intelligence, and materialized
+dossiers/snapshots — rather than ad hoc retrieval. This is later-phase
+architecture, not current MVP scope, and the wording rules above still apply.
+See `docs/knowledge-architecture.md`.

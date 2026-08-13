@@ -78,3 +78,11 @@ If model output fails validation:
 2. mark the analysis run failed
 3. return a safe fallback report state
 4. do not show malformed content to users
+
+## Later-phase knowledge source
+
+Longer term, the model should reason over compact, versioned WatchTell knowledge
+— structured claims, evidence, and provenance, temporal seller/factory
+intelligence, and materialized dossiers/snapshots — rather than raw retrieval on
+every call. This is later-phase architecture, not current MVP scope. See
+`docs/knowledge-architecture.md`.

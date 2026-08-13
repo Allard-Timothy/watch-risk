@@ -86,7 +86,28 @@ Use these repo files as source context:
 - docs/ai-contract.md
 - docs/report-rules.md
 - docs/migration-plan.md
+- docs/knowledge-architecture.md
 - prompts/pycharm-typescript-rewrite.md
 - assets/watchdesk-risk-report-dashboard.png
 
 Follow the design direction in docs/design-guidance.md and use assets/watchdesk-risk-report-dashboard.png as visual guidance.
+
+## Knowledge architecture (later-phase)
+
+WatchTell should eventually include a persistent, structured intelligence layer built from seller reviews, QC feedback, factory/model discussions, technical deep dives, transaction reports, and WatchTell user outcomes. See docs/knowledge-architecture.md.
+
+Do not make raw semantic RAG the primary runtime intelligence path.
+
+Preferred long-term flow:
+1. Ingest approved source material.
+2. Normalize and resolve entities.
+3. Extract explicit claims.
+4. Score evidence.
+5. Preserve provenance.
+6. Aggregate corroborating and conflicting claims.
+7. Generate versioned dossiers and knowledge snapshots.
+8. Feed compact snapshots into runtime analysis.
+
+For MVP work, do not build large-scale crawling, scraping, vector infrastructure, embeddings, or automated ingestion yet. Start with the domain ontology, claim schema, evidence schema, and source/provenance schema, plus a small manually curated seed corpus; add versioned knowledge snapshots later.
+
+Any implementation should extend the current architecture instead of replacing it.

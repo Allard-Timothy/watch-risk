@@ -174,3 +174,12 @@ Do not add:
 - complex admin platform
 
 Add those only after paid users exist.
+
+## Later-phase AI knowledge architecture
+
+The long-term AI direction is a persistent, structured intelligence layer:
+structured claims, evidence, and source provenance; time-aware seller/factory
+intelligence; and materialized dossiers/snapshots that the runtime consumes
+instead of raw retrieval on every call. This extends the data model above rather
+than replacing it, and is later-phase work — not immediate MVP scope. See
+`docs/knowledge-architecture.md`.
