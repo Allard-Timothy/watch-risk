@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import { saveDraftCase } from "@/lib/cases/draft-store";
 import { caseCreateFormSchema, type CaseCreateInput } from "@/lib/validation";
 
 type FieldName = keyof CaseCreateInput;
@@ -114,8 +116,9 @@ export function CaseForm() {
     setErrors({});
     setSubmitting(true);
 
-    // Placeholder submit handler. This step does not persist to the database
-    // or start any analysis; it validates the input and confirms intake.
+    // Placeholder submit handler. Listing details are kept in sessionStorage
+    // for the draft case page; nothing is written to the database.
+    saveDraftCase(parsed.data as CaseCreateInput);
     setResult(parsed.data as CaseCreateInput);
     setSubmitting(false);
   }
@@ -238,8 +241,8 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
             Case details recorded
           </h2>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            The listing details below are captured for review. Photo upload,
-            payment, and report generation are separate later steps.
+            The listing details below are captured in this browser for review.
+            Photo upload, payment, and report generation are separate later steps.
           </p>
         </div>
       </div>
@@ -261,6 +264,12 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
       </dl>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Link
+          href="/cases/draft"
+          className="inline-flex items-center justify-center rounded-md bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90"
+        >
+          Review case
+        </Link>
         <button
           type="button"
           onClick={onReset}
@@ -268,9 +277,6 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
         >
           Start another case
         </button>
-        <p className="text-xs leading-5 text-muted-foreground">
-          Independent inspection is recommended before any purchase decision.
-        </p>
       </div>
     </div>
   );
