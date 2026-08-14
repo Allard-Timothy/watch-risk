@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { caseCreateFormSchema, type CaseCreateInput } from "@/lib/validation";
@@ -261,6 +262,12 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
       </dl>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Link
+          href="/cases/draft/photos"
+          className="inline-flex items-center justify-center rounded-md bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90"
+        >
+          Add photos
+        </Link>
         <button
           type="button"
           onClick={onReset}
@@ -268,9 +275,6 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
         >
           Start another case
         </button>
-        <p className="text-xs leading-5 text-muted-foreground">
-          Independent inspection is recommended before any purchase decision.
-        </p>
       </div>
     </div>
   );
