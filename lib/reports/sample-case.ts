@@ -27,3 +27,5 @@ export const sampleReportMeta = {
   reportId: "WR-2026-0481",
   generatedAt: "June 7, 2026",
 } as const;
+
+export const SAMPLE_REPORT_PATH = `/reports/${sampleReportMeta.reportId}`;

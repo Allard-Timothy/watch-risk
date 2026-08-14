@@ -1,63 +1,113 @@
 import Link from "next/link";
 
-const reportHighlights = [
-  "Spot missing listing evidence",
-  "Organize visible concerns",
-  "Prepare practical seller questions",
-] as const;
+import { Card, DashboardMain, PageTitle } from "@/components/dashboard-main";
+import { SAMPLE_REPORT_PATH } from "@/lib/reports/sample-case";
 
 export default function HomePage() {
   return (
-    <main className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-12 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
-      <section>
-        <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-          Pre-purchase decision support
-        </p>
-        <h1 className="max-w-3xl font-serif text-5xl leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-          Understand the listing before you send money.
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-          WatchTell turns submitted listing details and photos into a structured,
-          photo-based buyer-risk report.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+    <DashboardMain>
+      <PageTitle
+        title="Overview"
+        subtitle="Photo-based buyer-risk workspace for luxury watch listings."
+      />
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="flex flex-col p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Intake
+          </p>
+          <h2 className="mt-2 font-serif text-2xl tracking-tight">Start a case</h2>
+          <p className="mt-2 flex-1 text-[13px] leading-6 text-muted-foreground">
+            Record listing details, then add photos. Nothing is paid or sent to a
+            model in this step.
+          </p>
           <Link
             href="/cases/new"
-            className="rounded-md bg-foreground px-5 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent/40"
+            className="mt-5 inline-flex w-fit items-center rounded-lg bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
           >
-            Start a case
+            New case
           </Link>
-          <span className="rounded-md border border-border bg-card px-5 py-3 text-sm text-muted-foreground">
-            Independent inspection recommended
-          </span>
-        </div>
-      </section>
+        </Card>
 
-      <aside className="rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          Report preview
-        </p>
-        <h2 className="mt-3 font-serif text-3xl text-foreground">
-          Evidence comes first.
-        </h2>
-        <ul className="mt-7 space-y-4">
-          {reportHighlights.map((highlight, index) => (
-            <li
-              className="flex items-center gap-4 border-t border-border pt-4 text-sm text-foreground"
-              key={highlight}
-            >
-              <span className="font-mono text-xs text-accent">
-                {String(index + 1).padStart(2, "0")}
+        <Card className="flex flex-col p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Evidence
+          </p>
+          <h2 className="mt-2 font-serif text-2xl tracking-tight">Photos</h2>
+          <p className="mt-2 flex-1 text-[13px] leading-6 text-muted-foreground">
+            Label dial, caseback, bracelet, and other areas so missing evidence
+            is obvious before you open a report.
+          </p>
+          <Link
+            href="/cases/draft"
+            className="mt-5 inline-flex w-fit items-center rounded-lg border border-border px-4 py-2 text-[13px] font-semibold"
+          >
+            Open case
+          </Link>
+        </Card>
+
+        <Card className="flex flex-col p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Report
+          </p>
+          <h2 className="mt-2 font-serif text-2xl tracking-tight">
+            Sample report
+          </h2>
+          <p className="mt-2 flex-1 text-[13px] leading-6 text-muted-foreground">
+            Tudor Black Bay 58 layout preview. Uses deterministic photo rules,
+            not a live model call.
+          </p>
+          <Link
+            href={SAMPLE_REPORT_PATH}
+            className="mt-5 inline-flex w-fit items-center rounded-lg border border-border px-4 py-2 text-[13px] font-semibold"
+          >
+            Open report
+          </Link>
+        </Card>
+      </div>
+
+      <Card className="mt-4 overflow-hidden p-0">
+        <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="grid grid-cols-[1fr_6.5rem] gap-3 bg-[#d8d5cf] p-4 sm:p-5">
+            <div className="relative min-h-[12rem] overflow-hidden rounded-xl bg-[#c9c4bc]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.4),transparent_42%)]" />
+              <span className="absolute bottom-2 left-2 rounded bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                Dial
               </span>
-              {highlight}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-8 rounded-lg bg-muted p-4 text-sm leading-6 text-muted-foreground">
-          This initial screen is placeholder content. Case intake and report
-          generation are intentionally outside this step.
-        </p>
-      </aside>
-    </main>
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-[#c3beb6]">
+                <span className="absolute bottom-2 left-2 rounded bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                  Bracelet
+                </span>
+              </div>
+              <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-[#bdb8b0]">
+                <span className="absolute bottom-2 left-2 rounded bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                  Caseback
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center p-6">
+            <span className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[12px] font-semibold text-amber-800">
+              Medium-risk listing
+            </span>
+            <h2 className="mt-4 font-serif text-3xl tracking-tight">
+              Tudor Black Bay 58
+            </h2>
+            <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
+              Sample photo set is incomplete. Open the report dashboard for
+              missing evidence, seller questions, and the recommended next step.
+            </p>
+            <Link
+              href={SAMPLE_REPORT_PATH}
+              className="mt-5 inline-flex w-fit items-center rounded-lg bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+            >
+              View risk analysis
+            </Link>
+          </div>
+        </div>
+      </Card>
+    </DashboardMain>
   );
 }
