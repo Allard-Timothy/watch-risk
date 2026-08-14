@@ -39,4 +39,4 @@ Target stack:
 - Google Cloud Storage placeholders
 - Cloud Run later
 
-Work in small, reviewable steps. Do not delete the Django scaffold until the TypeScript app is running.
+Work in small, reviewable steps. The TypeScript app now lives at the repository root; the earlier Django scaffold has been removed.

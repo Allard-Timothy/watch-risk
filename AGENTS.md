@@ -64,42 +64,27 @@ Branching: base every branch off `main` and target pull requests at `main`.
 `ta/add-scaffolding` is retired as an integration branch — do not branch from it
 or target it.
 
-This repo hosts two apps mid-migration; both run in dev:
-
-- Django scaffold at the repo root (the current working product). Python 3.12
-  managed with `uv`. Standard dev commands are in `docs/development.md` and
-  `README.md` (`uv run python manage.py ...`, `uv run pytest`, `uv run ruff check .`).
-- Next.js rewrite in `apps/web/` (currently an app shell only, no DB/auth/API).
-  Commands are in `apps/web/README.md` (`pnpm dev`, `pnpm typecheck`, `pnpm build`).
+WatchTell is a single Next.js (App Router) + TypeScript app at the repository
+root. The earlier Django scaffold has been removed. Standard commands are in
+`README.md`: `pnpm install`, `pnpm dev` (http://localhost:3000), `pnpm typecheck`,
+`pnpm build`. Key routes: `/`, `/cases/new`, `/reports/[reportId]`.
 
 Startup/run caveats (non-obvious):
 
-- Postgres runs locally as a system service, not via Docker (Docker is not
-  installed here). Start it with `sudo service postgresql start` before running
-  Django. The `watchrisk` role/db and `.env` (copied from `.env.example`) are
-  already provisioned in the environment.
-- The update script runs `uv sync` and `pnpm install` but intentionally does NOT
-  run DB migrations. After pulling changes or on a fresh DB, run
-  `uv run python manage.py migrate` yourself. Migrations are committed under
-  `apps/*/migrations/`.
-- `apps/web` uses pnpm 11 (pinned via `packageManager`). Build-script approval
-  lives in `apps/web/pnpm-workspace.yaml` under `allowBuilds` (e.g. `sharp: true`,
-  `prisma: true`); the legacy `pnpm.onlyBuiltDependencies` field is ignored by
-  pnpm 11.
-- `apps/web` uses Prisma pinned to v6. Do not bump to v7 without a rewrite: v7
-  removed `datasource.url` from the schema and requires a `prisma.config.ts`
-  adapter-based client. The Prisma client is generated into `node_modules` by the
-  `postinstall` hook (runs on every `pnpm install`); it does not need a database
-  or `DATABASE_URL` to generate. The data model is not wired to a database yet
-  (no migrations, `lib/db/client.ts` is a lazy placeholder).
-- The Django app has no self-signup UI; log in with an existing/superuser account
-  at `/accounts/login/`. Create one with `uv run python manage.py createsuperuser`.
-- Report generation is not wired to the UI yet. Create a case at `/cases/new/`,
-  then generate its report with `uv run python manage.py analyze_case <case_id>`
-  (analysis is a deterministic placeholder; no real OpenAI/Stripe/GCS calls).
-- `ruff check .` currently reports pre-existing import-ordering issues in the
-  scaffold; these are not caused by environment setup.
-- In `apps/web`, do not run `pnpm build` and then `pnpm dev` in the same
-  directory: the production build overwrites `.next` and breaks the dev server
-  (500s, e.g. missing `.next/dev/routes-manifest.json`). If dev starts 500ing
-  after a build, stop dev, `rm -rf apps/web/.next`, and restart `pnpm dev`.
+- `pnpm install` runs `prisma generate` via the `postinstall` hook; it does not
+  need a database or `DATABASE_URL`. The data model is defined but not wired to a
+  database yet (no migrations; `lib/db/client.ts` is a lazy placeholder), so the
+  app runs without Postgres.
+- The app pins pnpm 11 (via `packageManager`). Build-script approval lives in
+  `pnpm-workspace.yaml` under `allowBuilds` (e.g. `sharp: true`, `prisma: true`);
+  the legacy `pnpm.onlyBuiltDependencies` field is ignored by pnpm 11.
+- Prisma is pinned to v6. Do not bump to v7 without a rewrite: v7 removed
+  `datasource.url` from the schema and requires a `prisma.config.ts`
+  adapter-based client.
+- A local Postgres is available for future Prisma work via `docker compose up -d db`
+  (`docker-compose.yml`); `DATABASE_URL` in `.env.example` matches it. It is not
+  required to run the app today.
+- Do not run `pnpm build` and then `pnpm dev` in the same working tree: the
+  production build overwrites `.next` and breaks the dev server (500s, e.g.
+  missing `.next/dev/routes-manifest.json`). If dev starts 500ing after a build,
+  stop dev, `rm -rf .next`, and restart `pnpm dev`.
