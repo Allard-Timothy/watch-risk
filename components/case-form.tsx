@@ -78,7 +78,7 @@ function formatValue(name: FieldName, value: string | number): string {
 }
 
 const inputClasses =
-  "w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/25";
+  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/25";
 
 export function CaseForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -206,7 +206,7 @@ export function CaseForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center justify-center rounded-md bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-60"
         >
           {submitting ? "Saving case" : "Save case"}
         </button>
@@ -266,14 +266,14 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Link
           href="/cases/draft"
-          className="inline-flex items-center justify-center rounded-md bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90"
+          className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90"
         >
           Review case
         </Link>
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center justify-center rounded-md border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-accent/30"
+          className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-accent/30"
         >
           Start another case
         </button>

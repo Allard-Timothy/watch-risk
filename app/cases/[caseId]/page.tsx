@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CaseDetailView } from "@/components/case-detail";
+import { DashboardMain } from "@/components/dashboard-main";
 
 export const metadata: Metadata = {
   title: "Case | WatchTell",
@@ -15,8 +16,8 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
   const { caseId } = await params;
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-10 sm:px-6 sm:py-14">
+    <DashboardMain className="max-w-3xl">
       <CaseDetailView caseId={caseId} />
-    </main>
+    </DashboardMain>
   );
 }

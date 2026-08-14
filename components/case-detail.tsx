@@ -76,7 +76,7 @@ export function CaseDetailView({ caseId }: CaseDetailViewProps) {
         <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-accent">
           Case {caseId}
         </p>
-        <h1 className="font-serif text-3xl leading-tight tracking-tight text-foreground sm:text-4xl">
+        <h1 className="font-serif text-[2.15rem] leading-[1.1] tracking-tight text-foreground sm:text-[2.5rem]">
           {title || "Watch case"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -135,7 +135,7 @@ export function CaseDetailView({ caseId }: CaseDetailViewProps) {
         </p>
         <Link
           href="/reports/WR-2026-0481"
-          className="inline-flex items-center justify-center rounded-md bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm"
+          className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm"
         >
           View placeholder report
         </Link>
