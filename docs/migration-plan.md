@@ -4,30 +4,12 @@
 
 Replace the Django scaffold with a TypeScript-first Next.js app while preserving the product decisions from the original planning work.
 
-## Phase 1: repo reset or side-by-side rewrite
+## Phase 1: repo reset (done)
 
-Use one of two paths.
-
-### Option A: Clean rewrite
-
-Delete the Django scaffold and create a fresh Next.js app.
-
-Use this if there is no meaningful Django code to preserve.
-
-### Option B: Side-by-side rewrite
-
-Create the Next.js app in a new folder, then delete Django once the TypeScript version runs.
-
-Suggested temporary layout:
-
-```text
-legacy-django/
-web/
-docs/
-assets/
-```
-
-For this project, clean rewrite is probably better because the Django scaffold is early.
+Complete. The project took the clean-rewrite path: the Django scaffold has been
+removed and the Next.js app was promoted from `apps/web/` to the repository root,
+so WatchTell is now a single TypeScript-first project. `docker-compose.yml`
+(Postgres) is retained for future Prisma work.
 
 ## Phase 2: create Next.js foundation
 

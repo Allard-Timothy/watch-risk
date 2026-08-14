@@ -64,7 +64,6 @@ Rewrite direction:
 Work in small, reviewable steps.
 
 Do not:
-- delete the Django scaffold yet
 - rewrite the whole app in one pass
 - implement real Stripe calls yet
 - implement real OpenAI calls yet
@@ -74,9 +73,8 @@ Do not:
 - add GraphQL
 - add marketplace functionality
 
-Start the TypeScript app under:
-
-apps/web
+The TypeScript app lives at the repository root. The earlier Django scaffold has
+been removed.
 
 Use these repo files as source context:
 - AGENTS.md
