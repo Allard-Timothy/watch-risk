@@ -25,17 +25,26 @@ removed in favor of this TypeScript-first stack.
 
 ## Requirements
 
-- Node.js 20.9 or newer
-- pnpm (this repo pins pnpm 11 via `packageManager`)
+- Node.js 20.9 or newer (includes [Corepack](https://nodejs.org/api/corepack.html))
 - Docker (optional, only for a local Postgres via `docker-compose.yml`)
+
+Do not install pnpm globally (`npm i -g pnpm`, Homebrew, apt, etc.). This repo
+pins `pnpm@11.9.0` via `packageManager` in `package.json`. Corepack fetches that
+exact version into a per-user cache and does not install a system-wide package
+manager.
 
 ## Run locally
 
 ```bash
+corepack enable
+corepack prepare pnpm@11.9.0 --activate
 pnpm install        # also runs `prisma generate` via postinstall
 cp .env.example .env
 pnpm dev            # http://localhost:3000
 ```
+
+If you prefer not to put a `pnpm` shim on your PATH, prefix commands with
+`corepack` instead (`corepack pnpm install`, `corepack pnpm dev`).
 
 Key routes: `/` (landing), `/cases/new` (case intake), `/reports/[reportId]`
 (placeholder buyer-risk report).

@@ -75,9 +75,11 @@ Startup/run caveats (non-obvious):
   need a database or `DATABASE_URL`. The data model is defined but not wired to a
   database yet (no migrations; `lib/db/client.ts` is a lazy placeholder), so the
   app runs without Postgres.
-- The app pins pnpm 11 (via `packageManager`). Build-script approval lives in
-  `pnpm-workspace.yaml` under `allowBuilds` (e.g. `sharp: true`, `prisma: true`);
-  the legacy `pnpm.onlyBuiltDependencies` field is ignored by pnpm 11.
+- The app pins pnpm 11 (via `packageManager`). Use Corepack (`corepack enable`
+  then `corepack prepare pnpm@11.9.0 --activate`); do not install pnpm globally.
+  Build-script approval lives in `pnpm-workspace.yaml` under `allowBuilds`
+  (e.g. `sharp: true`, `prisma: true`); the legacy `pnpm.onlyBuiltDependencies`
+  field is ignored by pnpm 11.
 - Prisma is pinned to v6. Do not bump to v7 without a rewrite: v7 removed
   `datasource.url` from the schema and requires a `prisma.config.ts`
   adapter-based client.
