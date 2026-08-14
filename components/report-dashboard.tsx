@@ -90,18 +90,25 @@ function PhotoWell({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl bg-[#d8d5cf]",
+        "relative overflow-hidden rounded-xl",
+        present
+          ? "bg-[#d8d5cf]"
+          : "border border-dashed border-border bg-muted",
         className,
       )}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_42%),linear-gradient(180deg,rgba(32,34,36,0.04),rgba(32,34,36,0.18))]" />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="rounded-full bg-black/25 px-2.5 py-1 text-[11px] font-medium text-white">
-          {present ? label : `${label} missing`}
-        </span>
-      </div>
-      <span className="absolute bottom-2 left-2 rounded bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">
-        {label}
+      {present ? (
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_42%),linear-gradient(180deg,rgba(32,34,36,0.05),rgba(32,34,36,0.22))]" />
+      ) : null}
+      <span
+        className={cn(
+          "absolute bottom-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-medium",
+          present
+            ? "bg-black/45 text-white"
+            : "bg-card/90 text-muted-foreground",
+        )}
+      >
+        {present ? label : `${label} missing`}
       </span>
     </div>
   );
@@ -188,23 +195,23 @@ export function ReportDashboard({ watch, report }: ReportDashboardProps) {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
         <div
           id="visual-qc"
-          className="grid scroll-mt-6 grid-cols-[minmax(0,1fr)_7.75rem] gap-3 sm:grid-cols-[minmax(0,1fr)_8.5rem]"
+          className="grid h-[18.5rem] scroll-mt-6 grid-cols-[minmax(0,1fr)_8.25rem] gap-3 sm:h-[21rem] sm:grid-cols-[minmax(0,1fr)_9rem]"
         >
           <PhotoWell
             label="Dial"
             present={provided.has("dial")}
-            className="min-h-[16.5rem] sm:min-h-[18.5rem]"
+            className="h-full"
           />
-          <div className="flex flex-col gap-3">
+          <div className="grid h-full grid-rows-2 gap-3">
             <PhotoWell
               label="Bracelet"
               present={provided.has("bracelet")}
-              className="min-h-0 flex-1"
+              className="h-full"
             />
             <PhotoWell
               label="Caseback"
               present={provided.has("caseback")}
-              className="min-h-0 flex-1"
+              className="h-full"
             />
           </div>
         </div>
