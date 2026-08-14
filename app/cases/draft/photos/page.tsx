@@ -30,8 +30,8 @@ export default function DraftPhotosPage() {
       </section>
 
       <p className="mt-6 text-sm text-muted-foreground">
-        <Link href="/cases/new" className="font-medium text-foreground underline-offset-2 hover:underline">
-          Back to case intake
+        <Link href="/cases/draft" className="font-medium text-foreground underline-offset-2 hover:underline">
+          Back to case
         </Link>
       </p>
     </main>
