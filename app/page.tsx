@@ -18,8 +18,8 @@ export default function HomePage() {
           </p>
           <h2 className="mt-2 font-serif text-2xl tracking-tight">Start a case</h2>
           <p className="mt-2 flex-1 text-[13px] leading-6 text-muted-foreground">
-            Record listing details, then add photos. Nothing is paid or sent to a
-            model in this step.
+            Record listing details, then add photos. Listing details are saved
+            to Postgres. Nothing is paid or sent to a model in this step.
           </p>
           <Link
             href="/cases/new"

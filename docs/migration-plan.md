@@ -62,7 +62,7 @@ Add integrations only after local placeholder workflow is functional.
 
 Order:
 
-1. Postgres
+1. Postgres (listing details persist; first Prisma migration applied)
 2. Google Cloud Storage
 3. Stripe Checkout
 4. OpenAI structured output

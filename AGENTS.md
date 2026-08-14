@@ -73,10 +73,13 @@ root. The earlier Django scaffold has been removed. Standard commands are in
 
 Startup/run caveats (non-obvious):
 
-- `pnpm install` runs `prisma generate` via the `postinstall` hook; it does not
-  need a database or `DATABASE_URL`. The data model is defined but not wired to a
-  database yet (no migrations; `lib/db/client.ts` is a lazy placeholder), so the
-  app runs without Postgres.
+- `pnpm install` runs `prisma generate` via the `postinstall` hook. It does not
+  start Postgres or apply migrations. Overview and the sample report still
+  render without a database.
+- Case create/detail persist `WatchCase` listing details. Before saving a case,
+  start Postgres (`docker compose up -d db`) and apply migrations
+  (`pnpm exec prisma migrate deploy`). `DATABASE_URL` is in `.env.example`.
+- Photos remain in-browser only; do not expect CaseImage rows yet.
 - The app pins pnpm 11 (via `packageManager`). Use Corepack (`corepack enable`
   then `corepack prepare pnpm@11.9.0 --activate`); do not install pnpm globally.
   Build-script approval lives in `pnpm-workspace.yaml` under `allowBuilds`
@@ -85,9 +88,9 @@ Startup/run caveats (non-obvious):
 - Prisma is pinned to v6. Do not bump to v7 without a rewrite: v7 removed
   `datasource.url` from the schema and requires a `prisma.config.ts`
   adapter-based client.
-- A local Postgres is available for future Prisma work via `docker compose up -d db`
-  (`docker-compose.yml`); `DATABASE_URL` in `.env.example` matches it. It is not
-  required to run the app today.
+- A local Postgres is available via `docker compose up -d db`
+  (`docker-compose.yml`); `DATABASE_URL` in `.env.example` matches it. It is
+  required to save or reload cases, not to view the sample report.
 - Do not run `pnpm build` and then `pnpm dev` in the same working tree: the
   production build overwrites `.next` and breaks the dev server (500s, e.g.
   missing `.next/dev/routes-manifest.json`). If dev starts 500ing after a build,

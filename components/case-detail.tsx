@@ -46,16 +46,31 @@ const LISTING_ROWS: ReadonlyArray<{
   { key: "sellerClaims", label: "Seller claims" },
 ];
 
+type CaseSource = "database" | "draft" | "sample";
+
 type CaseDetailViewProps = Readonly<{
   caseId: string;
+  initialListing?: CaseCreateInput | null;
 }>;
 
-export function CaseDetailView({ caseId }: CaseDetailViewProps) {
-  const [listing, setListing] = useState<CaseCreateInput>(SAMPLE_CASE);
-  const [source, setSource] = useState<"draft" | "sample">("sample");
+export function CaseDetailView({
+  caseId,
+  initialListing,
+}: CaseDetailViewProps) {
+  const [listing, setListing] = useState<CaseCreateInput>(
+    initialListing ?? SAMPLE_CASE,
+  );
+  const [source, setSource] = useState<CaseSource>(
+    initialListing ? "database" : "sample",
+  );
   const [providedTypes, setProvidedTypes] = useState<DetectedPhotoType[]>([]);
 
   useEffect(() => {
+    if (initialListing) {
+      setListing(initialListing);
+      setSource("database");
+      return;
+    }
     if (caseId === "draft") {
       const draft = loadDraftCase();
       if (draft) {
@@ -66,9 +81,18 @@ export function CaseDetailView({ caseId }: CaseDetailViewProps) {
     }
     setListing(SAMPLE_CASE);
     setSource("sample");
-  }, [caseId]);
+  }, [caseId, initialListing]);
 
   const title = [listing.brand, listing.model].filter(Boolean).join(" ");
+
+  const sourceCopy: Record<CaseSource, string> = {
+    database:
+      "Listing details loaded from Postgres. Photos are not persisted yet.",
+    draft:
+      "Listing details from this browser session. Photos are not persisted.",
+    sample:
+      "Sample listing for layout review. Save a case to replace this with your intake.",
+  };
 
   return (
     <div className="space-y-8">
@@ -79,11 +103,7 @@ export function CaseDetailView({ caseId }: CaseDetailViewProps) {
         <h1 className="font-serif text-[2.15rem] leading-[1.1] tracking-tight text-foreground sm:text-[2.5rem]">
           {title || "Watch case"}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {source === "draft"
-            ? "Listing details from this browser session. Photos are not persisted."
-            : "Sample listing for layout review. Save a case first to replace this with your intake."}
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{sourceCopy[source]}</p>
       </header>
 
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-8">
@@ -116,7 +136,7 @@ export function CaseDetailView({ caseId }: CaseDetailViewProps) {
             href="/cases/new"
             className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
           >
-            Edit intake
+            Start another case
           </Link>
         </p>
       </section>

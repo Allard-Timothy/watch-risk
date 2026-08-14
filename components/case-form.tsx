@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
+import { createCaseAction } from "@/lib/cases/actions";
 import { cn } from "@/lib/utils";
-import { saveDraftCase } from "@/lib/cases/draft-store";
 import { caseCreateFormSchema, type CaseCreateInput } from "@/lib/validation";
 
 type FieldName = keyof CaseCreateInput;
@@ -82,10 +82,12 @@ const inputClasses =
 
 export function CaseForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<CaseCreateInput | null>(null);
+  const [savedId, setSavedId] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
@@ -110,26 +112,46 @@ export function CaseForm() {
         }
       }
       setErrors(nextErrors);
+      setFormError(null);
       return;
     }
 
     setErrors({});
+    setFormError(null);
     setSubmitting(true);
 
-    // Placeholder submit handler. Listing details are kept in sessionStorage
-    // for the draft case page; nothing is written to the database.
-    saveDraftCase(parsed.data as CaseCreateInput);
-    setResult(parsed.data as CaseCreateInput);
+    const created = await createCaseAction(raw);
     setSubmitting(false);
+
+    if (!created.ok) {
+      if (created.errors) {
+        setErrors(created.errors);
+      }
+      if (created.message) {
+        setFormError(created.message);
+      }
+      return;
+    }
+
+    setSavedId(created.id);
+    setResult(parsed.data as CaseCreateInput);
   }
 
   function handleReset() {
     setResult(null);
+    setSavedId(null);
     setErrors({});
+    setFormError(null);
   }
 
-  if (result) {
-    return <CaseIntakeConfirmation values={result} onReset={handleReset} />;
+  if (result && savedId) {
+    return (
+      <CaseIntakeConfirmation
+        values={result}
+        caseId={savedId}
+        onReset={handleReset}
+      />
+    );
   }
 
   return (
@@ -200,16 +222,23 @@ export function CaseForm() {
 
       <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted-foreground">
-          Nothing is submitted for analysis yet. This step only records the
-          listing details for review.
+          Listing details are saved to Postgres. Photos, payment, and report
+          generation are separate later steps.
         </p>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-60"
-        >
-          {submitting ? "Saving case" : "Save case"}
-        </button>
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+          {formError ? (
+            <p className="text-xs font-medium text-red-700" role="alert">
+              {formError}
+            </p>
+          ) : null}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-60"
+          >
+            {submitting ? "Saving case" : "Save case"}
+          </button>
+        </div>
       </div>
     </form>
   );
@@ -217,10 +246,15 @@ export function CaseForm() {
 
 type CaseIntakeConfirmationProps = Readonly<{
   values: CaseCreateInput;
+  caseId: string;
   onReset: () => void;
 }>;
 
-function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps) {
+function CaseIntakeConfirmation({
+  values,
+  caseId,
+  onReset,
+}: CaseIntakeConfirmationProps) {
   const entries = FIELDS.map((field) => ({
     name: field.name,
     label: FIELD_LABELS[field.name],
@@ -238,11 +272,12 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
         </span>
         <div>
           <h2 className="text-base font-semibold text-foreground">
-            Case details recorded
+            Case saved
           </h2>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            The listing details below are captured in this browser for review.
-            Photo upload, payment, and report generation are separate later steps.
+            Listing details are stored in Postgres as case{" "}
+            <span className="font-mono text-foreground">{caseId}</span>. Photos
+            stay in this browser until storage is wired.
           </p>
         </div>
       </div>
@@ -265,7 +300,7 @@ function CaseIntakeConfirmation({ values, onReset }: CaseIntakeConfirmationProps
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Link
-          href="/cases/draft"
+          href={`/cases/${caseId}`}
           className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90"
         >
           Review case
