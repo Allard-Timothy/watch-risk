@@ -92,7 +92,7 @@ export function CaseDetailView({
 
   const sourceCopy: Record<CaseSource, string> = {
     database:
-      "Listing details and photos loaded from this machine. Files stay under .data/uploads until GCS is wired.",
+      "Listing details and photos are saved with this case. Open the report to see them in the gallery.",
     draft:
       "Listing details from this browser session. Photos stay in this browser until you save a case.",
     sample:

@@ -222,8 +222,8 @@ export function CaseForm() {
 
       <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted-foreground">
-          Listing details are saved to Postgres. Photos, payment, and report
-          generation are separate later steps.
+          Listing details are saved to Postgres. You can add photos on the next
+          screen. Payment and model calls are not wired.
         </p>
         <div className="flex flex-col items-stretch gap-2 sm:items-end">
           {formError ? (
@@ -276,8 +276,9 @@ function CaseIntakeConfirmation({
           </h2>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
             Listing details are stored in Postgres as case{" "}
-            <span className="font-mono text-foreground">{caseId}</span>. Photos
-            stay in this browser until storage is wired.
+            <span className="font-mono text-foreground">{caseId}</span>. Add
+            photos on the case page; they are saved with the case for the report
+            gallery.
           </p>
         </div>
       </div>
