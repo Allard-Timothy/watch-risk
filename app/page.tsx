@@ -8,10 +8,10 @@ export default function HomePage() {
     <DashboardMain>
       <PageTitle
         title="Overview"
-        subtitle="Photo-based buyer-risk workspace for luxury watch listings."
+        subtitle="Photo-based buyer-risk workspace. Forum TD labels are evidence, not a universal conclusion."
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="flex flex-col p-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Intake
@@ -64,6 +64,31 @@ export default function HomePage() {
           >
             Open report
           </Link>
+        </Card>
+
+        <Card className="flex flex-col p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Knowledge
+          </p>
+          <h2 className="mt-2 font-serif text-2xl tracking-tight">Sellers</h2>
+          <p className="mt-2 flex-1 text-[13px] leading-6 text-muted-foreground">
+            Curated community recognition. Compare RepTime-associated lists with
+            RepWatchForum without treating either as universal truth.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link
+              href="/sellers"
+              className="inline-flex w-fit items-center rounded-lg bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+            >
+              Seller index
+            </Link>
+            <Link
+              href="/compare/communities"
+              className="inline-flex w-fit items-center rounded-lg border border-border px-4 py-2 text-[13px] font-semibold"
+            >
+              Compare
+            </Link>
+          </div>
         </Card>
       </div>
 

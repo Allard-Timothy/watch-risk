@@ -12,7 +12,7 @@
     { "key": "cross_community_validation", "label": "low" }
   ],
   "riskFlags": [
-    { "category": "fraud", "label": "insufficient_evidence", "summary": "Do not merge with Lin Feng without verified identity evidence. Name similarity is not sufficient." }
+    { "category": "fraud", "label": "insufficient_evidence", "summary": "Do not merge with Lin Feng without identity evidence. Name similarity is not sufficient." }
   ],
   "likes": [
     "Completed buyer transactions.",

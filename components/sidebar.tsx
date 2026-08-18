@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 function isActive(
   pathname: string,
-  match: "exact" | "cases" | "report",
+  match: "exact" | "cases" | "report" | "sellers",
   label: string,
 ) {
   if (match === "exact") {
@@ -25,6 +25,9 @@ function isActive(
   }
   if (match === "cases") {
     return pathname.startsWith("/cases") && pathname !== "/cases/new";
+  }
+  if (match === "sellers") {
+    return pathname.startsWith("/sellers") || pathname.startsWith("/compare");
   }
   if (match === "report") {
     return label === "Visual QC" && pathname.startsWith("/reports");
@@ -40,6 +43,12 @@ export function Sidebar() {
 
   const nav = [
     { href: "/", label: "Overview", icon: OverviewIcon, match: "exact" as const },
+    {
+      href: "/sellers",
+      label: "Sellers",
+      icon: SellerIcon,
+      match: "sellers" as const,
+    },
     {
       href: reportBase,
       label: "Visual QC",

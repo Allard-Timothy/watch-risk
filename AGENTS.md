@@ -70,7 +70,8 @@ WatchTell is a single Next.js (App Router) + TypeScript app at the repository
 root. The earlier Django scaffold has been removed. Standard commands are in
 `README.md`: `pnpm install`, `pnpm dev` (http://localhost:3000), `pnpm typecheck`,
 `pnpm build`, `pnpm test`. Key routes: `/` (overview), `/cases/new`,
-`/cases/[caseId]`, `/reports/[reportId]`. The chrome is a dashboard shell
+`/cases/[caseId]`, `/reports/[reportId]`, `/sellers`, `/sellers/[sellerId]`,
+`/compare/communities`. The chrome is a dashboard shell
 (dark sidebar + light canvas) guided by `assets/watchdesk-risk-report-dashboard.png`.
 
 Startup/run caveats (non-obvious):

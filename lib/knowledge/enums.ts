@@ -34,6 +34,22 @@ export const QUALITATIVE_LABELS = [
 ] as const;
 export type QualitativeLabel = (typeof QUALITATIVE_LABELS)[number];
 
+export const COMMUNITY_RECOGNITION_COPY: Record<
+  CommunityRecognitionStatus,
+  string
+> = {
+  full_td: "Full TD",
+  provisionary_td: "Provisionary TD",
+  trusted_seller: "Trusted seller",
+  established_seller: "Established seller",
+  recommended_seller: "Recommended seller",
+  listed_seller: "Listed seller",
+  former_td: "Former TD",
+  removed_td: "Removed TD",
+  banned: "Banned",
+  unknown: "No known status",
+};
+
 export const QUALITATIVE_LABEL_COPY: Record<QualitativeLabel, string> = {
   very_high: "Very High",
   high: "High",

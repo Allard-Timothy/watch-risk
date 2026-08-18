@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, it } from "vitest";
 
 import { getDbClient } from "@/lib/db";
+import { findForbiddenWords } from "@/lib/validation/safe-language";
 import { compareCommunitySellers } from "./compare";
 import {
   loadCommunities,
@@ -33,6 +34,18 @@ describe("knowledge seed corpus", () => {
     expect(compare.overlapPercent).toBeLessThan(50);
     expect(compareCases[0]?.id).toBe("reptime-vs-repwatchforum");
     expect(dossiers.some((item) => item.reference === "126610LN")).toBe(true);
+
+    for (const seller of sellers) {
+      const text = [
+        seller.interpretation,
+        ...seller.likes,
+        ...seller.concerns,
+        ...seller.riskFlags.map((flag) => flag.summary),
+      ]
+        .filter(Boolean)
+        .join(" ");
+      expect(findForbiddenWords(text)).toEqual([]);
+    }
   });
 
   it("upserts the corpus into Postgres", async () => {
