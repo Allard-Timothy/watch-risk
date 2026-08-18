@@ -106,6 +106,15 @@ Core entities:
 - AnalysisRun
 - Report
 - PaymentRecord
+- Community
+- Seller
+- SellerAlias
+- SellerCommunity
+- Evidence
+- Source
+- Claim
+- RiskFlag
+- TrustDimension
 
 ## Suggested Prisma model shape
 

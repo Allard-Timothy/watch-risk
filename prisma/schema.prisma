@@ -1,10 +1,12 @@
 // WatchTell data model (initial).
 //
 // This schema mirrors the entities described in docs/architecture-typescript.md
-// and docs/reference/data-model.md. Auth, storage, payments, and model calls
-// are still placeholders. The first migration is in prisma/migrations/.
-// WatchCase listing details and CaseImage metadata are persisted.
-// Photo bytes are stored locally under .data/uploads until GCS is wired.
+// and docs/knowledge-architecture.md. Auth, storage, payments, and model calls
+// are still placeholders. WatchCase listing details and CaseImage metadata are
+// persisted; photo bytes live under .data/uploads until GCS is wired.
+// Seller/community/evidence tables hold curated local knowledge (seed JSON),
+// not scraped forum dumps. TD status is stored as community recognition, not
+// a universal trust boolean.
 
 generator client {
   provider = "prisma-client-js"
@@ -66,6 +68,69 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum SellerLifecycleStatus {
+  ACTIVE
+  INACTIVE
+  UNKNOWN
+}
+
+enum CommunityRecognitionStatus {
+  FULL_TD
+  PROVISIONARY_TD
+  TRUSTED_SELLER
+  ESTABLISHED_SELLER
+  RECOMMENDED_SELLER
+  LISTED_SELLER
+  FORMER_TD
+  REMOVED_TD
+  BANNED
+  UNKNOWN
+}
+
+enum QualitativeLabel {
+  VERY_HIGH
+  HIGH
+  MEDIUM
+  LOW
+  INSUFFICIENT_EVIDENCE
+}
+
+enum RiskCategory {
+  FRAUD
+  OPERATIONAL
+  QC
+  AFTER_SALES
+  PRODUCT_CLAIM
+}
+
+enum EvidenceKind {
+  TD_LISTING
+  MODERATOR_REVIEW
+  MODERATOR_TEST_PURCHASE
+  BUYER_REVIEW
+  TRANSACTION_REPORT
+  GIVEAWAY_OR_SPONSORSHIP
+  SELLER_PROMOTION
+  FORUM_STATUS
+  INDEPENDENT_REVIEW
+  OTHER
+}
+
+enum SourceKind {
+  FORUM
+  REDDIT
+  WEBSITE
+  MANUAL_CURATION
+  OTHER
+}
+
+enum ClaimSentiment {
+  POSITIVE
+  NEGATIVE
+  MIXED
+  NEUTRAL
+}
+
 model User {
   id        String      @id @default(cuid())
   email     String      @unique
@@ -79,6 +144,8 @@ model WatchCase {
   id             String          @id @default(cuid())
   userId         String?
   user           User?           @relation(fields: [userId], references: [id])
+  sellerId       String?
+  seller         Seller?         @relation(fields: [sellerId], references: [id], onDelete: SetNull)
   brand          String
   model          String?
   reference      String?
@@ -97,6 +164,7 @@ model WatchCase {
   updatedAt      DateTime        @updatedAt
 
   @@index([userId])
+  @@index([sellerId])
 }
 
 model CaseImage {
@@ -163,4 +231,137 @@ model PaymentRecord {
   updatedAt               DateTime      @updatedAt
 
   @@index([caseId])
+}
+
+model Community {
+  id                String            @id
+  displayName       String
+  independenceGroup String
+  formalTdProgram   Boolean           @default(false)
+  notes             String?
+  vettingNotes      String?
+  sellerCommunities SellerCommunity[]
+  evidence          Evidence[]
+  sources           Source[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model Seller {
+  id              String                @id
+  canonicalName   String
+  status          SellerLifecycleStatus @default(ACTIVE)
+  likes           String[]
+  concerns        String[]
+  interpretation  String?
+  aliases         SellerAlias[]
+  communities     SellerCommunity[]
+  trustDimensions TrustDimension[]
+  riskFlags       RiskFlag[]
+  evidence        Evidence[]
+  claims          Claim[]
+  cases           WatchCase[]
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model SellerAlias {
+  id                 String   @id @default(cuid())
+  sellerId           String
+  seller             Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  alias              String
+  identityConfidence Float
+  evidenceNote       String?
+  createdAt          DateTime @default(now())
+
+  @@unique([sellerId, alias])
+  @@index([alias])
+}
+
+model SellerCommunity {
+  id                                String                      @id @default(cuid())
+  sellerId                          String
+  seller                            Seller                      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  communityId                       String
+  community                         Community                   @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  status                            CommunityRecognitionStatus
+  statusSince                       DateTime?
+  moderatorVetted                   Boolean                     @default(false)
+  formalTdProgram                   Boolean                     @default(false)
+  sellerParticipationRequired       Boolean                     @default(false)
+  giveawayOrSponsorshipRelationship Boolean                     @default(false)
+  notes                             String?
+
+  @@unique([sellerId, communityId])
+}
+
+model TrustDimension {
+  id       String           @id @default(cuid())
+  sellerId String
+  seller   Seller           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  key      String
+  label    QualitativeLabel
+  notes    String?
+
+  @@unique([sellerId, key])
+}
+
+model RiskFlag {
+  id       String           @id @default(cuid())
+  sellerId String
+  seller   Seller           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  category RiskCategory
+  label    QualitativeLabel
+  summary  String
+}
+
+model Source {
+  id                String     @id
+  kind              SourceKind
+  communityId       String?
+  community         Community? @relation(fields: [communityId], references: [id])
+  title             String
+  url               String?
+  publishedAt       DateTime?
+  retrievedAt       DateTime?
+  independenceGroup String
+  evidence          Evidence[]
+  claims            Claim[]
+}
+
+model Evidence {
+  id                String          @id @default(cuid())
+  sellerId          String
+  seller            Seller          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  communityId       String?
+  community         Community?      @relation(fields: [communityId], references: [id])
+  sourceId          String?
+  source            Source?         @relation(fields: [sourceId], references: [id])
+  evidenceType      EvidenceKind
+  independenceGroup String
+  claimText         String
+  sentiment         ClaimSentiment?
+  confidence        Float?
+  publishedAt       DateTime?
+  retrievedAt       DateTime?
+  sourceUrl         String?
+
+  @@index([sellerId])
+  @@index([independenceGroup])
+}
+
+model Claim {
+  id          String    @id @default(cuid())
+  sellerId    String?
+  seller      Seller?   @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  sourceId    String?
+  source      Source?   @relation(fields: [sourceId], references: [id])
+  subjectType String
+  subjectId   String
+  predicate   String
+  value       String
+  confidence  Float?
+  observedAt  DateTime?
+
+  @@index([subjectType, subjectId])
 }

@@ -10,10 +10,12 @@ and implementation order.
 
 ## Product
 
-WatchTell is a pre-purchase buyer-risk assessment app for luxury watch listings.
+WatchTell is a pre-purchase buyer-risk assessment app for watch listings
+(including replica-community listings).
 
 The product must not claim to authenticate watches, certify watches, verify
-watches, or guarantee authenticity.
+watches, or guarantee authenticity. Forum TD status is evidence, not a
+universal trust score.
 
 ## User-facing language
 
@@ -83,6 +85,9 @@ Startup/run caveats (non-obvious):
 - A saved case report is `/reports/{caseId}` (same id as the case). The sample
   layout at `/reports/WR-2026-0481` is unchanged. Photos on a saved-case report
   are served from `/api/cases/{caseId}/images/{imageId}`. GCS is not wired.
+- Seller/community knowledge is curated local seed data (Zod schemas in
+  `lib/knowledge/`, Prisma tables from the `seller_knowledge` migration). Do not
+  scrape forums. TD recognition is stored per community, not as `trusted: true`.
 - The app pins pnpm 11 (via `packageManager`). Use Corepack (`corepack enable`
   then `corepack prepare pnpm@11.9.0 --activate`); do not install pnpm globally.
   Build-script approval lives in `pnpm-workspace.yaml` under `allowBuilds`
