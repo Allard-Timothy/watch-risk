@@ -1,0 +1,27 @@
+{
+  "sellerId": "ike-watch",
+  "canonicalName": "IKE Watch",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "provisionary_td", "moderatorVetted": true, "formalTdProgram": true }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "insufficient_evidence" },
+    { "key": "fulfillment_confidence", "label": "insufficient_evidence" },
+    { "key": "communication_quality", "label": "insufficient_evidence" },
+    { "key": "product_claim_accuracy", "label": "insufficient_evidence" },
+    { "key": "longevity", "label": "low" }
+  ],
+  "riskFlags": [
+    { "category": "operational", "label": "insufficient_evidence", "summary": "Insufficient long-term evidence for fulfillment, factory claims, and communication." }
+  ],
+  "likes": [],
+  "concerns": [
+    "Insufficient long-term evidence."
+  ],
+  "interpretation": "Provisionary. Track fulfillment, factory claims, communication, and independent buyer reviews before raising confidence.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "td_listing", "independenceGroup": "rwf", "claimText": "Provisionary listing on RepWatchForum.", "sentiment": "neutral" }
+  ]
+}

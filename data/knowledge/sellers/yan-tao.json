@@ -1,0 +1,34 @@
+{
+  "sellerId": "yan-tao",
+  "canonicalName": "Yan Tao",
+  "status": "active",
+  "aliases": [
+    { "alias": "RXMB", "identityConfidence": 0.8, "evidenceNote": "Community-used shop name; confirm before treating as the same payment endpoint." }
+  ],
+  "communities": [
+    { "communityId": "1688time", "status": "established_seller" },
+    { "communityId": "repwatchforum", "status": "listed_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "high" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "qc_process_quality", "label": "high" },
+    { "key": "product_claim_accuracy", "label": "medium" },
+    { "key": "cross_community_validation", "label": "high" }
+  ],
+  "riskFlags": [
+    { "category": "product_claim", "label": "medium", "summary": "Customization quality may vary. Standard sourcing and custom work should be scored separately." }
+  ],
+  "likes": [
+    "Previous 1688Time history.",
+    "Detailed QC reports.",
+    "Successful sourcing reports."
+  ],
+  "concerns": [
+    "Customization quality may vary."
+  ],
+  "interpretation": "Established outside RWF. Medium-high confidence for standard sourcing. Custom work is a separate dimension from catalog sourcing.",
+  "evidence": [
+    { "communityId": "1688time", "evidenceType": "transaction_report", "independenceGroup": "1688time", "claimText": "Prior 1688Time history and QC reports.", "sentiment": "positive" }
+  ]
+}

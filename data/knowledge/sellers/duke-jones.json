@@ -1,0 +1,38 @@
+{
+  "sellerId": "duke-jones",
+  "canonicalName": "Duke Jones",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "established_seller", "moderatorVetted": true, "formalTdProgram": true },
+    { "communityId": "rwi", "status": "listed_seller" },
+    { "communityId": "reptime", "status": "established_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "high" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "communication_quality", "label": "medium" },
+    { "key": "qc_process_quality", "label": "medium" },
+    { "key": "longevity", "label": "high" },
+    { "key": "cross_community_validation", "label": "high" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "low", "summary": "Established cross-community history. No curated non-delivery pattern." },
+    { "category": "operational", "label": "medium", "summary": "Recurring reports of slow QC and communication delays." },
+    { "category": "qc", "label": "medium", "summary": "Occasional post-QC quality complaints." }
+  ],
+  "likes": [
+    "Recognized outside RepWatchForum.",
+    "Long transaction record."
+  ],
+  "concerns": [
+    "Reports of slow QC.",
+    "Communication complaints.",
+    "Established is not the same as excellent service."
+  ],
+  "interpretation": "Duke Jones is an established seller with cross-community recognition. Longevity supports low legitimacy concern. Service quality is a separate dimension and remains variable in the curated notes.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "forum_status", "independenceGroup": "rwf", "claimText": "Established on RepWatchForum.", "sentiment": "positive" },
+    { "communityId": "reptime", "evidenceType": "buyer_review", "independenceGroup": "reptime", "claimText": "Buyer reports of slow QC and communication.", "sentiment": "negative" }
+  ]
+}

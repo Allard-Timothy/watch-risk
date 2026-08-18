@@ -1,0 +1,27 @@
+{
+  "sellerId": "kings-and-queens",
+  "canonicalName": "Kings & Queens",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "provisionary_td", "formalTdProgram": true },
+    { "communityId": "chinatime", "status": "established_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "cross_community_validation", "label": "medium" },
+    { "key": "longevity", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "operational", "label": "medium", "summary": "ChinaTime history is supporting context and is tracked separately from RWF recognition." }
+  ],
+  "likes": [
+    "Existing adjacent-community history on ChinaTime."
+  ],
+  "concerns": [],
+  "interpretation": "Provisionary RWF seller with ChinaTime history. Those are two independence groups, not one confirmation.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "td_listing", "independenceGroup": "rwf", "claimText": "Provisionary RWF listing.", "sentiment": "neutral" },
+    { "communityId": "chinatime", "evidenceType": "forum_status", "independenceGroup": "chinatime", "claimText": "Prior ChinaTime history.", "sentiment": "positive" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "cf-31030425001001",
+  "brand": "Omega",
+  "modelFamily": "Speedmaster",
+  "reference": "310.30.42.50.01.001",
+  "factory": "unknown",
+  "requiredPhotos": ["dial", "caseback", "movement"],
+  "optionalPhotos": ["bracelet", "clasp", "papers"],
+  "riskCheckpoints": {
+    "dial": ["logo and subdial printing"],
+    "caseback": ["caseback markings"],
+    "movement": ["movement photo or independent inspection"]
+  },
+  "notes": "Generic Speedmaster checklist used when factory attribution is unknown. Movement cannot be assessed without a movement photo."
+}

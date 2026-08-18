@@ -1,0 +1,35 @@
+{
+  "sellerId": "jtime",
+  "canonicalName": "JTime",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "rwi", "status": "full_td", "formalTdProgram": true },
+    { "communityId": "repgeek", "status": "full_td", "formalTdProgram": true },
+    { "communityId": "rwg", "status": "full_td", "formalTdProgram": true },
+    { "communityId": "reptime", "status": "recommended_seller" },
+    { "communityId": "repwatchforum", "status": "unknown" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "high" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "longevity", "label": "very_high" },
+    { "key": "cross_community_validation", "label": "high" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "low", "summary": "Long Western-facing TD history across RWI/RepGeek/RWG. Those lists still overlap one older ecosystem more than they confirm RWF." }
+  ],
+  "likes": [
+    "Long English-language transaction history.",
+    "Present on multiple older Western-facing TD lists."
+  ],
+  "concerns": [
+    "RWI, RepGeek, and RWG recognition should not be flattened into a single universal TD truth."
+  ],
+  "interpretation": "Included as a RepTime-associated old-line TD example for community comparison. Multiple Western lists are related ecosystems, not automatic RWF equivalence.",
+  "evidence": [
+    { "communityId": "rwi", "evidenceType": "td_listing", "independenceGroup": "rwi", "claimText": "RWI TD listing.", "sentiment": "positive" },
+    { "communityId": "repgeek", "evidenceType": "td_listing", "independenceGroup": "repgeek", "claimText": "RepGeek TD listing.", "sentiment": "positive" },
+    { "communityId": "rwg", "evidenceType": "td_listing", "independenceGroup": "rwg", "claimText": "RWG TD listing.", "sentiment": "positive" }
+  ]
+}

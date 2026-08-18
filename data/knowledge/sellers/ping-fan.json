@@ -1,0 +1,33 @@
+{
+  "sellerId": "ping-fan",
+  "canonicalName": "Ping Fan",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "established_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "fulfillment_confidence", "label": "medium" },
+    { "key": "communication_quality", "label": "medium" },
+    { "key": "longevity", "label": "high" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "low", "summary": "Long-running transaction history. No curated non-delivery pattern." },
+    { "category": "operational", "label": "medium", "summary": "Delayed responses, tracking issues, and buyers chasing updates." }
+  ],
+  "likes": [
+    "Long-running transaction history.",
+    "Substantial buyer evidence."
+  ],
+  "concerns": [
+    "Delayed responses.",
+    "Tracking issues.",
+    "Customers needing to chase updates."
+  ],
+  "interpretation": "Ping Fan is an example of separating fraud risk from service risk. Low legitimacy concern can coexist with medium operational risk.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "transaction_report", "independenceGroup": "rwf", "claimText": "Completed transactions with recurring update-chasing complaints.", "sentiment": "mixed" }
+  ]
+}

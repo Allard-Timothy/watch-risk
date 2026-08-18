@@ -1,0 +1,19 @@
+{
+  "id": "reptime-vs-repwatchforum",
+  "communityAId": "reptime",
+  "communityBId": "repwatchforum",
+  "conclusion": "Low overlap between RepTime-associated TD lists and RepWatchForum TDs is expected. RepTime does not run a native TD program and generally points at older Western-facing lists (RWI, RepGeek, RWG). RepWatchForum runs a separate vetting program that includes Korean and Chinese-facing networks. Absence from RWI or RepGeek is not by itself a negative. Appearance on one TD list is not by itself high confidence.",
+  "vettingDifferences": [
+    "RepTime: no native TD program; relies on external forum lists.",
+    "RepWatchForum: formal program with provisionary periods, moderator test purchases, and participation expectations.",
+    "RWF giveaways and promotional posts stay in independence group rwf rather than counting as extra confirmation."
+  ],
+  "demographicNotes": [
+    "RepTime-associated lists skew toward long English-language websites and traditional catalog sourcing.",
+    "RepWatchForum includes newer independent sellers, 1688Time/ChinaTime networks, and modding/custom builders."
+  ],
+  "incentiveNotes": [
+    "RWF seller participation and sponsored giveaways are community-commercial relationships, not automatic trust reductions.",
+    "Evidence that originates entirely inside one forum remains one ecosystem."
+  ]
+}

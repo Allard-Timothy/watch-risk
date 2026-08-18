@@ -131,3 +131,18 @@ export const communityCompareCaseSchema = z.object({
   incentiveNotes: z.array(z.string().trim().min(1).max(1000)).default([]),
 });
 export type CommunityCompareCase = z.infer<typeof communityCompareCaseSchema>;
+
+export const modelDossierSeedSchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  brand: z.string().trim().min(1).max(80),
+  modelFamily: z.string().trim().min(1).max(80),
+  reference: z.string().trim().min(1).max(80),
+  factory: z.string().trim().min(1).max(80).optional(),
+  requiredPhotos: z.array(z.string().trim().min(1).max(40)).min(1),
+  optionalPhotos: z.array(z.string().trim().min(1).max(40)).default([]),
+  riskCheckpoints: z
+    .record(z.string(), z.array(z.string().trim().min(1).max(200)))
+    .default({}),
+  notes: z.string().max(4000).optional(),
+});
+export type ModelDossierSeed = z.infer<typeof modelDossierSeedSchema>;

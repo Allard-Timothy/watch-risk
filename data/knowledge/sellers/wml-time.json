@@ -1,0 +1,25 @@
+{
+  "sellerId": "wml-time",
+  "canonicalName": "WML_TIME",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "provisionary_td", "formalTdProgram": true }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "product_claim_accuracy", "label": "medium" },
+    { "key": "qc_process_quality", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "product_claim", "label": "medium", "summary": "Specialized/modding seller. Standard sourcing and custom work should be analyzed separately." }
+  ],
+  "likes": [],
+  "concerns": [
+    "Custom and modding work should not inherit catalog-sourcing confidence."
+  ],
+  "interpretation": "Provisionary specialized/modding seller. Standard sourcing and custom work are separate dimensions.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "td_listing", "independenceGroup": "rwf", "claimText": "Provisionary listing as a specialized seller.", "sentiment": "neutral" }
+  ]
+}
