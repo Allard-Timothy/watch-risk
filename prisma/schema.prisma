@@ -1,9 +1,9 @@
 // WatchTell data model (initial).
 //
 // This schema mirrors the entities described in docs/architecture-typescript.md
-// and docs/reference/data-model.md. It intentionally does not wire real auth,
-// storage, payments, or model calls yet. No migrations are created in this step;
-// the database is not connected. See lib/db/client.ts for the placeholder client.
+// and docs/reference/data-model.md. Auth, storage, payments, and model calls
+// are still placeholders. The first migration is in prisma/migrations/.
+// WatchCase listing details are persisted; images are not stored yet.
 
 generator client {
   provider = "prisma-client-js"

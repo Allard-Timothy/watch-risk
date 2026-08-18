@@ -13,5 +13,10 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["**/*.test.ts"],
+    env: {
+      DATABASE_URL:
+        process.env.DATABASE_URL ??
+        "postgresql://watchrisk:watchrisk@localhost:5432/watchrisk?schema=public",
+    },
   },
 });

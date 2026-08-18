@@ -17,7 +17,7 @@ rules.
 - Next.js (App Router) + TypeScript
 - Tailwind CSS, shadcn/ui-ready structure
 - Zod validation
-- Prisma + Postgres (data model defined; not wired to a database yet)
+- Prisma + Postgres (listing details persist; photos/payments/model still placeholders)
 - Stripe / OpenAI / Google Cloud Storage: placeholder modules only
 
 The app lives at the repository root. The earlier Django scaffold has been
@@ -26,7 +26,7 @@ removed in favor of this TypeScript-first stack.
 ## Requirements
 
 - Node.js 20.9 or newer (includes [Corepack](https://nodejs.org/api/corepack.html))
-- Docker (optional, only for a local Postgres via `docker-compose.yml`)
+- Docker (optional for overview/sample report; required for local Postgres via `docker-compose.yml` if you want to save cases)
 
 Do not install pnpm globally (`npm i -g pnpm`, Homebrew, apt, etc.). This repo
 pins `pnpm@11.9.0` via `packageManager` in `package.json`. Corepack fetches that
@@ -46,29 +46,34 @@ pnpm dev            # http://localhost:3000
 If you prefer not to put a `pnpm` shim on your PATH, prefix commands with
 `corepack` instead (`corepack pnpm install`, `corepack pnpm dev`).
 
-Key routes: `/` (landing), `/cases/new` (case intake), `/reports/[reportId]`
-(placeholder buyer-risk report).
+Key routes: `/` (overview), `/cases/new` (case intake), `/cases/[caseId]`
+(saved case), `/reports/[reportId]` (placeholder buyer-risk report).
 
 ## Checks
 
 ```bash
 pnpm typecheck
+pnpm test
 pnpm build
 ```
 
-## Database (optional, not wired yet)
+## Database
 
-Prisma is configured (`prisma/schema.prisma`) but the app does not query a
-database yet. A local Postgres is available via Docker for future work:
+Case intake writes `WatchCase` rows to Postgres. Start the database, copy env,
+and apply migrations before saving a case:
 
 ```bash
 docker compose up -d db
-pnpm exec prisma validate
-pnpm exec prisma generate
+cp .env.example .env
+pnpm exec prisma migrate deploy
 ```
 
-`DATABASE_URL` in `.env.example` matches the `watchrisk` database defined in
-[`docker-compose.yml`](docker-compose.yml).
+`DATABASE_URL` in `.env.example` matches the `watchrisk` database in
+[`docker-compose.yml`](docker-compose.yml). `pnpm install` still runs
+`prisma generate` only; it does not start Postgres or apply migrations.
+
+Overview (`/`) and the sample report still render without a database. Creating
+or opening a saved case requires Postgres.
 
 ## Documentation
 
@@ -79,5 +84,5 @@ and `knowledge-architecture.md`.
 ## Current boundaries
 
 - No account or login flow
-- No database persistence yet
+- Photos are not persisted (in-browser only)
 - No file storage, payment, or model calls (placeholders only)
