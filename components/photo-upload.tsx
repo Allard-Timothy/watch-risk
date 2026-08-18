@@ -3,6 +3,12 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import {
+  deleteCasePhotoAction,
+  updateCasePhotoTypeAction,
+  uploadCasePhotoAction,
+} from "@/lib/cases/actions";
+import type { CasePhoto } from "@/lib/cases/repository";
+import {
   CLAIMED_PHOTO_TYPES,
   PHOTO_TYPE_LABELS,
   RECOMMENDED_PHOTO_AREAS,
@@ -19,17 +25,39 @@ export type DraftPhoto = Readonly<{
 }>;
 
 type PhotoUploadProps = Readonly<{
-  onProvidedTypesChange?: (types: ReturnType<typeof providedDetectedTypes>) => void;
+  caseId?: string;
+  initialPhotos?: readonly DraftPhoto[];
+  persist?: boolean;
+  onProvidedTypesChange?: (
+    types: ReturnType<typeof providedDetectedTypes>,
+  ) => void;
 }>;
 
 function newId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function PhotoUpload({ onProvidedTypesChange }: PhotoUploadProps) {
-  const [photos, setPhotos] = useState<DraftPhoto[]>([]);
+function toDraftPhoto(photo: CasePhoto): DraftPhoto {
+  return {
+    id: photo.id,
+    fileName: photo.fileName,
+    url: photo.url,
+    claimedType: photo.claimedType,
+  };
+}
+
+export function PhotoUpload({
+  caseId,
+  initialPhotos = [],
+  persist = false,
+  onProvidedTypesChange,
+}: PhotoUploadProps) {
+  const [photos, setPhotos] = useState<DraftPhoto[]>([...initialPhotos]);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const objectUrls = useRef<string[]>([]);
   const inputId = useId();
+  const persistUploads = persist && Boolean(caseId);
 
   useEffect(() => {
     onProvidedTypesChange?.(
@@ -45,48 +73,85 @@ export function PhotoUpload({ onProvidedTypesChange }: PhotoUploadProps) {
     };
   }, []);
 
-  function addFiles(fileList: FileList | null) {
+  async function addFiles(fileList: FileList | null) {
     if (!fileList) {
       return;
     }
-    const next: DraftPhoto[] = [];
+    setError(null);
+
+    if (!persistUploads || !caseId) {
+      const next: DraftPhoto[] = [];
+      for (const file of Array.from(fileList)) {
+        if (!file.type.startsWith("image/")) {
+          continue;
+        }
+        const url = URL.createObjectURL(file);
+        objectUrls.current.push(url);
+        next.push({
+          id: newId(),
+          fileName: file.name,
+          url,
+          claimedType: "",
+        });
+      }
+      if (next.length > 0) {
+        setPhotos((current) => [...current, ...next]);
+      }
+      return;
+    }
+
+    setBusy(true);
+    const uploaded: DraftPhoto[] = [];
     for (const file of Array.from(fileList)) {
       if (!file.type.startsWith("image/")) {
         continue;
       }
-      const url = URL.createObjectURL(file);
-      objectUrls.current.push(url);
-      next.push({
-        id: newId(),
-        fileName: file.name,
-        url,
-        claimedType: "",
-      });
+      const formData = new FormData();
+      formData.append("file", file);
+      const result = await uploadCasePhotoAction(caseId, formData);
+      if (!result.ok) {
+        setError(result.message);
+        continue;
+      }
+      uploaded.push(toDraftPhoto(result.photo));
     }
-    if (next.length > 0) {
-      setPhotos((current) => [...current, ...next]);
+    if (uploaded.length > 0) {
+      setPhotos((current) => [...current, ...uploaded]);
     }
+    setBusy(false);
   }
 
-  function updateType(id: string, claimedType: ClaimedPhotoType | "") {
+  async function updateType(id: string, claimedType: ClaimedPhotoType | "") {
     setPhotos((current) =>
       current.map((photo) =>
         photo.id === id ? { ...photo, claimedType } : photo,
       ),
     );
+    if (!persistUploads || !caseId) {
+      return;
+    }
+    const result = await updateCasePhotoTypeAction(caseId, id, claimedType);
+    if (!result.ok) {
+      setError(result.message);
+    }
   }
 
-  function removePhoto(id: string) {
-    setPhotos((current) => {
-      const target = current.find((photo) => photo.id === id);
-      if (target) {
-        URL.revokeObjectURL(target.url);
-        objectUrls.current = objectUrls.current.filter(
-          (url) => url !== target.url,
-        );
-      }
-      return current.filter((photo) => photo.id !== id);
-    });
+  async function removePhoto(id: string) {
+    const target = photos.find((photo) => photo.id === id);
+    if (target && !persistUploads) {
+      URL.revokeObjectURL(target.url);
+      objectUrls.current = objectUrls.current.filter(
+        (url) => url !== target.url,
+      );
+    }
+    setPhotos((current) => current.filter((photo) => photo.id !== id));
+    if (!persistUploads || !caseId) {
+      return;
+    }
+    const result = await deleteCasePhotoAction(caseId, id);
+    if (!result.ok) {
+      setError(result.message);
+    }
   }
 
   const provided = providedDetectedTypes(
@@ -99,9 +164,16 @@ export function PhotoUpload({ onProvidedTypesChange }: PhotoUploadProps) {
       <div>
         <p className="mb-3 text-sm text-muted-foreground">
           {provided.length} of {RECOMMENDED_PHOTO_AREAS.length} recommended
-          photo areas labeled. Files stay in this browser only — nothing is
-          uploaded to storage yet.
+          photo areas labeled.{" "}
+          {persistUploads
+            ? "Files are stored on this machine for the report gallery. GCS is not wired."
+            : "Files stay in this browser only — nothing is uploaded to storage yet."}
         </p>
+        {error ? (
+          <p className="mb-3 text-xs font-medium text-red-700" role="alert">
+            {error}
+          </p>
+        ) : null}
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {RECOMMENDED_PHOTO_AREAS.map((area) => {
             const present = providedSet.has(area.type);
@@ -128,19 +200,20 @@ export function PhotoUpload({ onProvidedTypesChange }: PhotoUploadProps) {
           className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-center transition hover:bg-muted"
         >
           <span className="text-sm font-semibold text-foreground">
-            Add listing photos
+            {busy ? "Saving photos…" : "Add listing photos"}
           </span>
           <span className="mt-1 text-xs text-muted-foreground">
-            JPEG or PNG. Large touch target for phone uploads.
+            JPEG, PNG, or WebP. Large touch target for phone uploads.
           </span>
           <input
             id={inputId}
             type="file"
             accept="image/*"
             multiple
+            disabled={busy}
             className="sr-only"
             onChange={(event) => {
-              addFiles(event.target.files);
+              void addFiles(event.target.files);
               event.target.value = "";
             }}
           />
@@ -169,7 +242,7 @@ export function PhotoUpload({ onProvidedTypesChange }: PhotoUploadProps) {
                   <select
                     value={photo.claimedType}
                     onChange={(event) =>
-                      updateType(
+                      void updateType(
                         photo.id,
                         event.target.value as ClaimedPhotoType | "",
                       )
@@ -188,7 +261,7 @@ export function PhotoUpload({ onProvidedTypesChange }: PhotoUploadProps) {
                 </label>
                 <button
                   type="button"
-                  onClick={() => removePhoto(photo.id)}
+                  onClick={() => void removePhoto(photo.id)}
                   className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
                   Remove

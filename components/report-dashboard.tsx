@@ -10,7 +10,11 @@ import {
 } from "@/components/icons";
 import type { GeneratedReport } from "@/lib/reports/generate-report";
 import type { ReportInput } from "@/lib/reports/generate-report";
-import { sampleReportMeta } from "@/lib/reports/sample-case";
+import {
+  firstPhotoOfType,
+  heroPhotoLayout,
+  type ReportPhoto,
+} from "@/lib/photos/layout";
 import type { ConfidenceLevel, ImageFinding, RiskLevel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -69,6 +73,10 @@ const SEVERITY_BADGE: Record<ImageFinding["severity"], string> = {
 type ReportDashboardProps = Readonly<{
   watch: ReportInput;
   report: GeneratedReport;
+  reportId: string;
+  generatedAt: string;
+  sample?: boolean;
+  photos?: readonly ReportPhoto[];
 }>;
 
 function formatPrice(value: number | undefined): string | null {
@@ -85,30 +93,43 @@ function formatPrice(value: number | undefined): string | null {
 function PhotoWell({
   label,
   present,
+  src,
   className,
-}: Readonly<{ label: string; present: boolean; className?: string }>) {
+}: Readonly<{
+  label: string;
+  present: boolean;
+  src?: string;
+  className?: string;
+}>) {
   return (
     <div
       className={cn(
         "relative overflow-hidden rounded-xl",
-        present
+        src || present
           ? "bg-[#d8d5cf]"
           : "border border-dashed border-border bg-muted",
         className,
       )}
     >
-      {present ? (
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={label}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : present ? (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_42%),linear-gradient(180deg,rgba(32,34,36,0.05),rgba(32,34,36,0.22))]" />
       ) : null}
       <span
         className={cn(
           "absolute bottom-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-medium",
-          present
+          src || present
             ? "bg-black/45 text-white"
             : "bg-card/90 text-muted-foreground",
         )}
       >
-        {present ? label : `${label} missing`}
+        {src || present ? label : `${label} missing`}
       </span>
     </div>
   );
@@ -155,7 +176,14 @@ function DlRow({
   );
 }
 
-export function ReportDashboard({ watch, report }: ReportDashboardProps) {
+export function ReportDashboard({
+  watch,
+  report,
+  reportId,
+  generatedAt,
+  sample = false,
+  photos = [],
+}: ReportDashboardProps) {
   const risk = RISK_PRESENTATION[report.overallRisk];
   const providedPhotos = report.photoCompleteness.filter((item) => item.present)
     .length;
@@ -164,6 +192,7 @@ export function ReportDashboard({ watch, report }: ReportDashboardProps) {
   const provided = new Set(watch.providedPhotoTypes);
   const movementPresent = provided.has("movement");
   const subtitle = [watch.brand, watch.model].filter(Boolean).join(" ");
+  const hero = heroPhotoLayout(photos);
 
   return (
     <div className="space-y-5">
@@ -182,13 +211,15 @@ export function ReportDashboard({ watch, report }: ReportDashboardProps) {
           <p>
             Report ID:{" "}
             <span className="font-medium text-foreground">
-              {sampleReportMeta.reportId}
+              {reportId}
             </span>
           </p>
-          <p>{sampleReportMeta.generatedAt}</p>
-          <p className="mt-1 inline-flex rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Sample data
-          </p>
+          <p>{generatedAt}</p>
+          {sample ? (
+            <p className="mt-1 inline-flex rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Sample data
+            </p>
+          ) : null}
         </div>
       </header>
 
@@ -199,18 +230,21 @@ export function ReportDashboard({ watch, report }: ReportDashboardProps) {
         >
           <PhotoWell
             label="Dial"
-            present={provided.has("dial")}
+            present={provided.has("dial") || Boolean(hero.primary)}
+            src={hero.primary?.url}
             className="h-full"
           />
           <div className="grid h-full grid-rows-2 gap-3">
             <PhotoWell
               label="Bracelet"
-              present={provided.has("bracelet")}
+              present={provided.has("bracelet") || Boolean(hero.secondary)}
+              src={hero.secondary?.url}
               className="h-full"
             />
             <PhotoWell
               label="Caseback"
-              present={provided.has("caseback")}
+              present={provided.has("caseback") || Boolean(hero.tertiary)}
+              src={hero.tertiary?.url}
               className="h-full"
             />
           </div>
@@ -401,6 +435,7 @@ export function ReportDashboard({ watch, report }: ReportDashboardProps) {
                 <PhotoWell
                   label={item.label}
                   present={item.present}
+                  src={firstPhotoOfType(photos, item.type)?.url}
                   className="aspect-square"
                 />
                 <p className="mt-1.5 truncate text-center text-[11px] text-muted-foreground">

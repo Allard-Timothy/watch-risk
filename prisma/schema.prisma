@@ -3,7 +3,8 @@
 // This schema mirrors the entities described in docs/architecture-typescript.md
 // and docs/reference/data-model.md. Auth, storage, payments, and model calls
 // are still placeholders. The first migration is in prisma/migrations/.
-// WatchCase listing details are persisted; images are not stored yet.
+// WatchCase listing details and CaseImage metadata are persisted.
+// Photo bytes are stored locally under .data/uploads until GCS is wired.
 
 generator client {
   provider = "prisma-client-js"

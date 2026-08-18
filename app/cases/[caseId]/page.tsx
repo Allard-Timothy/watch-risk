@@ -34,7 +34,11 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
 
   return (
     <DashboardMain className="max-w-3xl">
-      <CaseDetailView caseId={listing.id} initialListing={listing} />
+        <CaseDetailView
+          caseId={listing.id}
+          initialListing={listing}
+          initialPhotos={listing.photos}
+        />
     </DashboardMain>
   );
 }
