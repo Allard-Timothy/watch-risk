@@ -76,10 +76,13 @@ Startup/run caveats (non-obvious):
 - `pnpm install` runs `prisma generate` via the `postinstall` hook. It does not
   start Postgres or apply migrations. Overview and the sample report still
   render without a database.
-- Case create/detail persist `WatchCase` listing details. Before saving a case,
-  start Postgres (`docker compose up -d db`) and apply migrations
+- Case create/detail persist `WatchCase` listing details and `CaseImage`
+  metadata. Photo bytes are written under `.data/uploads/{caseId}/`. Before
+  saving a case, start Postgres (`docker compose up -d db`) and apply migrations
   (`pnpm exec prisma migrate deploy`). `DATABASE_URL` is in `.env.example`.
-- Photos remain in-browser only; do not expect CaseImage rows yet.
+- A saved case report is `/reports/{caseId}` (same id as the case). The sample
+  layout at `/reports/WR-2026-0481` is unchanged. Photos on a saved-case report
+  are served from `/api/cases/{caseId}/images/{imageId}`. GCS is not wired.
 - The app pins pnpm 11 (via `packageManager`). Use Corepack (`corepack enable`
   then `corepack prepare pnpm@11.9.0 --activate`); do not install pnpm globally.
   Build-script approval lives in `pnpm-workspace.yaml` under `allowBuilds`
@@ -90,7 +93,7 @@ Startup/run caveats (non-obvious):
   adapter-based client.
 - A local Postgres is available via `docker compose up -d db`
   (`docker-compose.yml`); `DATABASE_URL` in `.env.example` matches it. It is
-  required to save or reload cases, not to view the sample report.
+  required to save or reload cases and photos, not to view the sample report.
 - Do not run `pnpm build` and then `pnpm dev` in the same working tree: the
   production build overwrites `.next` and breaks the dev server (500s, e.g.
   missing `.next/dev/routes-manifest.json`). If dev starts 500ing after a build,

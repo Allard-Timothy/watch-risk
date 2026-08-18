@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { ExportIcon } from "@/components/icons";
 import { Sidebar } from "@/components/sidebar";
+import { activeSavedCaseId, reportBasePath } from "@/lib/reports/paths";
 import { sampleReportMeta } from "@/lib/reports/sample-case";
 import { cn } from "@/lib/utils";
 
@@ -14,10 +15,11 @@ type AppShellProps = Readonly<{
 }>;
 
 function crumbsFor(pathname: string): { href?: string; label: string }[] {
-  if (pathname.startsWith("/reports")) {
+  if (pathname.startsWith("/reports/")) {
+    const reportId = pathname.split("/")[2] ?? sampleReportMeta.reportId;
     return [
       { href: "/", label: "Reports" },
-      { label: sampleReportMeta.reportId },
+      { label: reportId },
     ];
   }
   if (pathname === "/cases/new") {
@@ -124,11 +126,13 @@ export function AppShell({ children }: AppShellProps) {
 }
 
 function MobileNav({ pathname }: { pathname: string }) {
+  const reportHref = reportBasePath(pathname);
+  const savedCaseId = activeSavedCaseId(pathname);
   const items = [
     { href: "/", label: "Overview" },
     { href: "/cases/new", label: "New case" },
-    { href: "/cases/draft", label: "Evidence" },
-    { href: `/reports/${sampleReportMeta.reportId}`, label: "Report" },
+    { href: savedCaseId ? `/cases/${savedCaseId}` : "/cases/draft", label: "Evidence" },
+    { href: reportHref, label: "Report" },
   ];
 
   return (

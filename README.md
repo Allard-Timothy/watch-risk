@@ -17,7 +17,7 @@ rules.
 - Next.js (App Router) + TypeScript
 - Tailwind CSS, shadcn/ui-ready structure
 - Zod validation
-- Prisma + Postgres (listing details persist; photos/payments/model still placeholders)
+- Prisma + Postgres (listing details and local photos persist; payments/model still placeholders)
 - Stripe / OpenAI / Google Cloud Storage: placeholder modules only
 
 The app lives at the repository root. The earlier Django scaffold has been
@@ -47,7 +47,8 @@ If you prefer not to put a `pnpm` shim on your PATH, prefix commands with
 `corepack` instead (`corepack pnpm install`, `corepack pnpm dev`).
 
 Key routes: `/` (overview), `/cases/new` (case intake), `/cases/[caseId]`
-(saved case), `/reports/[reportId]` (placeholder buyer-risk report).
+(saved case), `/reports/[reportId]` (buyer-risk report for that case, or the
+sample id `WR-2026-0481`).
 
 ## Checks
 
@@ -59,8 +60,9 @@ pnpm build
 
 ## Database
 
-Case intake writes `WatchCase` rows to Postgres. Start the database, copy env,
-and apply migrations before saving a case:
+Case intake writes `WatchCase` rows and `CaseImage` metadata to Postgres.
+Photo bytes are stored under `.data/uploads/` on the app machine (not GCS yet).
+Start the database, copy env, and apply migrations before saving a case:
 
 ```bash
 docker compose up -d db
@@ -84,5 +86,5 @@ and `knowledge-architecture.md`.
 ## Current boundaries
 
 - No account or login flow
-- Photos are not persisted (in-browser only)
-- No file storage, payment, or model calls (placeholders only)
+- Photos persist locally as `CaseImage` rows plus files under `.data/uploads/`
+- No Google Cloud Storage, payment, or model calls (placeholders only)

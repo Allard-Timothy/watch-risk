@@ -12,46 +12,12 @@ import {
   SellerIcon,
   VisualQcIcon,
 } from "@/components/icons";
-import { SAMPLE_REPORT_PATH } from "@/lib/reports/sample-case";
+import { activeSavedCaseId, reportBasePath } from "@/lib/reports/paths";
 import { cn } from "@/lib/utils";
-
-const NAV = [
-  { href: "/", label: "Overview", icon: OverviewIcon, match: "exact" },
-  {
-    href: SAMPLE_REPORT_PATH,
-    label: "Visual QC",
-    icon: VisualQcIcon,
-    match: "report",
-  },
-  {
-    href: `${SAMPLE_REPORT_PATH}#mechanical`,
-    label: "Mechanical",
-    icon: MechanicalIcon,
-    match: "report",
-  },
-  {
-    href: `${SAMPLE_REPORT_PATH}#seller`,
-    label: "Seller",
-    icon: SellerIcon,
-    match: "report",
-  },
-  {
-    href: "/cases/draft",
-    label: "Evidence",
-    icon: EvidenceIcon,
-    match: "cases",
-  },
-  {
-    href: `${SAMPLE_REPORT_PATH}#decision`,
-    label: "Decision",
-    icon: DecisionIcon,
-    match: "report",
-  },
-] as const;
 
 function isActive(
   pathname: string,
-  match: (typeof NAV)[number]["match"],
+  match: "exact" | "cases" | "report",
   label: string,
 ) {
   if (match === "exact") {
@@ -68,6 +34,43 @@ function isActive(
 
 export function Sidebar() {
   const pathname = usePathname();
+  const reportBase = reportBasePath(pathname);
+  const savedCaseId = activeSavedCaseId(pathname);
+  const evidenceHref = savedCaseId ? `/cases/${savedCaseId}` : "/cases/draft";
+
+  const nav = [
+    { href: "/", label: "Overview", icon: OverviewIcon, match: "exact" as const },
+    {
+      href: reportBase,
+      label: "Visual QC",
+      icon: VisualQcIcon,
+      match: "report" as const,
+    },
+    {
+      href: `${reportBase}#mechanical`,
+      label: "Mechanical",
+      icon: MechanicalIcon,
+      match: "report" as const,
+    },
+    {
+      href: `${reportBase}#seller`,
+      label: "Seller",
+      icon: SellerIcon,
+      match: "report" as const,
+    },
+    {
+      href: evidenceHref,
+      label: "Evidence",
+      icon: EvidenceIcon,
+      match: "cases" as const,
+    },
+    {
+      href: `${reportBase}#decision`,
+      label: "Decision",
+      icon: DecisionIcon,
+      match: "report" as const,
+    },
+  ];
 
   return (
     <aside className="flex w-[15.5rem] shrink-0 flex-col bg-sidebar text-sidebar-foreground">
@@ -78,7 +81,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 px-3">
-        {NAV.map((item) => {
+        {nav.map((item) => {
           const Icon = item.icon;
           const active = isActive(pathname, item.match, item.label);
 

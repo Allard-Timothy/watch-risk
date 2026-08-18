@@ -1,3 +1,4 @@
+import type { PhotoType } from "@prisma/client";
 import type { DetectedPhotoType } from "@/lib/validation";
 
 /**
@@ -67,4 +68,17 @@ export function providedDetectedTypes(
     }
   }
   return [...found];
+}
+
+export function claimedTypeToPrisma(type: ClaimedPhotoType): PhotoType {
+  return type.toUpperCase() as PhotoType;
+}
+
+export function prismaToClaimedType(
+  type: PhotoType | null,
+): ClaimedPhotoType | "" {
+  if (!type) {
+    return "";
+  }
+  return type.toLowerCase() as ClaimedPhotoType;
 }

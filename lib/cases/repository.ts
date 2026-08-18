@@ -1,14 +1,55 @@
-import type { WatchCase } from "@prisma/client";
+import type { CaseImage, WatchCase } from "@prisma/client";
 
 import { getDbClient } from "@/lib/db";
+import {
+  claimedTypeToPrisma,
+  prismaToClaimedType,
+  type ClaimedPhotoType,
+} from "@/lib/photos";
 import type { CaseCreateInput } from "@/lib/validation";
+
+export type CasePhoto = Readonly<{
+  id: string;
+  fileName: string;
+  url: string;
+  claimedType: ClaimedPhotoType | "";
+  storagePath: string;
+}>;
 
 export type PersistedWatchCase = CaseCreateInput &
   Readonly<{
     id: string;
+    createdAt: Date;
+    photos: readonly CasePhoto[];
   }>;
 
-function toCaseCreateInput(row: WatchCase): PersistedWatchCase {
+export function casePhotoUrl(caseId: string, imageId: string): string {
+  return `/api/cases/${caseId}/images/${imageId}`;
+}
+
+function fileNameFromStoragePath(storagePath: string): string {
+  const base = storagePath.split("/").pop() ?? storagePath;
+  return (
+    base.replace(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/i,
+      "",
+    ) || base
+  );
+}
+
+function toCasePhoto(row: CaseImage): CasePhoto {
+  return {
+    id: row.id,
+    fileName: fileNameFromStoragePath(row.storagePath),
+    url: casePhotoUrl(row.caseId, row.id),
+    claimedType: prismaToClaimedType(row.claimedType),
+    storagePath: row.storagePath,
+  };
+}
+
+function toCaseCreateInput(
+  row: WatchCase & { images?: CaseImage[] },
+): PersistedWatchCase {
   return {
     id: row.id,
     brand: row.brand,
@@ -21,6 +62,8 @@ function toCaseCreateInput(row: WatchCase): PersistedWatchCase {
     listingUrl: row.listingUrl ?? undefined,
     listingText: row.listingText ?? undefined,
     sellerClaims: row.sellerClaims ?? undefined,
+    createdAt: row.createdAt,
+    photos: (row.images ?? []).map(toCasePhoto),
   };
 }
 
@@ -41,6 +84,7 @@ export async function createWatchCase(
       sellerClaims: input.sellerClaims,
       status: "DRAFT",
     },
+    include: { images: true },
   });
   return toCaseCreateInput(row);
 }
@@ -49,6 +93,70 @@ export async function getWatchCase(
   id: string,
 ): Promise<PersistedWatchCase | null> {
   const db = getDbClient();
-  const row = await db.watchCase.findUnique({ where: { id } });
+  const row = await db.watchCase.findUnique({
+    where: { id },
+    include: { images: { orderBy: { createdAt: "asc" } } },
+  });
   return row ? toCaseCreateInput(row) : null;
+}
+
+export async function getCaseImage(
+  caseId: string,
+  imageId: string,
+): Promise<CasePhoto | null> {
+  const db = getDbClient();
+  const row = await db.caseImage.findFirst({
+    where: { id: imageId, caseId },
+  });
+  return row ? toCasePhoto(row) : null;
+}
+
+export async function createCaseImage(input: {
+  caseId: string;
+  storagePath: string;
+  claimedType?: ClaimedPhotoType | "";
+}): Promise<CasePhoto> {
+  const db = getDbClient();
+  const row = await db.caseImage.create({
+    data: {
+      caseId: input.caseId,
+      storagePath: input.storagePath,
+      claimedType: input.claimedType
+        ? claimedTypeToPrisma(input.claimedType)
+        : null,
+    },
+  });
+  return toCasePhoto(row);
+}
+
+export async function updateCaseImageType(
+  caseId: string,
+  imageId: string,
+  claimedType: ClaimedPhotoType | "",
+): Promise<CasePhoto | null> {
+  const existing = await getCaseImage(caseId, imageId);
+  if (!existing) {
+    return null;
+  }
+  const db = getDbClient();
+  const row = await db.caseImage.update({
+    where: { id: imageId },
+    data: {
+      claimedType: claimedType ? claimedTypeToPrisma(claimedType) : null,
+    },
+  });
+  return toCasePhoto(row);
+}
+
+export async function deleteCaseImage(
+  caseId: string,
+  imageId: string,
+): Promise<CasePhoto | null> {
+  const existing = await getCaseImage(caseId, imageId);
+  if (!existing) {
+    return null;
+  }
+  const db = getDbClient();
+  await db.caseImage.delete({ where: { id: imageId } });
+  return existing;
 }
