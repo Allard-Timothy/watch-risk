@@ -166,7 +166,7 @@ export function PhotoUpload({
           {provided.length} of {RECOMMENDED_PHOTO_AREAS.length} recommended
           photo areas labeled.{" "}
           {persistUploads
-            ? "Files are stored on this machine for the report gallery. GCS is not wired."
+            ? "Files are stored with this case for the report gallery."
             : "Files stay in this browser only — nothing is uploaded to storage yet."}
         </p>
         {error ? (
