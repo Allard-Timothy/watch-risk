@@ -1,0 +1,15 @@
+{
+  "id": "vsf-116610lv",
+  "brand": "Rolex",
+  "modelFamily": "Submariner",
+  "reference": "116610LV",
+  "factory": "VSF",
+  "requiredPhotos": ["dial", "rehaut", "date_cyclops", "clasp"],
+  "optionalPhotos": ["caseback", "bracelet", "movement"],
+  "riskCheckpoints": {
+    "dial": ["date centering"],
+    "rehaut": ["rehaut alignment"],
+    "clasp": ["SEL fit"]
+  },
+  "notes": "Curated starting checklist. Crystal and cyclops observations require a straight-on dial photo."
+}

@@ -15,6 +15,18 @@ type AppShellProps = Readonly<{
 }>;
 
 function crumbsFor(pathname: string): { href?: string; label: string }[] {
+  if (pathname.startsWith("/sellers/")) {
+    return [
+      { href: "/sellers", label: "Sellers" },
+      { label: pathname.split("/")[2] ?? "Seller" },
+    ];
+  }
+  if (pathname.startsWith("/sellers")) {
+    return [{ label: "Sellers" }];
+  }
+  if (pathname.startsWith("/compare")) {
+    return [{ href: "/sellers", label: "Sellers" }, { label: "Compare" }];
+  }
   if (pathname.startsWith("/reports/")) {
     const reportId = pathname.split("/")[2] ?? sampleReportMeta.reportId;
     return [
@@ -131,6 +143,7 @@ function MobileNav({ pathname }: { pathname: string }) {
   const items = [
     { href: "/", label: "Overview" },
     { href: "/cases/new", label: "New case" },
+    { href: "/sellers", label: "Sellers" },
     { href: savedCaseId ? `/cases/${savedCaseId}` : "/cases/draft", label: "Evidence" },
     { href: reportHref, label: "Report" },
   ];

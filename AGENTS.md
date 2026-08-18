@@ -10,10 +10,12 @@ and implementation order.
 
 ## Product
 
-WatchTell is a pre-purchase buyer-risk assessment app for luxury watch listings.
+WatchTell is a pre-purchase buyer-risk assessment app for watch listings
+(including replica-community listings).
 
 The product must not claim to authenticate watches, certify watches, verify
-watches, or guarantee authenticity.
+watches, or guarantee authenticity. Forum TD status is evidence, not a
+universal trust score.
 
 ## User-facing language
 
@@ -68,7 +70,8 @@ WatchTell is a single Next.js (App Router) + TypeScript app at the repository
 root. The earlier Django scaffold has been removed. Standard commands are in
 `README.md`: `pnpm install`, `pnpm dev` (http://localhost:3000), `pnpm typecheck`,
 `pnpm build`, `pnpm test`. Key routes: `/` (overview), `/cases/new`,
-`/cases/[caseId]`, `/reports/[reportId]`. The chrome is a dashboard shell
+`/cases/[caseId]`, `/reports/[reportId]`, `/sellers`, `/sellers/[sellerId]`,
+`/compare/communities`. The chrome is a dashboard shell
 (dark sidebar + light canvas) guided by `assets/watchdesk-risk-report-dashboard.png`.
 
 Startup/run caveats (non-obvious):
@@ -80,9 +83,24 @@ Startup/run caveats (non-obvious):
   metadata. Photo bytes are written under `.data/uploads/{caseId}/`. Before
   saving a case, start Postgres (`docker compose up -d db`) and apply migrations
   (`pnpm exec prisma migrate deploy`). `DATABASE_URL` is in `.env.example`.
-- A saved case report is `/reports/{caseId}` (same id as the case). The sample
-  layout at `/reports/WR-2026-0481` is unchanged. Photos on a saved-case report
-  are served from `/api/cases/{caseId}/images/{imageId}`. GCS is not wired.
+- A saved case report is `/reports/{caseId}` (same id as the case). Opening it
+  writes or updates `AnalysisRun` + `Report` with `modelUsed: deterministic-rules`.
+  The sample layout at `/reports/WR-2026-0481` is unchanged. Photos on a saved-case
+  report are served from `/api/cases/{caseId}/images/{imageId}` and are real
+  `CaseImage` files only (sample wells may still use placeholders). GCS is not wired.
+- Seller handle on intake resolves by exact seller id, canonical name, or an
+  explicit alias. Similar names are never merged (Lin Seller ≠ Lin Feng). The
+  resolved seller is upserted before `WatchCase.sellerId` is stored so the FK
+  succeeds. The report seller card groups community recognition by independence
+  group and links to `/sellers/{id}`. Missing RWI TD is not a negative by itself.
+- If `WatchCase.reference` matches a curated dossier under `data/knowledge/references/`,
+  the generator and case-photo checklist use that required-photo set. `visibleConcerns`
+  come from missing checkpoints, seller `product_claim` flags, and optional manual
+  notes — never from pixel analysis. Factory claim and fulfillment chips are
+  qualitative labels, not dummy scores.
+- Seller/community knowledge is curated local seed data (Zod schemas in
+  `lib/knowledge/`, Prisma tables from the `seller_knowledge` migration). Do not
+  scrape forums. TD recognition is stored per community, not as `trusted: true`.
 - The app pins pnpm 11 (via `packageManager`). Use Corepack (`corepack enable`
   then `corepack prepare pnpm@11.9.0 --activate`); do not install pnpm globally.
   Build-script approval lives in `pnpm-workspace.yaml` under `allowBuilds`

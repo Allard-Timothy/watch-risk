@@ -1,0 +1,31 @@
+{
+  "sellerId": "panda-watches",
+  "canonicalName": "Panda Watches",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "1688time", "status": "established_seller" },
+    { "communityId": "repwatchforum", "status": "listed_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "high" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "pricing_competitiveness", "label": "high" },
+    { "key": "cross_community_validation", "label": "high" },
+    { "key": "longevity", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "low", "summary": "Independent buyer reviews outside a single TD list." }
+  ],
+  "likes": [
+    "Known in 1688Time.",
+    "Competitive pricing reports.",
+    "Independent buyer reviews."
+  ],
+  "concerns": [],
+  "interpretation": "1688Time history and independent buyer reviews are stronger evidence than RWF listing status alone.",
+  "evidence": [
+    { "communityId": "1688time", "evidenceType": "transaction_report", "independenceGroup": "1688time", "claimText": "Successful transaction history on 1688Time.", "sentiment": "positive" },
+    { "communityId": "repwatchforum", "evidenceType": "forum_status", "independenceGroup": "rwf", "claimText": "Listed on RepWatchForum.", "sentiment": "neutral" }
+  ]
+}

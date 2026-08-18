@@ -1,0 +1,30 @@
+{
+  "sellerId": "quick-time",
+  "canonicalName": "Quick Time",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "established_seller", "moderatorVetted": true, "formalTdProgram": true }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "legitimacy_confidence", "label": "medium" },
+    { "key": "cross_community_validation", "label": "low" },
+    { "key": "longevity", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "operational", "label": "medium", "summary": "Evidence currently concentrated inside one ecosystem." }
+  ],
+  "likes": [
+    "Korean network access.",
+    "Successful customer reports.",
+    "Access to less common watches and modifications."
+  ],
+  "concerns": [
+    "Evidence currently concentrated inside one ecosystem."
+  ],
+  "interpretation": "RWF-established with a Korea-facing network. Medium confidence until independent evidence appears outside that ecosystem.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "transaction_report", "independenceGroup": "rwf", "claimText": "Successful customer reports on RepWatchForum.", "sentiment": "positive" }
+  ]
+}

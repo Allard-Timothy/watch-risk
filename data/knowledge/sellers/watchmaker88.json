@@ -1,0 +1,31 @@
+{
+  "sellerId": "watchmaker88",
+  "canonicalName": "Watchmaker88",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "provisionary_td", "moderatorVetted": true, "formalTdProgram": true }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "legitimacy_confidence", "label": "medium" },
+    { "key": "product_claim_accuracy", "label": "low" },
+    { "key": "longevity", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "product_claim", "label": "medium", "summary": "Historical skepticism around factory and product claims. Show this alongside later RWF vetting." },
+    { "category": "fraud", "label": "insufficient_evidence", "summary": "No curated non-delivery pattern. Promotional volume is not a fraud finding." }
+  ],
+  "likes": [
+    "RWF subsequently vetted the seller."
+  ],
+  "concerns": [
+    "Aggressive promotion.",
+    "Historical skepticism around factory and product claims."
+  ],
+  "interpretation": "Provisionary. Legitimacy evidence exists after RWF vetting, while product-claim confidence should remain lower. Both facts should be shown together.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "td_listing", "independenceGroup": "rwf", "claimText": "RWF subsequently listed the seller as provisionary.", "sentiment": "positive" },
+    { "communityId": "repwatchforum", "evidenceType": "seller_promotion", "independenceGroup": "rwf", "claimText": "Aggressive promotion on the same forum.", "sentiment": "neutral" }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "sellerId": "adu-shop",
+  "canonicalName": "ADU Shop",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "listed_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "legitimacy_confidence", "label": "medium" },
+    { "key": "longevity", "label": "low" }
+  ],
+  "riskFlags": [
+    { "category": "operational", "label": "medium", "summary": "Watch-specific track record remains relatively young." }
+  ],
+  "likes": [
+    "History in adjacent replica categories.",
+    "Completed watch transactions.",
+    "Positive initial reviews."
+  ],
+  "concerns": [
+    "Watch-specific track record remains relatively young."
+  ],
+  "interpretation": "Emerging watch seller with medium confidence. Adjacent-category history is supporting context, not a substitute for watch-specific evidence.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "transaction_report", "independenceGroup": "rwf", "claimText": "Completed watch transactions with positive initial reviews.", "sentiment": "positive" }
+  ]
+}

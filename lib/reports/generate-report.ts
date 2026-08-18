@@ -4,18 +4,23 @@ import {
   type BuyerRiskReport,
   type ConfidenceLevel,
   type DetectedPhotoType,
+  type ImageFinding,
   type RiskLevel,
 } from "@/lib/validation";
+import type { ModelDossierSeed, SellerSeed } from "@/lib/knowledge/schemas";
+import { PHOTO_TYPE_LABELS, isDetectedPhotoType } from "@/lib/photos";
+import type { ClaimedPhotoType } from "@/lib/photos";
 
 /**
  * Deterministic placeholder report generator.
  *
- * This turns case details and image type labels into a validated
- * `BuyerRiskReport` by applying the deterministic rules and confidence caps in
- * docs/report-rules.md. It does NOT call a model and does NOT invent visual
- * observations: `visibleConcerns` is left to the (future) model layer, so this
- * generator returns an empty list. All language stays within the safe wording
- * allowed by docs/report-rules.md and .cursor/rules/watchrisk.mdc.
+ * This turns case details, image type labels, and curated knowledge into a
+ * validated `BuyerRiskReport` by applying the deterministic rules and
+ * confidence caps in docs/report-rules.md. It does NOT call a model and does
+ * NOT invent visual observations from pixels. `visibleConcerns` come from
+ * missing dossier checkpoints, curated seller product-claim flags, and
+ * optional manual notes. All language stays within the safe wording allowed
+ * by docs/report-rules.md and .cursor/rules/watchrisk.mdc.
  */
 
 export type ImageQuality = "clear" | "mixed" | "poor";
@@ -27,6 +32,9 @@ export type ReportInput = Readonly<{
   claimedYear?: string;
   askingPrice?: number;
   sellerPlatform?: string;
+  listingUrl?: string;
+  listingText?: string;
+  sellerClaims?: string;
   /** Photo areas the buyer actually submitted. */
   providedPhotoTypes: readonly DetectedPhotoType[];
   /** Overall quality of the submitted images. */
@@ -37,6 +45,12 @@ export type ReportInput = Readonly<{
   stockPhotosOnly?: boolean;
   /** The seller declined to provide additional photos. */
   sellerRefusedMorePhotos?: boolean;
+}>;
+
+export type ReportContext = Readonly<{
+  dossier?: ModelDossierSeed;
+  seller?: SellerSeed;
+  manualNotes?: readonly string[];
 }>;
 
 export type PhotoCompletenessItem = Readonly<{
@@ -59,48 +73,100 @@ type RecommendedPhoto = Readonly<{
   sellerQuestion: string;
 }>;
 
-const RECOMMENDED_PHOTOS: readonly RecommendedPhoto[] = [
-  {
+const PHOTO_CHECKLIST: Record<DetectedPhotoType, RecommendedPhoto> = {
+  dial: {
     type: "dial",
     label: "Dial",
     missingEvidence: "Straight-on dial macro in natural light",
     sellerQuestion: "Can you share a straight-on dial photo in natural light?",
   },
-  {
+  caseback: {
     type: "caseback",
     label: "Caseback",
     missingEvidence: "Caseback photo",
     sellerQuestion: "Can you photograph the caseback?",
   },
-  {
+  rehaut: {
     type: "rehaut",
     label: "Rehaut",
     missingEvidence: "Clear rehaut photo",
     sellerQuestion: "Can you photograph the rehaut / inner bezel ring?",
   },
-  {
+  clasp: {
     type: "clasp",
     label: "Clasp",
     missingEvidence: "Clear clasp and end-link photos",
     sellerQuestion: "Can you photograph the clasp, end links, and bracelet stamps?",
   },
-  {
+  bracelet: {
     type: "bracelet",
     label: "Bracelet / strap",
     missingEvidence: "Bracelet or strap photo",
     sellerQuestion: "Can you photograph the full bracelet or strap?",
   },
-  {
+  movement: {
     type: "movement",
     label: "Movement",
     missingEvidence: "Movement photo, or an offer of independent inspection",
     sellerQuestion:
       "Can you provide a movement photo, or allow an independent inspection?",
   },
+  papers: {
+    type: "papers",
+    label: "Papers",
+    missingEvidence: "Box and papers photo",
+    sellerQuestion: "Can you photograph the box and papers?",
+  },
+  date_cyclops: {
+    type: "date_cyclops",
+    label: "Date / cyclops",
+    missingEvidence: "Straight-on date window and cyclops photo",
+    sellerQuestion:
+      "Can you share a straight-on photo of the date window and cyclops?",
+  },
+  other: {
+    type: "other",
+    label: "Other",
+    missingEvidence: "Additional listing photo",
+    sellerQuestion: "Can you share additional photos of the watch?",
+  },
+};
+
+const DEFAULT_RECOMMENDED_TYPES: readonly DetectedPhotoType[] = [
+  "dial",
+  "caseback",
+  "rehaut",
+  "clasp",
+  "bracelet",
+  "movement",
 ];
 
 const CONFIDENCE_ORDER: readonly ConfidenceLevel[] = ["low", "medium", "high"];
 const RISK_ORDER: readonly RiskLevel[] = ["low", "medium", "high"];
+
+function photoLabel(type: DetectedPhotoType): string {
+  if (type in PHOTO_TYPE_LABELS) {
+    return PHOTO_TYPE_LABELS[type as ClaimedPhotoType];
+  }
+  return PHOTO_CHECKLIST[type].label;
+}
+
+export function recommendedPhotosFor(
+  dossier?: ModelDossierSeed,
+): RecommendedPhoto[] {
+  if (!dossier) {
+    return DEFAULT_RECOMMENDED_TYPES.map((type) => PHOTO_CHECKLIST[type]);
+  }
+  const fromDossier = dossier.requiredPhotos.flatMap((type) => {
+    if (!isDetectedPhotoType(type) || type === "other") {
+      return [];
+    }
+    return [PHOTO_CHECKLIST[type]];
+  });
+  return fromDossier.length > 0
+    ? fromDossier
+    : DEFAULT_RECOMMENDED_TYPES.map((type) => PHOTO_CHECKLIST[type]);
+}
 
 function capConfidence(
   current: ConfidenceLevel,
@@ -119,11 +185,17 @@ function increaseRisk(current: RiskLevel): RiskLevel {
   return RISK_ORDER[next];
 }
 
-function assembleCoreReport(input: ReportInput): BuyerRiskReport {
+function listingBlob(input: ReportInput): string {
+  return `${input.listingText ?? ""} ${input.sellerClaims ?? ""}`;
+}
+
+function assembleCoreReport(
+  input: ReportInput,
+  recommended: readonly RecommendedPhoto[],
+  context: ReportContext,
+): BuyerRiskReport {
   const provided = new Set(input.providedPhotoTypes);
-  const missingPhotos = RECOMMENDED_PHOTOS.filter(
-    (photo) => !provided.has(photo.type),
-  );
+  const missingPhotos = recommended.filter((photo) => !provided.has(photo.type));
   const missingCount = missingPhotos.length;
 
   // Confidence caps (docs/report-rules.md).
@@ -188,9 +260,7 @@ function assembleCoreReport(input: ReportInput): BuyerRiskReport {
     overallRisk,
     confidence,
     missingEvidence,
-    // Visual observations are the model layer's responsibility; the
-    // deterministic layer does not invent them.
-    visibleConcerns: [],
+    visibleConcerns: buildVisibleConcerns(input, context),
     sellerQuestions,
     recommendedNextStep,
     safeSummary,
@@ -211,9 +281,19 @@ function buildSafeSummary(risk: RiskLevel, missingCount: number): string {
   return "The submitted photos cover the recommended areas and no photo-based red flags were detected. Confidence is still limited to what photos can show.";
 }
 
-function buildReferenceConsistency(input: ReportInput): string {
+function buildReferenceConsistency(
+  input: ReportInput,
+  dossier?: ModelDossierSeed,
+): string {
   if (!input.reference) {
     return "No reference was provided, so reference consistency cannot be assessed from the submitted details.";
+  }
+  if (dossier) {
+    const factory =
+      dossier.factory && dossier.factory !== "unknown"
+        ? ` Curated notes use factory attribution ${dossier.factory}.`
+        : " Factory attribution is insufficient from curated notes.";
+    return `The claimed reference ${input.reference} matches a curated ${dossier.brand} ${dossier.modelFamily} checklist.${factory} Key details still cannot be confirmed from the submitted photos.`;
   }
   return `The visible case shape and bezel broadly match the claimed reference ${input.reference}, but key details cannot be confirmed from the submitted photos.`;
 }
@@ -221,8 +301,11 @@ function buildReferenceConsistency(input: ReportInput): string {
 function buildSellerRiskSignals(input: ReportInput): string[] {
   const provided = new Set(input.providedPhotoTypes);
   const signals: string[] = [];
+  const blob = listingBlob(input).toLowerCase();
   if (input.stockPhotosOnly) {
     signals.push("Listing appears to reuse stock photos rather than the actual watch.");
+  } else if (/stock photos?|catalogue photos?|catalog photos?/.test(blob)) {
+    signals.push("Listing text mentions stock or catalogue photos.");
   }
   if (input.sellerRefusedMorePhotos) {
     signals.push("Seller declined to provide additional photos on request.");
@@ -236,11 +319,91 @@ function buildSellerRiskSignals(input: ReportInput): string[] {
   return signals;
 }
 
-export function generateReport(input: ReportInput): GeneratedReport {
-  const provided = new Set(input.providedPhotoTypes);
-  const core = assembleCoreReport(input);
+function qualitativeToSeverity(
+  label: SellerSeed["riskFlags"][number]["label"],
+): ImageFinding["severity"] | null {
+  if (label === "insufficient_evidence") {
+    return null;
+  }
+  if (label === "low") {
+    return "low";
+  }
+  if (label === "high" || label === "very_high") {
+    return "high";
+  }
+  return "medium";
+}
 
-  const photoCompleteness: PhotoCompletenessItem[] = RECOMMENDED_PHOTOS.map(
+function buildVisibleConcerns(
+  input: ReportInput,
+  context: ReportContext,
+): ImageFinding[] {
+  const provided = new Set(input.providedPhotoTypes);
+  const concerns: ImageFinding[] = [];
+
+  if (context.dossier) {
+    for (const [area, checkpoints] of Object.entries(
+      context.dossier.riskCheckpoints,
+    )) {
+      if (!isDetectedPhotoType(area) || provided.has(area)) {
+        continue;
+      }
+      for (const checkpoint of checkpoints) {
+        concerns.push({
+          area: photoLabel(area),
+          severity: "medium",
+          finding: `Cannot assess ${checkpoint} from submitted images.`,
+          visibleEvidence: `No ${photoLabel(area).toLowerCase()} photo was submitted for this checkpoint.`,
+        });
+      }
+    }
+  }
+
+  if (context.seller) {
+    for (const flag of context.seller.riskFlags) {
+      if (flag.category !== "product_claim") {
+        continue;
+      }
+      const severity = qualitativeToSeverity(flag.label);
+      if (!severity) {
+        continue;
+      }
+      concerns.push({
+        area: "Seller product claim",
+        severity,
+        finding: flag.summary,
+        visibleEvidence:
+          "Curated seller knowledge flag. This is not a pixel analysis of the submitted photos.",
+      });
+    }
+  }
+
+  for (const note of context.manualNotes ?? []) {
+    const trimmed = note.trim();
+    if (!trimmed) {
+      continue;
+    }
+    concerns.push({
+      area: "Buyer note",
+      severity: "medium",
+      finding: trimmed,
+      visibleEvidence:
+        "Manual note supplied at intake. This is not a pixel analysis.",
+    });
+  }
+
+  return concerns;
+}
+
+export function generateReport(
+  input: ReportInput,
+  context: ReportContext = {},
+): GeneratedReport {
+  const provided = new Set(input.providedPhotoTypes);
+  const recommended = recommendedPhotosFor(context.dossier);
+  const core = assembleCoreReport(input, recommended, context);
+
+  const photoCompleteness: PhotoCompletenessItem[] = recommended.map(
     (photo) => ({
       type: photo.type,
       label: photo.label,
@@ -251,7 +414,7 @@ export function generateReport(input: ReportInput): GeneratedReport {
   return {
     ...core,
     photoCompleteness,
-    referenceConsistency: buildReferenceConsistency(input),
+    referenceConsistency: buildReferenceConsistency(input, context.dossier),
     sellerRiskSignals: buildSellerRiskSignals(input),
   };
 }

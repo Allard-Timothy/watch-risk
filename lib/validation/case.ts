@@ -29,8 +29,11 @@ export type CaseCreateInput = z.infer<typeof caseCreateSchema>;
 /**
  * Coercing variant for HTML form submissions, where every field arrives as a
  * string. `askingPrice` is coerced from its string input to a number.
+ * `sellerHandle` is intake-only: it resolves to `WatchCase.sellerId` and is
+ * not stored as its own column.
  */
 export const caseCreateFormSchema = caseCreateSchema.extend({
   askingPrice: z.coerce.number().nonnegative().finite().optional(),
+  sellerHandle: optionalTrimmedString,
 });
-export type CaseCreateFormInput = z.input<typeof caseCreateFormSchema>;
+export type CaseCreateFormInput = z.infer<typeof caseCreateFormSchema>;

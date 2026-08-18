@@ -20,6 +20,7 @@ export type PersistedWatchCase = CaseCreateInput &
   Readonly<{
     id: string;
     createdAt: Date;
+    sellerId?: string;
     photos: readonly CasePhoto[];
   }>;
 
@@ -63,12 +64,14 @@ function toCaseCreateInput(
     listingText: row.listingText ?? undefined,
     sellerClaims: row.sellerClaims ?? undefined,
     createdAt: row.createdAt,
+    sellerId: row.sellerId ?? undefined,
     photos: (row.images ?? []).map(toCasePhoto),
   };
 }
 
 export async function createWatchCase(
   input: CaseCreateInput,
+  options?: { sellerId?: string },
 ): Promise<PersistedWatchCase> {
   const db = getDbClient();
   const row = await db.watchCase.create({
@@ -82,11 +85,22 @@ export async function createWatchCase(
       listingUrl: input.listingUrl,
       listingText: input.listingText,
       sellerClaims: input.sellerClaims,
+      sellerId: options?.sellerId,
       status: "DRAFT",
     },
     include: { images: true },
   });
   return toCaseCreateInput(row);
+}
+
+export async function listWatchCases(limit = 12): Promise<PersistedWatchCase[]> {
+  const db = getDbClient();
+  const rows = await db.watchCase.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: { images: { orderBy: { createdAt: "asc" } } },
+  });
+  return rows.map(toCaseCreateInput);
 }
 
 export async function getWatchCase(

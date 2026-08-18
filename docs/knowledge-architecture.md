@@ -628,18 +628,26 @@ When adding this to the current implementation plan, preserve existing architect
 
 ## Relationship to the current MVP
 
-This knowledge architecture is later-phase direction, not immediate MVP scope. It extends the current plan rather than replacing it:
+Phase 1 of this architecture is now in the local app: a curated seller,
+community, evidence, and claim ontology with Zod seed schemas
+(`lib/knowledge/`) and Prisma tables. It extends the current plan rather than
+replacing it:
 
 * The existing Zod report schema, deterministic report rules, and confidence caps
   (`docs/ai-contract.md`, `docs/report-rules.md`) remain the near-term analysis
   path and are the natural place to later consume compact dossiers/snapshots.
-* The current data model (`docs/architecture-typescript.md`) can be extended with
-  the claim, evidence, source/provenance, and snapshot entities described above;
-  it does not need to be replaced.
-* Product positioning is unchanged. WatchTell remains a pre-purchase, photo-based
-  buyer-risk assessment tool and does not authenticate, certify, or verify
-  watches; keep the safer language in `docs/report-rules.md`.
+* The current data model (`docs/architecture-typescript.md`) is extended with
+  Community, Seller, SellerAlias, SellerCommunity, Evidence, Source, Claim,
+  RiskFlag, and TrustDimension. `WatchCase.sellerId` is optional.
+* Product positioning is unchanged on authentication: WatchTell remains a
+  pre-purchase, photo-based buyer-risk assessment tool and does not
+  authenticate, certify, or verify watches; keep the safer language in
+  `docs/report-rules.md`. Forum TD labels are stored as community recognition
+  with an `independenceGroup` so one ecosystem cannot count as several
+  confirmations.
 * No crawling, scraping, embeddings, vector search, or automated ingestion is in
   scope yet. Start with the ontology, claim/evidence/provenance schemas, and a
   small manually curated seed corpus; add versioned snapshots and retrieval
   later.
+* Never merge two sellers based on similar names. Alias rows require an
+  `identityConfidence` and supporting note.

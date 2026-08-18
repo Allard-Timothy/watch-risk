@@ -53,12 +53,19 @@ type CaseDetailViewProps = Readonly<{
   caseId: string;
   initialListing?: CaseCreateInput | null;
   initialPhotos?: readonly DraftPhoto[];
+  seller?: { id: string; name: string };
+  recommendedPhotoAreas?: readonly {
+    type: DetectedPhotoType;
+    label: string;
+  }[];
 }>;
 
 export function CaseDetailView({
   caseId,
   initialListing,
   initialPhotos = [],
+  seller,
+  recommendedPhotoAreas,
 }: CaseDetailViewProps) {
   const [listing, setListing] = useState<CaseCreateInput>(
     initialListing ?? SAMPLE_CASE,
@@ -99,6 +106,17 @@ export function CaseDetailView({
       "Sample listing for layout review. Save a case to replace this with your intake.",
   };
 
+  const recommendedCount = recommendedPhotoAreas?.length;
+  const labeledRequired = recommendedPhotoAreas
+    ? providedTypes.filter((type) =>
+        recommendedPhotoAreas.some((area) => area.type === type),
+      ).length
+    : providedTypes.length;
+  const missingRequired =
+    recommendedPhotoAreas?.filter(
+      (area) => !providedTypes.includes(area.type),
+    ) ?? [];
+
   return (
     <div className="space-y-8">
       <header>
@@ -135,6 +153,21 @@ export function CaseDetailView({
               </div>
             );
           })}
+          {seller ? (
+            <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-4">
+              <dt className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
+                Seller
+              </dt>
+              <dd className="text-sm">
+                <Link
+                  href={`/sellers/${seller.id}`}
+                  className="font-medium underline-offset-2 hover:underline"
+                >
+                  {seller.name}
+                </Link>
+              </dd>
+            </div>
+          ) : null}
         </dl>
         <p className="mt-4">
           <Link
@@ -152,6 +185,7 @@ export function CaseDetailView({
           caseId={caseId}
           persist={source === "database"}
           initialPhotos={initialPhotos}
+          recommendedAreas={recommendedPhotoAreas}
           onProvidedTypesChange={setProvidedTypes}
         />
       </section>
@@ -160,13 +194,20 @@ export function CaseDetailView({
         <h2 className="mb-2 font-serif text-xl tracking-tight">Next step</h2>
         <p className="mb-4 text-sm leading-6 text-muted-foreground">
           {source === "database"
-            ? providedTypes.length === 0
+            ? labeledRequired === 0
               ? "Open the photo-based buyer-risk report for this saved case. Label photos to improve completeness; analysis still uses deterministic rules, not a model."
-              : `${providedTypes.length} recommended photo area(s) labeled. The report for this case uses those labels and the saved listing details.`
+              : `${labeledRequired}${recommendedCount ? ` of ${recommendedCount}` : ""} recommended photo area(s) labeled. The report for this case uses those labels and the saved listing details.`
             : providedTypes.length === 0
               ? "Label at least one recommended photo area, then open the sample report. Analysis is still sample-driven and does not call a model."
               : `${providedTypes.length} recommended photo area(s) labeled. The sample report still uses sample evidence rules; payment and model calls are not wired.`}
         </p>
+        {source === "database" && missingRequired.length > 0 ? (
+          <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900">
+            Missing recommended photos:{" "}
+            {missingRequired.map((area) => area.label).join(", ")}. You can
+            still open the report; confidence will stay limited.
+          </p>
+        ) : null}
         <Link
           href={source === "database" ? `/reports/${caseId}` : "/reports/WR-2026-0481"}
           className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-sm"

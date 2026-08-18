@@ -1,0 +1,29 @@
+{
+  "sellerId": "lin-seller",
+  "canonicalName": "Lin Seller",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "established_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "legitimacy_confidence", "label": "medium" },
+    { "key": "cross_community_validation", "label": "low" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "insufficient_evidence", "summary": "Do not merge with Lin Feng without identity evidence. Name similarity is not sufficient." }
+  ],
+  "likes": [
+    "Completed buyer transactions.",
+    "Factory and product information.",
+    "Sourcing activity."
+  ],
+  "concerns": [
+    "Name similarity to other Lin-named sellers is not identity evidence."
+  ],
+  "interpretation": "RWF-established with medium confidence. Lin Seller is not merged with Lin Feng. Alias rows require identity confidence and supporting evidence.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "transaction_report", "independenceGroup": "rwf", "claimText": "Completed buyer transactions attributed to Lin Seller.", "sentiment": "positive" }
+  ]
+}

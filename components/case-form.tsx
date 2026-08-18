@@ -5,9 +5,9 @@ import Link from "next/link";
 
 import { createCaseAction } from "@/lib/cases/actions";
 import { cn } from "@/lib/utils";
-import { caseCreateFormSchema, type CaseCreateInput } from "@/lib/validation";
+import { caseCreateFormSchema, type CaseCreateFormInput } from "@/lib/validation";
 
-type FieldName = keyof CaseCreateInput;
+type FieldName = keyof CaseCreateFormInput;
 
 type FieldConfig = Readonly<{
   name: FieldName;
@@ -35,6 +35,12 @@ const FIELDS: readonly FieldConfig[] = [
     hint: "USD",
   },
   { name: "sellerPlatform", label: "Seller platform", placeholder: "Chrono24, eBay, forum sale" },
+  {
+    name: "sellerHandle",
+    label: "Seller handle",
+    placeholder: "DDGTOP, Duke Jones",
+    hint: "Matches a curated seller id or alias. Similar names are not merged.",
+  },
   {
     name: "listingUrl",
     label: "Listing URL",
@@ -84,7 +90,7 @@ export function CaseForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<CaseCreateInput | null>(null);
+  const [result, setResult] = useState<CaseCreateFormInput | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -134,7 +140,7 @@ export function CaseForm() {
     }
 
     setSavedId(created.id);
-    setResult(parsed.data as CaseCreateInput);
+    setResult(parsed.data);
   }
 
   function handleReset() {
@@ -245,7 +251,7 @@ export function CaseForm() {
 }
 
 type CaseIntakeConfirmationProps = Readonly<{
-  values: CaseCreateInput;
+  values: CaseCreateFormInput;
   caseId: string;
   onReset: () => void;
 }>;

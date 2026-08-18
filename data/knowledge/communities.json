@@ -1,0 +1,62 @@
+[
+  {
+    "id": "reptime",
+    "displayName": "RepTime",
+    "independenceGroup": "reptime",
+    "formalTdProgram": false,
+    "notes": "Does not operate a native TD program. Historically points buyers toward dealer lists maintained by RWI, RepGeek, and RWG.",
+    "vettingNotes": "Treat RepTime discussion as its own ecosystem. Do not count RWI/RepGeek/RWG lists as RepTime-native TD status."
+  },
+  {
+    "id": "rwi",
+    "displayName": "RWI",
+    "independenceGroup": "rwi",
+    "formalTdProgram": true,
+    "notes": "Older Western-facing dealer list. Long English-language transaction histories are common.",
+    "vettingNotes": "Formal TD program. Independent from RepWatchForum."
+  },
+  {
+    "id": "repgeek",
+    "displayName": "RepGeek",
+    "independenceGroup": "repgeek",
+    "formalTdProgram": true,
+    "notes": "Western-facing forum TD list often cited from RepTime.",
+    "vettingNotes": "Separate independence group from RWI even when the dealer set overlaps."
+  },
+  {
+    "id": "rwg",
+    "displayName": "RWG",
+    "independenceGroup": "rwg",
+    "formalTdProgram": true,
+    "notes": "Western-facing forum TD list often cited from RepTime."
+  },
+  {
+    "id": "repwatchforum",
+    "displayName": "RepWatchForum",
+    "independenceGroup": "rwf",
+    "formalTdProgram": true,
+    "notes": "Operates its own TD vetting program and includes sellers from Korean and Chinese-facing networks with little presence on older Western lists.",
+    "vettingNotes": "Vetting can include dispute checks, business verification, Chinese-language contact, wholesaler discussion, moderator test purchases, provisionary periods, participation requirements, and giveaways. Those items share independence group rwf."
+  },
+  {
+    "id": "1688time",
+    "displayName": "1688Time",
+    "independenceGroup": "1688time",
+    "formalTdProgram": false,
+    "notes": "Informal reputation and established-seller recognition. Independent from RWF even when the same seller appears in both."
+  },
+  {
+    "id": "chinatime",
+    "displayName": "ChinaTime",
+    "independenceGroup": "chinatime",
+    "formalTdProgram": false,
+    "notes": "Adjacent Chinese-facing community reputation. Track separately from RWF recognition."
+  },
+  {
+    "id": "rep_watch_world",
+    "displayName": "Rep_Watch_World",
+    "independenceGroup": "rww",
+    "formalTdProgram": false,
+    "notes": "Separate informal seller reputation system."
+  }
+]

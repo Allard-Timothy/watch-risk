@@ -25,7 +25,7 @@ export type ConfidenceLevel = z.infer<typeof confidenceLevelSchema>;
 export const severitySchema = z.enum(["low", "medium", "high"]);
 export type Severity = z.infer<typeof severitySchema>;
 
-export const detectedPhotoTypeSchema = z.enum([
+export const DETECTED_PHOTO_TYPES = [
   "dial",
   "clasp",
   "rehaut",
@@ -33,8 +33,10 @@ export const detectedPhotoTypeSchema = z.enum([
   "bracelet",
   "movement",
   "papers",
+  "date_cyclops",
   "other",
-]);
+] as const;
+export const detectedPhotoTypeSchema = z.enum(DETECTED_PHOTO_TYPES);
 export type DetectedPhotoType = z.infer<typeof detectedPhotoTypeSchema>;
 
 /** A single structured observation about a photo or the listing. */

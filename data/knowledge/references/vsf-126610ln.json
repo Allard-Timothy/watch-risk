@@ -1,0 +1,15 @@
+{
+  "id": "vsf-126610ln",
+  "brand": "Rolex",
+  "modelFamily": "Submariner",
+  "reference": "126610LN",
+  "factory": "VSF",
+  "requiredPhotos": ["dial", "rehaut", "clasp", "caseback"],
+  "optionalPhotos": ["bracelet", "movement", "papers"],
+  "riskCheckpoints": {
+    "dial": ["date alignment", "lume plots"],
+    "rehaut": ["laser etching visibility"],
+    "clasp": ["clasp code and end-link fit"]
+  },
+  "notes": "Curated starting checklist only. Missing a required photo means that area cannot be assessed from submitted images."
+}

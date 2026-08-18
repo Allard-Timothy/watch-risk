@@ -1,0 +1,25 @@
+{
+  "sellerId": "spacex",
+  "canonicalName": "SpaceX",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "provisionary_td", "formalTdProgram": true }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "insufficient_evidence" },
+    { "key": "cross_community_validation", "label": "low" },
+    { "key": "evidence_volume", "label": "low" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "insufficient_evidence", "summary": "Insufficient independent evidence. Do not produce a strong recommendation yet." }
+  ],
+  "likes": [],
+  "concerns": [
+    "Insufficient independent evidence."
+  ],
+  "interpretation": "Provisionary. Do not produce a strong recommendation yet. RWF listing is one ecosystem.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "td_listing", "independenceGroup": "rwf", "claimText": "Provisionary listing on RepWatchForum.", "sentiment": "neutral" }
+  ]
+}

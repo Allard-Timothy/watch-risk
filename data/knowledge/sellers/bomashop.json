@@ -1,0 +1,31 @@
+{
+  "sellerId": "bomashop",
+  "canonicalName": "BomaShop",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "established_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "high" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "longevity", "label": "medium" },
+    { "key": "cross_community_validation", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "low", "summary": "Completed transactions and buyer reviews outside moderator-controlled sources." }
+  ],
+  "likes": [
+    "Completed transactions.",
+    "Buyer reviews outside moderator-controlled sources.",
+    "Growing history."
+  ],
+  "concerns": [
+    "Relatively short Western-facing track record."
+  ],
+  "interpretation": "Emerging established seller with medium-high confidence. History is growing but shorter than old-line TDs.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "buyer_review", "independenceGroup": "rwf", "claimText": "Completed buyer transactions.", "sentiment": "positive" },
+    { "evidenceType": "independent_review", "independenceGroup": "independent", "claimText": "Buyer reviews outside moderator-controlled sources.", "sentiment": "positive" }
+  ]
+}

@@ -4,8 +4,15 @@ import { notFound } from "next/navigation";
 import { DashboardMain } from "@/components/dashboard-main";
 import { ReportDashboard } from "@/components/report-dashboard";
 import { getWatchCase } from "@/lib/cases/repository";
+import {
+  loadCommunities,
+  loadModelDossiers,
+  loadSellers,
+} from "@/lib/knowledge/load";
+import { matchModelDossier } from "@/lib/knowledge/match-reference";
 import { reportInputFromCase } from "@/lib/reports/from-case";
 import { generateReport } from "@/lib/reports/generate-report";
+import { persistGeneratedReport } from "@/lib/reports/persist";
 import {
   sampleReportInput,
   sampleReportMeta,
@@ -61,8 +68,26 @@ export default async function ReportPage({ params }: ReportPageProps) {
     notFound();
   }
 
+  const [sellers, dossiers, communities] = await Promise.all([
+    loadSellers(),
+    loadModelDossiers(),
+    loadCommunities(),
+  ]);
+  const seller = listing.sellerId
+    ? sellers.find((item) => item.sellerId === listing.sellerId)
+    : undefined;
+  const dossier = matchModelDossier(
+    dossiers,
+    listing.brand,
+    listing.reference,
+  );
   const watch = reportInputFromCase(listing);
-  const report = generateReport(watch);
+  const report = generateReport(watch, { dossier, seller });
+  try {
+    await persistGeneratedReport(listing.id, report);
+  } catch (error) {
+    console.error("persistGeneratedReport failed", error);
+  }
   const generatedAt = listing.createdAt.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -77,6 +102,9 @@ export default async function ReportPage({ params }: ReportPageProps) {
         reportId={listing.id}
         generatedAt={generatedAt}
         photos={listing.photos}
+        seller={seller}
+        communities={communities}
+        dossier={dossier}
       />
     </DashboardMain>
   );

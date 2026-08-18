@@ -5,9 +5,12 @@ alwaysApply: true
 
 # WatchTell rules
 
-WatchTell is a pre-purchase buyer-risk assessment app for luxury watch listings.
+WatchTell is a pre-purchase buyer-risk assessment app for watch listings,
+including replica-community listings.
 
 Users upload listing details, seller claims, price, reference information, and photos. The app produces a photo-based buyer-risk report that flags missing evidence, visible concerns, seller-risk signals, and seller questions before purchase.
+
+Forum TD status is evidence, not a universal trust score.
 
 ## Product boundary
 

@@ -1,5 +1,8 @@
 import type { PhotoType } from "@prisma/client";
-import type { DetectedPhotoType } from "@/lib/validation";
+import {
+  DETECTED_PHOTO_TYPES,
+  type DetectedPhotoType,
+} from "@/lib/validation";
 
 /**
  * Claimed photo types for intake. Mirrors the Prisma `PhotoType` enum as
@@ -55,7 +58,26 @@ export const RECOMMENDED_PHOTO_AREAS: readonly {
 export function isDetectedPhotoType(
   value: string,
 ): value is DetectedPhotoType {
-  return RECOMMENDED_PHOTO_AREAS.some((area) => area.type === value);
+  return (DETECTED_PHOTO_TYPES as readonly string[]).includes(value);
+}
+
+export function recommendedPhotoAreasFor(
+  requiredTypes?: readonly string[],
+): { type: DetectedPhotoType; label: string }[] {
+  if (!requiredTypes || requiredTypes.length === 0) {
+    return [...RECOMMENDED_PHOTO_AREAS];
+  }
+  const areas = requiredTypes.flatMap((type) => {
+    if (!isDetectedPhotoType(type) || type === "other") {
+      return [];
+    }
+    const label =
+      type in PHOTO_TYPE_LABELS
+        ? PHOTO_TYPE_LABELS[type as ClaimedPhotoType]
+        : type;
+    return [{ type, label }];
+  });
+  return areas.length > 0 ? areas : [...RECOMMENDED_PHOTO_AREAS];
 }
 
 export function providedDetectedTypes(

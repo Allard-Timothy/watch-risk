@@ -1,0 +1,31 @@
+{
+  "sellerId": "ss-watches",
+  "canonicalName": "SS Watches",
+  "status": "active",
+  "aliases": [],
+  "communities": [
+    { "communityId": "repwatchforum", "status": "listed_seller" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "medium" },
+    { "key": "legitimacy_confidence", "label": "medium" },
+    { "key": "cross_community_validation", "label": "low" },
+    { "key": "evidence_volume", "label": "low" }
+  ],
+  "riskFlags": [
+    { "category": "operational", "label": "medium", "summary": "Less independent transaction data than major established TDs." }
+  ],
+  "likes": [
+    "Unusual watches.",
+    "Lower-cost watches.",
+    "Less common brands and models.",
+    "Completed buyer reports."
+  ],
+  "concerns": [
+    "Less independent transaction data than major established TDs."
+  ],
+  "interpretation": "Niche seller with medium confidence. Limited independent volume is the main constraint, not a fraud conclusion.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "buyer_review", "independenceGroup": "rwf", "claimText": "Completed buyer reports for less common models.", "sentiment": "positive" }
+  ]
+}

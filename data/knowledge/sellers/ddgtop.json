@@ -1,0 +1,58 @@
+{
+  "sellerId": "ddgtop",
+  "canonicalName": "DDGTOP",
+  "status": "active",
+  "aliases": [
+    { "alias": "DDG Top", "identityConfidence": 0.95, "evidenceNote": "Spelling variant used on listings." }
+  ],
+  "communities": [
+    {
+      "communityId": "repwatchforum",
+      "status": "provisionary_td",
+      "statusSince": "2026-01-01",
+      "moderatorVetted": true,
+      "formalTdProgram": true,
+      "sellerParticipationRequired": true,
+      "giveawayOrSponsorshipRelationship": true
+    },
+    { "communityId": "1688time", "status": "established_seller" },
+    { "communityId": "rwi", "status": "unknown" },
+    { "communityId": "repgeek", "status": "unknown" },
+    { "communityId": "rwg", "status": "unknown" }
+  ],
+  "trustDimensions": [
+    { "key": "overall", "label": "high" },
+    { "key": "legitimacy_confidence", "label": "high" },
+    { "key": "fulfillment_confidence", "label": "high" },
+    { "key": "communication_quality", "label": "high" },
+    { "key": "qc_process_quality", "label": "high" },
+    { "key": "after_sales_support", "label": "insufficient_evidence" },
+    { "key": "longevity", "label": "medium" },
+    { "key": "cross_community_validation", "label": "medium" }
+  ],
+  "riskFlags": [
+    { "category": "fraud", "label": "low", "summary": "No known unresolved non-delivery disputes in the curated notes." },
+    { "category": "operational", "label": "low", "summary": "Starting notes describe responsive communication." }
+  ],
+  "likes": [
+    "Positive transaction reports outside RepWatchForum.",
+    "Reports of catching issues before QC approval.",
+    "Competitive pricing reports."
+  ],
+  "concerns": [
+    "Shorter Western-facing history than old-line TDs."
+  ],
+  "interpretation": "DDGTOP lacks the decade-long Western forum history of dealers such as JTime or PureTime, but independent transaction evidence across communities reduces the significance of missing RWI TD status. Provisionary RWF recognition is one ecosystem, not several confirmations.",
+  "evidence": [
+    { "communityId": "repwatchforum", "evidenceType": "td_listing", "independenceGroup": "rwf", "claimText": "Listed as provisionary TD on RepWatchForum.", "sentiment": "positive", "confidence": 0.7 },
+    { "communityId": "repwatchforum", "evidenceType": "giveaway_or_sponsorship", "independenceGroup": "rwf", "claimText": "Seller-sponsored giveaway on the same forum.", "sentiment": "neutral", "confidence": 0.4 },
+    { "communityId": "1688time", "evidenceType": "transaction_report", "independenceGroup": "1688time", "claimText": "Independent buyer transaction reports on 1688Time.", "sentiment": "positive", "confidence": 0.72 }
+  ],
+  "evidenceDepth": {
+    "transactionReports": 23,
+    "communitiesRepresented": 3,
+    "oldestKnownTransactionYear": 2024,
+    "latestEvidenceYear": 2026,
+    "unresolvedDisputesKnown": 0
+  }
+}
