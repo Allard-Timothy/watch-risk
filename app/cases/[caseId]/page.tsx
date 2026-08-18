@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { CaseDetailView } from "@/components/case-detail";
 import { DashboardMain } from "@/components/dashboard-main";
 import { getWatchCase } from "@/lib/cases/repository";
+import { loadModelDossiers, loadSellers } from "@/lib/knowledge/load";
+import { matchModelDossier } from "@/lib/knowledge/match-reference";
+import { recommendedPhotoAreasFor } from "@/lib/photos";
 
 export const metadata: Metadata = {
   title: "Case | WatchTell",
@@ -32,12 +35,33 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
     notFound();
   }
 
+  const [dossiers, sellers] = await Promise.all([
+    loadModelDossiers(),
+    listing.sellerId ? loadSellers() : Promise.resolve([]),
+  ]);
+  const dossier = matchModelDossier(
+    dossiers,
+    listing.brand,
+    listing.reference,
+  );
+  const seller = listing.sellerId
+    ? sellers.find((item) => item.sellerId === listing.sellerId)
+    : undefined;
+
   return (
     <DashboardMain className="max-w-3xl">
         <CaseDetailView
           caseId={listing.id}
           initialListing={listing}
           initialPhotos={listing.photos}
+          seller={
+            seller
+              ? { id: seller.sellerId, name: seller.canonicalName }
+              : undefined
+          }
+          recommendedPhotoAreas={recommendedPhotoAreasFor(
+            dossier?.requiredPhotos,
+          )}
         />
     </DashboardMain>
   );

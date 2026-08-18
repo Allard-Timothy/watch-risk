@@ -15,6 +15,7 @@ import {
   providedDetectedTypes,
   type ClaimedPhotoType,
 } from "@/lib/photos";
+import type { DetectedPhotoType } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 export type DraftPhoto = Readonly<{
@@ -28,6 +29,10 @@ type PhotoUploadProps = Readonly<{
   caseId?: string;
   initialPhotos?: readonly DraftPhoto[];
   persist?: boolean;
+  recommendedAreas?: readonly {
+    type: DetectedPhotoType;
+    label: string;
+  }[];
   onProvidedTypesChange?: (
     types: ReturnType<typeof providedDetectedTypes>,
   ) => void;
@@ -50,6 +55,7 @@ export function PhotoUpload({
   caseId,
   initialPhotos = [],
   persist = false,
+  recommendedAreas = RECOMMENDED_PHOTO_AREAS,
   onProvidedTypesChange,
 }: PhotoUploadProps) {
   const [photos, setPhotos] = useState<DraftPhoto[]>([...initialPhotos]);
@@ -158,12 +164,15 @@ export function PhotoUpload({
     photos.map((photo) => photo.claimedType),
   );
   const providedSet = new Set(provided);
+  const labeledRequired = recommendedAreas.filter((area) =>
+    providedSet.has(area.type),
+  ).length;
 
   return (
     <div className="space-y-6">
       <div>
         <p className="mb-3 text-sm text-muted-foreground">
-          {provided.length} of {RECOMMENDED_PHOTO_AREAS.length} recommended
+          {labeledRequired} of {recommendedAreas.length} recommended
           photo areas labeled.{" "}
           {persistUploads
             ? "Files are stored with this case for the report gallery."
@@ -175,7 +184,7 @@ export function PhotoUpload({
           </p>
         ) : null}
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {RECOMMENDED_PHOTO_AREAS.map((area) => {
+          {recommendedAreas.map((area) => {
             const present = providedSet.has(area.type);
             return (
               <li

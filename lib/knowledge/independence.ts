@@ -1,4 +1,9 @@
-import type { EvidenceSeed } from "./schemas";
+import type {
+  CommunitySeed,
+  EvidenceSeed,
+  SellerCommunitySeed,
+  SellerSeed,
+} from "./schemas";
 
 /**
  * Evidence from the same forum/ecosystem is one confirmation, not N.
@@ -28,6 +33,43 @@ export type RecencyBucket =
   | "medium"
   | "lower"
   | "historical";
+
+export type RecognitionIndependenceGroup = Readonly<{
+  independenceGroup: string;
+  recognitions: readonly (SellerCommunitySeed & { displayName: string })[];
+}>;
+
+/**
+ * Group a seller's community records by the community's independence group.
+ * RWF TD listing and RWF giveaway stay one group, not two confirmations.
+ */
+export function recognitionsByIndependenceGroup(
+  seller: SellerSeed,
+  communities: readonly CommunitySeed[],
+): RecognitionIndependenceGroup[] {
+  const byId = new Map(communities.map((community) => [community.id, community]));
+  const grouped = new Map<
+    string,
+    Array<SellerCommunitySeed & { displayName: string }>
+  >();
+
+  for (const recognition of seller.communities) {
+    const community = byId.get(recognition.communityId);
+    const independenceGroup =
+      community?.independenceGroup ?? recognition.communityId;
+    const current = grouped.get(independenceGroup) ?? [];
+    current.push({
+      ...recognition,
+      displayName: community?.displayName ?? recognition.communityId,
+    });
+    grouped.set(independenceGroup, current);
+  }
+
+  return [...grouped.entries()].map(([independenceGroup, recognitions]) => ({
+    independenceGroup,
+    recognitions,
+  }));
+}
 
 export function recencyBucket(
   publishedAt: string | undefined,

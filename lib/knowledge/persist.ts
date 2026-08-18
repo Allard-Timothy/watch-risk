@@ -142,6 +142,28 @@ export async function upsertSeller(seed: SellerSeed) {
   return getSeller(seed.sellerId);
 }
 
+/**
+ * Upsert a resolved seller and the communities it references so
+ * `WatchCase.sellerId` can be stored without a missing-FK error.
+ */
+export async function ensureSellerPersisted(
+  seed: SellerSeed,
+  communities: readonly CommunitySeed[],
+): Promise<void> {
+  const needed = new Set(
+    [
+      ...seed.communities.map((item) => item.communityId),
+      ...seed.evidence.map((item) => item.communityId),
+    ].filter((id): id is string => Boolean(id)),
+  );
+  for (const community of communities) {
+    if (needed.has(community.id)) {
+      await upsertCommunity(community);
+    }
+  }
+  await upsertSeller(seed);
+}
+
 export async function getSeller(id: string) {
   const db = getDbClient();
   return db.seller.findUnique({

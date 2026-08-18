@@ -17,12 +17,15 @@ import {
   MAX_PHOTO_BYTES,
   writeCasePhotoFile,
 } from "@/lib/storage/local";
+import { loadCommunities, loadSellers } from "@/lib/knowledge/load";
+import { ensureSellerPersisted } from "@/lib/knowledge/persist";
+import { resolveSeller } from "@/lib/knowledge/resolve";
 import {
   caseCreateFormSchema,
-  type CaseCreateInput,
+  type CaseCreateFormInput,
 } from "@/lib/validation";
 
-type FieldName = keyof CaseCreateInput;
+type FieldName = keyof CaseCreateFormInput;
 
 export type CreateCaseResult =
   | Readonly<{ ok: true; id: string }>
@@ -48,7 +51,16 @@ export async function createCaseAction(
   }
 
   try {
-    const created = await createWatchCase(parsed.data as CaseCreateInput);
+    const { sellerHandle, ...listing } = parsed.data;
+    const sellers = await loadSellers();
+    const resolved = resolveSeller(sellers, sellerHandle);
+    if (resolved) {
+      const communities = await loadCommunities();
+      await ensureSellerPersisted(resolved.seller, communities);
+    }
+    const created = await createWatchCase(listing, {
+      sellerId: resolved?.seller.sellerId,
+    });
     return { ok: true, id: created.id };
   } catch (error) {
     console.error("createWatchCase failed", error);

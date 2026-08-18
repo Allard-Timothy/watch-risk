@@ -83,9 +83,21 @@ Startup/run caveats (non-obvious):
   metadata. Photo bytes are written under `.data/uploads/{caseId}/`. Before
   saving a case, start Postgres (`docker compose up -d db`) and apply migrations
   (`pnpm exec prisma migrate deploy`). `DATABASE_URL` is in `.env.example`.
-- A saved case report is `/reports/{caseId}` (same id as the case). The sample
-  layout at `/reports/WR-2026-0481` is unchanged. Photos on a saved-case report
-  are served from `/api/cases/{caseId}/images/{imageId}`. GCS is not wired.
+- A saved case report is `/reports/{caseId}` (same id as the case). Opening it
+  writes or updates `AnalysisRun` + `Report` with `modelUsed: deterministic-rules`.
+  The sample layout at `/reports/WR-2026-0481` is unchanged. Photos on a saved-case
+  report are served from `/api/cases/{caseId}/images/{imageId}` and are real
+  `CaseImage` files only (sample wells may still use placeholders). GCS is not wired.
+- Seller handle on intake resolves by exact seller id, canonical name, or an
+  explicit alias. Similar names are never merged (Lin Seller ≠ Lin Feng). The
+  resolved seller is upserted before `WatchCase.sellerId` is stored so the FK
+  succeeds. The report seller card groups community recognition by independence
+  group and links to `/sellers/{id}`. Missing RWI TD is not a negative by itself.
+- If `WatchCase.reference` matches a curated dossier under `data/knowledge/references/`,
+  the generator and case-photo checklist use that required-photo set. `visibleConcerns`
+  come from missing checkpoints, seller `product_claim` flags, and optional manual
+  notes — never from pixel analysis. Factory claim and fulfillment chips are
+  qualitative labels, not dummy scores.
 - Seller/community knowledge is curated local seed data (Zod schemas in
   `lib/knowledge/`, Prisma tables from the `seller_knowledge` migration). Do not
   scrape forums. TD recognition is stored per community, not as `trusted: true`.

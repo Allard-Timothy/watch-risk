@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 import { Card, DashboardMain, PageTitle } from "@/components/dashboard-main";
+import { listWatchCases } from "@/lib/cases/repository";
 import { SAMPLE_REPORT_PATH } from "@/lib/reports/sample-case";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  let recentCases: Awaited<ReturnType<typeof listWatchCases>> = [];
+  try {
+    recentCases = await listWatchCases(8);
+  } catch {
+    recentCases = [];
+  }
+  const latestCase = recentCases[0];
+
   return (
     <DashboardMain>
       <PageTitle
@@ -40,10 +51,10 @@ export default function HomePage() {
             is obvious before you open a report.
           </p>
           <Link
-            href="/cases/draft"
+            href={latestCase ? `/cases/${latestCase.id}` : "/cases/draft"}
             className="mt-5 inline-flex w-fit items-center rounded-lg border border-border px-4 py-2 text-[13px] font-semibold"
           >
-            Open case
+            {latestCase ? "Open latest case" : "Open draft"}
           </Link>
         </Card>
 
@@ -91,6 +102,60 @@ export default function HomePage() {
           </div>
         </Card>
       </div>
+
+      <Card className="mt-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          Recent cases
+        </p>
+        {recentCases.length === 0 ? (
+          <p className="mt-3 text-[13px] leading-6 text-muted-foreground">
+            No saved cases yet. Create a case to persist listing details and
+            photos. This list stays empty if Postgres is not running.
+          </p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border">
+            {recentCases.map((listing) => {
+              const title = [listing.brand, listing.model]
+                .filter(Boolean)
+                .join(" ");
+              const captured = listing.createdAt.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              });
+              return (
+                <li
+                  key={listing.id}
+                  className="flex flex-wrap items-center justify-between gap-3 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-[14px] font-semibold">
+                      {title || "Watch case"}
+                    </p>
+                    <p className="font-mono text-[11px] text-muted-foreground">
+                      {listing.id} · {captured} · {listing.photos.length} photo
+                      {listing.photos.length === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/cases/${listing.id}`}
+                      className="rounded-lg border border-border px-3 py-1.5 text-[12px] font-semibold"
+                    >
+                      Case
+                    </Link>
+                    <Link
+                      href={`/reports/${listing.id}`}
+                      className="rounded-lg bg-foreground px-3 py-1.5 text-[12px] font-semibold text-background"
+                    >
+                      Report
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
 
       <Card className="mt-4 overflow-hidden p-0">
         <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">

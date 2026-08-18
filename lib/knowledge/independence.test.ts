@@ -3,9 +3,14 @@ import { describe, expect, it } from "vitest";
 import {
   evidenceByIndependenceGroup,
   recencyBucket,
+  recognitionsByIndependenceGroup,
   uniqueIndependenceGroups,
 } from "./independence";
-import type { EvidenceSeed } from "./schemas";
+import {
+  communitySeedSchema,
+  sellerSeedSchema,
+  type EvidenceSeed,
+} from "./schemas";
 
 const evidence: EvidenceSeed[] = [
   {
@@ -50,5 +55,36 @@ describe("recencyBucket", () => {
     expect(recencyBucket("2024-09-01", now)).toBe("medium");
     expect(recencyBucket("2023-01-01", now)).toBe("lower");
     expect(recencyBucket("2018-01-01", now)).toBe("historical");
+  });
+});
+
+describe("recognitionsByIndependenceGroup", () => {
+  it("groups RWF records as one confirmation", () => {
+    const seller = sellerSeedSchema.parse({
+      sellerId: "ddgtop",
+      canonicalName: "DDGTOP",
+      communities: [
+        { communityId: "repwatchforum", status: "provisionary_td" },
+        { communityId: "rwi", status: "unknown" },
+      ],
+    });
+    const communities = [
+      communitySeedSchema.parse({
+        id: "repwatchforum",
+        displayName: "RepWatchForum",
+        independenceGroup: "rwf",
+      }),
+      communitySeedSchema.parse({
+        id: "rwi",
+        displayName: "RWI",
+        independenceGroup: "rwi",
+      }),
+    ];
+    const groups = recognitionsByIndependenceGroup(seller, communities);
+    expect(groups.map((group) => group.independenceGroup)).toEqual([
+      "rwf",
+      "rwi",
+    ]);
+    expect(groups[0]?.recognitions[0]?.displayName).toBe("RepWatchForum");
   });
 });

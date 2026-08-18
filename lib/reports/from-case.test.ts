@@ -66,4 +66,13 @@ describe("reportInputFromCase", () => {
 
     expect(reportInputFromCase(withPhotos).providedPhotoTypes).toEqual(["dial"]);
   });
+
+  it("reads full-set claims from listing text", () => {
+    const withSet: PersistedWatchCase = {
+      ...listing,
+      listingText: "Full set with box and papers.",
+    };
+    expect(reportInputFromCase(withSet).claimsFullSet).toBe(true);
+    expect(reportInputFromCase(listing).claimsFullSet).toBe(false);
+  });
 });

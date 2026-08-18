@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 import { Card, CardTitle } from "@/components/dashboard-main";
 import {
@@ -8,6 +9,14 @@ import {
   SellerIcon,
   VisualQcIcon,
 } from "@/components/icons";
+import {
+  COMMUNITY_RECOGNITION_COPY,
+  QUALITATIVE_LABEL_COPY,
+  recognitionsByIndependenceGroup,
+  type CommunitySeed,
+  type ModelDossierSeed,
+  type SellerSeed,
+} from "@/lib/knowledge";
 import type { GeneratedReport } from "@/lib/reports/generate-report";
 import type { ReportInput } from "@/lib/reports/generate-report";
 import {
@@ -77,6 +86,9 @@ type ReportDashboardProps = Readonly<{
   generatedAt: string;
   sample?: boolean;
   photos?: readonly ReportPhoto[];
+  seller?: SellerSeed;
+  communities?: readonly CommunitySeed[];
+  dossier?: ModelDossierSeed;
 }>;
 
 function formatPrice(value: number | undefined): string | null {
@@ -95,41 +107,46 @@ function PhotoWell({
   present,
   src,
   className,
+  allowPlaceholder = false,
 }: Readonly<{
   label: string;
   present: boolean;
   src?: string;
   className?: string;
+  allowPlaceholder?: boolean;
 }>) {
+  const showPhoto = Boolean(src);
+  const showPlaceholder = !showPhoto && present && allowPlaceholder;
+  const filled = showPhoto || showPlaceholder;
   return (
     <div
       className={cn(
         "relative overflow-hidden rounded-xl",
-        src || present
+        filled
           ? "bg-[#d8d5cf]"
           : "border border-dashed border-border bg-muted",
         className,
       )}
     >
-      {src ? (
+      {showPhoto ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
           alt={label}
           className="absolute inset-0 h-full w-full object-cover"
         />
-      ) : present ? (
+      ) : showPlaceholder ? (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_42%),linear-gradient(180deg,rgba(32,34,36,0.05),rgba(32,34,36,0.22))]" />
       ) : null}
       <span
         className={cn(
           "absolute bottom-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-medium",
-          src || present
+          filled
             ? "bg-black/45 text-white"
             : "bg-card/90 text-muted-foreground",
         )}
       >
-        {src || present ? label : `${label} missing`}
+        {filled ? label : `${label} missing`}
       </span>
     </div>
   );
@@ -183,6 +200,9 @@ export function ReportDashboard({
   generatedAt,
   sample = false,
   photos = [],
+  seller,
+  communities = [],
+  dossier,
 }: ReportDashboardProps) {
   const risk = RISK_PRESENTATION[report.overallRisk];
   const providedPhotos = report.photoCompleteness.filter((item) => item.present)
@@ -193,6 +213,17 @@ export function ReportDashboard({
   const movementPresent = provided.has("movement");
   const subtitle = [watch.brand, watch.model].filter(Boolean).join(" ");
   const hero = heroPhotoLayout(photos);
+  const factoryClaim =
+    dossier?.factory && dossier.factory !== "unknown"
+      ? dossier.factory
+      : "Insufficient evidence";
+  const fulfillment =
+    seller?.trustDimensions.find((item) => item.key === "fulfillment_confidence")
+      ?.label ?? "insufficient_evidence";
+  const sellerName = seller?.canonicalName ?? watch.sellerPlatform ?? "Unknown seller";
+  const recognitionGroups = seller
+    ? recognitionsByIndependenceGroup(seller, communities)
+    : [];
 
   return (
     <div className="space-y-5">
@@ -232,6 +263,7 @@ export function ReportDashboard({
             label="Dial"
             present={provided.has("dial") || Boolean(hero.primary)}
             src={hero.primary?.url}
+            allowPlaceholder={sample}
             className="h-full"
           />
           <div className="grid h-full grid-rows-2 gap-3">
@@ -239,12 +271,14 @@ export function ReportDashboard({
               label="Bracelet"
               present={provided.has("bracelet") || Boolean(hero.secondary)}
               src={hero.secondary?.url}
+              allowPlaceholder={sample}
               className="h-full"
             />
             <PhotoWell
               label="Caseback"
               present={provided.has("caseback") || Boolean(hero.tertiary)}
               src={hero.tertiary?.url}
+              allowPlaceholder={sample}
               className="h-full"
             />
           </div>
@@ -298,7 +332,7 @@ export function ReportDashboard({
         </Card>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         <MetricCard
           icon={<VisualQcIcon className="h-4 w-4" />}
           label="Visual QC"
@@ -341,6 +375,18 @@ export function ReportDashboard({
           label="Reference"
           value={watch.reference ?? "None"}
         />
+        <MetricCard
+          icon={<MechanicalIcon className="h-4 w-4" />}
+          label="Factory claim"
+          value={factoryClaim}
+          hint="Curated dossier"
+        />
+        <MetricCard
+          icon={<SellerIcon className="h-4 w-4" />}
+          label="Fulfillment"
+          value={QUALITATIVE_LABEL_COPY[fulfillment]}
+          hint="Seller knowledge"
+        />
       </div>
 
       <p className="rounded-lg border border-border bg-card/80 px-4 py-2.5 text-[12px] leading-5 text-muted-foreground">
@@ -364,6 +410,21 @@ export function ReportDashboard({
         <Card id="seller">
           <CardTitle>Seller & listing</CardTitle>
           <dl className="divide-y divide-border">
+            <DlRow
+              label="Seller"
+              value={
+                seller ? (
+                  <Link
+                    href={`/sellers/${seller.sellerId}`}
+                    className="font-medium text-foreground underline-offset-2 hover:underline"
+                  >
+                    {sellerName}
+                  </Link>
+                ) : (
+                  sellerName
+                )
+              }
+            />
             <DlRow label="Platform" value={watch.sellerPlatform ?? "—"} />
             <DlRow label="Claimed year" value={watch.claimedYear ?? "—"} />
             <DlRow
@@ -375,6 +436,35 @@ export function ReportDashboard({
               value={watch.stockPhotosOnly ? "Yes" : "No"}
             />
           </dl>
+          {recognitionGroups.length > 0 ? (
+            <div className="mt-4 space-y-3 border-t border-border pt-4">
+              {recognitionGroups.map((group) => (
+                <div key={group.independenceGroup}>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    {group.independenceGroup}
+                  </p>
+                  <ul className="mt-1 space-y-1">
+                    {group.recognitions.map((recognition) => (
+                      <li
+                        key={`${recognition.communityId}-${recognition.status}`}
+                        className="text-[12px] leading-5 text-foreground"
+                      >
+                        {recognition.displayName}:{" "}
+                        {COMMUNITY_RECOGNITION_COPY[recognition.status]}
+                        {recognition.statusSince
+                          ? ` · as of ${recognition.statusSince}`
+                          : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <p className="text-[12px] leading-5 text-muted-foreground">
+                Missing a community status is not a negative by itself. Forum TD
+                is evidence with provenance, not a universal trust score.
+              </p>
+            </div>
+          ) : null}
           {report.sellerRiskSignals.length > 0 ? (
             <ul className="mt-4 space-y-2">
               {report.sellerRiskSignals.map((signal) => (
@@ -436,6 +526,7 @@ export function ReportDashboard({
                   label={item.label}
                   present={item.present}
                   src={firstPhotoOfType(photos, item.type)?.url}
+                  allowPlaceholder={sample}
                   className="aspect-square"
                 />
                 <p className="mt-1.5 truncate text-center text-[11px] text-muted-foreground">

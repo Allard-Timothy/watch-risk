@@ -10,6 +10,7 @@ import {
   createWatchCase,
   deleteCaseImage,
   getWatchCase,
+  listWatchCases,
   updateCaseImageType,
 } from "./repository";
 
@@ -96,6 +97,35 @@ describe("watch case repository", () => {
 
     await deleteCaseImage(created.id, photo.id);
     await deleteCasePhotoFile(storagePath);
+    await getDbClient().watchCase.delete({ where: { id: created.id } });
+  });
+
+  it("lists recent cases and persists a generated report", async () => {
+    process.env.DATABASE_URL = DATABASE_URL;
+
+    const created = await createWatchCase({
+      brand: "Rolex",
+      model: "Submariner",
+      reference: "126610LN",
+      listingText: undefined,
+      sellerClaims: undefined,
+    });
+
+    const listed = await listWatchCases(8);
+    expect(listed.some((item) => item.id === created.id)).toBe(true);
+
+    const { generateReport } = await import("@/lib/reports/generate-report");
+    const { persistGeneratedReport } = await import("@/lib/reports/persist");
+    const { reportInputFromCase } = await import("@/lib/reports/from-case");
+
+    const report = generateReport(reportInputFromCase(created));
+    const saved = await persistGeneratedReport(created.id, report);
+    expect(saved.modelUsed).toBe("deterministic-rules");
+    expect(saved.caseId).toBe(created.id);
+
+    const again = await persistGeneratedReport(created.id, report);
+    expect(again.id).toBe(saved.id);
+
     await getDbClient().watchCase.delete({ where: { id: created.id } });
   });
 });
