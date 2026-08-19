@@ -9,7 +9,7 @@ import { toPrismaEnum } from "@/lib/knowledge/enums";
 import type { GeneratedReport } from "./generate-report";
 
 export const DETERMINISTIC_MODEL = "deterministic-rules";
-export const DETERMINISTIC_PROMPT_VERSION = "knowledge-v1";
+export const DETERMINISTIC_PROMPT_VERSION = "knowledge-v2";
 
 /**
  * Persist the latest deterministic report for a saved case.

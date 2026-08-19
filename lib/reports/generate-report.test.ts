@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 
 import { generateReport } from "./generate-report";
 import type { ReportInput } from "./generate-report";
-import { modelDossierSeedSchema, sellerSeedSchema } from "@/lib/knowledge/schemas";
+import {
+  factorySeedSchema,
+  modelDossierSeedSchema,
+  sellerSeedSchema,
+} from "@/lib/knowledge/schemas";
+import { CANNOT_ASSESS_FROM_IMAGES } from "./factory-variance";
+import { containsForbiddenLanguage } from "@/lib/validation";
 
 const baseInput: ReportInput = {
   brand: "Tudor",
@@ -107,5 +115,96 @@ describe("generateReport", () => {
     expect(report.sellerRiskSignals).toContain(
       "Listing text mentions stock or catalogue photos.",
     );
+  });
+
+  it("does not show known factory variance for an unknown factory", () => {
+    const report = generateReport(
+      {
+        brand: "Omega",
+        reference: "310.30.42.50.01.001",
+        askingPrice: 6400,
+        providedPhotoTypes: ["dial", "caseback"],
+      },
+      { dossier: speedmasterDossier },
+    );
+    expect(report.factoryVariance).toBeUndefined();
+    expect(report.visibleConcerns.map((item) => item.finding)).toEqual([
+      CANNOT_ASSESS_FROM_IMAGES,
+    ]);
+  });
+});
+
+const vsfFactory = factorySeedSchema.parse(
+  JSON.parse(
+    readFileSync(
+      path.join(process.cwd(), "data/knowledge/factories/vsf.json"),
+      "utf8",
+    ),
+  ),
+);
+
+const lvDossier = modelDossierSeedSchema.parse({
+  id: "vsf-116610lv",
+  brand: "Rolex",
+  modelFamily: "Submariner",
+  reference: "116610LV",
+  factory: "VSF",
+  requiredPhotos: ["dial", "rehaut", "date_cyclops", "clasp"],
+  riskCheckpoints: {
+    dial: ["date centering"],
+    rehaut: ["rehaut alignment"],
+    clasp: ["SEL fit"],
+  },
+});
+
+describe("generateReport factory variance", () => {
+  it("lists known factory variance without inventing pixel findings", () => {
+    const report = generateReport(
+      {
+        brand: "Rolex",
+        model: "Submariner",
+        reference: "116610LV",
+        askingPrice: 4200,
+        providedPhotoTypes: ["dial", "rehaut", "date_cyclops", "clasp"],
+      },
+      { dossier: lvDossier, factory: vsfFactory },
+    );
+    expect(report.factoryVariance?.factoryName).toBe("VSF");
+    expect(report.visibleConcerns).toEqual([]);
+    expect(
+      report.factoryVariance?.items.every(
+        (item) => item.assessment === "photo_present",
+      ),
+    ).toBe(true);
+    expect(
+      containsForbiddenLanguage(report.factoryVariance?.disclaimer ?? ""),
+    ).toBe(false);
+  });
+
+  it("adds visibleConcerns only when the relevant factory-variance photo is missing", () => {
+    const report = generateReport(
+      {
+        brand: "Rolex",
+        reference: "116610LV",
+        askingPrice: 4200,
+        providedPhotoTypes: ["dial"],
+      },
+      { dossier: lvDossier, factory: vsfFactory },
+    );
+    expect(report.factoryVariance).toBeDefined();
+    expect(
+      report.visibleConcerns.every(
+        (item) => item.finding === CANNOT_ASSESS_FROM_IMAGES,
+      ),
+    ).toBe(true);
+    expect(report.visibleConcerns.map((item) => item.area)).not.toContain(
+      "Dial date centering",
+    );
+    expect(report.visibleConcerns.length).toBeGreaterThan(0);
+    expect(
+      report.visibleConcerns.every(
+        (item) => !containsForbiddenLanguage(item.finding),
+      ),
+    ).toBe(true);
   });
 });

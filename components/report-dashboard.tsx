@@ -17,6 +17,7 @@ import {
   type ModelDossierSeed,
   type SellerSeed,
 } from "@/lib/knowledge";
+import { FACTORY_VARIANCE_ASSESSMENT_COPY } from "@/lib/reports/factory-variance";
 import type { GeneratedReport } from "@/lib/reports/generate-report";
 import type { ReportInput } from "@/lib/reports/generate-report";
 import {
@@ -513,6 +514,47 @@ export function ReportDashboard({
         </Card>
       </div>
 
+      {report.factoryVariance ? (
+        <Card id="factory-variance">
+          <CardTitle>Known factory variance</CardTitle>
+          <p className="text-[13px] leading-6 text-foreground">
+            Factory {report.factoryVariance.factoryName} is a curated label, not
+            a score.
+          </p>
+          <p className="mt-2 text-[12px] leading-5 text-muted-foreground">
+            {report.factoryVariance.disclaimer}
+          </p>
+          <ul className="mt-4 space-y-3">
+            {report.factoryVariance.items.map((item) => (
+              <li
+                key={item.id}
+                className="rounded-lg border border-border bg-muted/40 p-3"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[13px] font-semibold">{item.area}</p>
+                  <span
+                    className={cn(
+                      "rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-[0.02em]",
+                      item.assessment === "cannot_assess"
+                        ? "border-amber-200 bg-amber-50 text-amber-800"
+                        : "border-border bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {FACTORY_VARIANCE_ASSESSMENT_COPY[item.assessment]}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-[13px] leading-5">{item.lookFor}</p>
+                {item.photosCannotShow ? (
+                  <p className="mt-1 text-[12px] leading-5 text-muted-foreground">
+                    Photos cannot show: {item.photosCannotShow}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
+
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)]">
         <Card>
           <CardTitle>Evidence</CardTitle>
@@ -563,9 +605,9 @@ export function ReportDashboard({
             </p>
           ) : (
             <ul className="space-y-3">
-              {report.visibleConcerns.map((concern) => (
+              {report.visibleConcerns.map((concern, index) => (
                 <li
-                  key={concern.area}
+                  key={`${concern.area}-${index}`}
                   className="rounded-lg border border-border bg-muted/40 p-3"
                 >
                   <div className="flex items-center justify-between gap-3">

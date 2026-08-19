@@ -6,9 +6,11 @@ import { ReportDashboard } from "@/components/report-dashboard";
 import { getWatchCase } from "@/lib/cases/repository";
 import {
   loadCommunities,
+  loadFactories,
   loadModelDossiers,
   loadSellers,
 } from "@/lib/knowledge/load";
+import { matchFactory } from "@/lib/knowledge/match-factory";
 import { matchModelDossier } from "@/lib/knowledge/match-reference";
 import { reportInputFromCase } from "@/lib/reports/from-case";
 import { generateReport } from "@/lib/reports/generate-report";
@@ -68,10 +70,11 @@ export default async function ReportPage({ params }: ReportPageProps) {
     notFound();
   }
 
-  const [sellers, dossiers, communities] = await Promise.all([
+  const [sellers, dossiers, communities, factories] = await Promise.all([
     loadSellers(),
     loadModelDossiers(),
     loadCommunities(),
+    loadFactories(),
   ]);
   const seller = listing.sellerId
     ? sellers.find((item) => item.sellerId === listing.sellerId)
@@ -81,8 +84,11 @@ export default async function ReportPage({ params }: ReportPageProps) {
     listing.brand,
     listing.reference,
   );
+  const factory = dossier
+    ? matchFactory(factories, dossier.factory)
+    : undefined;
   const watch = reportInputFromCase(listing);
-  const report = generateReport(watch, { dossier, seller });
+  const report = generateReport(watch, { dossier, factory, seller });
   try {
     await persistGeneratedReport(listing.id, report);
   } catch (error) {
