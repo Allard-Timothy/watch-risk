@@ -2,24 +2,33 @@
 
 Use this guide when adding structured support for a new watch reference.
 
-The initial implementation may not have a full reference database yet. This guide describes the intended path.
+Curated dossiers live under `data/knowledge/references/` as one JSON file per
+reference. Zod validates them through `modelDossierSeedSchema` in
+`lib/knowledge/schemas.ts`. Do not scrape forums.
 
 ## 1. Create the reference record
 
-Capture:
+Add `data/knowledge/references/<id>.json` with:
 
-- brand
-- model family
-- reference number
-- case size
-- movement family
-- bracelet options
-- clasp type
-- bezel type
-- dial variants
-- expected photo checklist
+- `id` (stable slug, for example `vsf-126610ln`)
+- `brand`
+- `modelFamily`
+- `reference`
+- `factory` (use a canonical factory label already in
+  `data/knowledge/factories/`, or `unknown`)
+- `factoryVersion` when a curated factory version id is known
+- `requiredPhotos` and `optionalPhotos` (photo-type keys such as `dial`,
+  `rehaut`, `clasp`)
+- `riskCheckpoints` keyed by photo type
+- `knownVariance` (area, optional photo type, what buyers should look for,
+  what photos cannot show)
+- `highValueChecks` (seller questions for missing evidence)
+- `notes`
 
-## 2. Add risk checkpoints
+Keep user-facing copy free of conclusion words such as authentic, genuine,
+fake, counterfeit, certified, verified, guaranteed, or passed.
+
+## 2. Add risk checkpoints and known variance
 
 For each reference, document:
 
@@ -32,7 +41,10 @@ For each reference, document:
 - movement checks
 - known photo limitations
 
-Do not include counterfeit improvement instructions.
+Known variance is qualitative. It is what buyers should ask to see, not proof
+that a submitted photo shows a defect.
+
+Do not include improvement instructions for replica construction.
 
 ## 3. Update required photos
 
@@ -53,25 +65,27 @@ Rolex Submariner 126610LN:
     - timegrapher
 ```
 
-## 4. Add prompt context
+## 4. High-value seller questions
 
-Add reference-specific context to the analysis layer.
+`highValueChecks` are questions to ask when the matching photo is missing.
+They should use safer language (`cannot assess from submitted images`,
+`independent inspection recommended`).
 
-Do not let the prompt produce authentication claims.
+The report generator can consume these later; this seed is still useful as a
+read-only dossier at `/references/[id]`.
 
 ## 5. Add tests
 
-Add tests for:
+Add or extend tests for:
 
+- seed parse of the new JSON file
+- forbidden-word scan on notes, known variance, and seller questions
 - missing required photos
-- confidence capping
-- report wording
-- unsafe terms
 - reference mismatch handling
 
 ## 6. Update docs
 
 Update:
 
-- `docs/architecture-typescript.md` (data model)
-- `docs/explanation/risk-scoring.md`
+- `docs/architecture-typescript.md` (data model) when the dossier shape changes
+- this file if you add required dossier fields

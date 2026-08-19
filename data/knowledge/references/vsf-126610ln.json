@@ -4,6 +4,7 @@
   "modelFamily": "Submariner",
   "reference": "126610LN",
   "factory": "VSF",
+  "factoryVersion": "vsf-current",
   "requiredPhotos": ["dial", "rehaut", "clasp", "caseback"],
   "optionalPhotos": ["bracelet", "movement", "papers"],
   "riskCheckpoints": {
@@ -11,5 +12,48 @@
     "rehaut": ["laser etching visibility"],
     "clasp": ["clasp code and end-link fit"]
   },
-  "notes": "Curated starting checklist only. Missing a required photo means that area cannot be assessed from submitted images."
+  "knownVariance": [
+    {
+      "area": "Dial date window",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "Straight-on dial photo in even light so date-window alignment can be discussed.",
+      "whatPhotosCannotShow": "How the date changes through the month, lume duration, or how the dial looks in person under mixed lighting."
+    },
+    {
+      "area": "Dial lume plots",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "A sharp dial photo that shows lume plot shape and placement on the markers.",
+      "whatPhotosCannotShow": "Lume brightness after hours, color shift, or consistency across a batch."
+    },
+    {
+      "area": "Rehaut",
+      "photoType": "rehaut",
+      "whatBuyersShouldLookFor": "A rehaut photo that shows whether laser etching is visible around the inner ring.",
+      "whatPhotosCannotShow": "Etching depth, durability, or how the rehaut looks off-camera at other angles."
+    },
+    {
+      "area": "Clasp and end links",
+      "photoType": "clasp",
+      "whatBuyersShouldLookFor": "Close photos of clasp code and end-link fit against the case.",
+      "whatPhotosCannotShow": "How the clasp feels in hand, long-term wear, or bracelet stretch."
+    }
+  ],
+  "highValueChecks": [
+    {
+      "area": "Dial",
+      "photoType": "dial",
+      "sellerQuestion": "Can you send a straight-on dial photo in even light so date-window alignment and lume plots can be discussed?"
+    },
+    {
+      "area": "Rehaut",
+      "photoType": "rehaut",
+      "sellerQuestion": "Can you send a rehaut photo that shows whether inner-ring etching is visible?"
+    },
+    {
+      "area": "Clasp",
+      "photoType": "clasp",
+      "sellerQuestion": "Can you send close photos of the clasp code and how the end links sit against the case?"
+    }
+  ],
+  "notes": "Curated starting checklist only. Missing a required photo means that area cannot be assessed from submitted images. Factory version vsf-current is a qualitative snapshot, not a production-date score."
 }

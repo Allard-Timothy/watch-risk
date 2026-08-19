@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { factorySeedSchema, sellerSeedSchema } from "./schemas";
+import { factorySeedSchema, modelDossierSeedSchema, sellerSeedSchema } from "./schemas";
 
 const fixture = {
   sellerId: "ddgtop",
@@ -131,5 +131,38 @@ describe("factorySeedSchema", () => {
     });
     expect(parsed.defects[0]?.photoType).toBe("rehaut");
     expect(parsed.defects[0]?.references).toEqual(["126610LN"]);
+  });
+});
+
+describe("modelDossierSeedSchema", () => {
+  it("accepts known variance and high-value seller questions", () => {
+    const parsed = modelDossierSeedSchema.parse({
+      id: "vsf-126610ln",
+      brand: "Rolex",
+      modelFamily: "Submariner",
+      reference: "126610LN",
+      factory: "VSF",
+      factoryVersion: "vsf-current",
+      requiredPhotos: ["dial"],
+      knownVariance: [
+        {
+          area: "Rehaut",
+          photoType: "rehaut",
+          whatBuyersShouldLookFor: "A rehaut photo in even light.",
+          whatPhotosCannotShow: "Etching depth after delivery.",
+        },
+      ],
+      highValueChecks: [
+        {
+          area: "Rehaut",
+          photoType: "rehaut",
+          sellerQuestion:
+            "Can you send a rehaut photo so inner-ring etching can be discussed?",
+        },
+      ],
+    });
+    expect(parsed.factoryVersion).toBe("vsf-current");
+    expect(parsed.knownVariance).toHaveLength(1);
+    expect(parsed.highValueChecks[0]?.sellerQuestion).toMatch(/rehaut/i);
   });
 });
