@@ -144,3 +144,30 @@ Keep PRs small. Forbidden conclusion words stay out of seed and UI.
    references with `knownVariance` / `highValueChecks` (and factory version when
    known). Optional `/references/[id]` read-only page. Generator uses those checks
    for seller questions. Follow `docs/how-to/add-a-new-watch-reference.md`.
+
+## Parallel Cloud Agents (collision rules)
+
+Run one Cloud Agent per queued PR. Each agent owns a unique
+`cursor/<short-name>-5373` branch off `origin/main` and a draft PR to `main`.
+Do not stack on another agent’s unmerged branch unless the prompt says to.
+
+Before editing, check open PRs and your ownership table. If a needed file is
+owned by another in-flight PR, stop and say so — do not “just touch it.”
+
+### File ownership (do not overlap)
+
+| Queue PR | Owns (only these) | Do not edit |
+|---|---|---|
+| 1 Factory ontology + seed | `prisma/schema.prisma`, `prisma/migrations/`, `lib/knowledge/schemas.ts`, `lib/knowledge/enums.ts`, `lib/knowledge/load.ts`, `lib/knowledge/persist.ts`, `lib/knowledge/index.ts`, `data/knowledge/factories/` | UI routes, report generator, seller/compare pages |
+| 2 Factory pages | `app/factories/`, factory components, sidebar/overview **link-only** hunks | Prisma, seed schemas, `lib/reports/` |
+| 3 Wire defects into reports | `lib/reports/`, `components/report-dashboard.tsx`, `app/reports/` | Prisma, factory seed, seller/compare pages |
+| 4 Seller/compare follow-through | `app/sellers/`, `app/compare/`, `lib/knowledge/compare.ts`, `lib/knowledge/resolve.ts`, case-form/detail seller-handle copy | Prisma, `data/knowledge/factories/`, `lib/reports/generate-report.ts` |
+| 5 Thicker dossiers | `data/knowledge/references/`, optional `app/references/`, `docs/how-to/add-a-new-watch-reference.md` | Prisma, factory seed, seller/compare pages |
+
+Shared files (`components/sidebar.tsx`, `components/app-shell.tsx`, `app/page.tsx`, `AGENTS.md`): make the smallest possible hunk (one nav link / one sentence). If another PR already changed that file, wait or call it out.
+
+**Never in parallel with another agent:** new npm/pnpm dependencies, `pnpm-lock.yaml`, Prisma migrations, or rewriting `lib/knowledge/schemas.ts`.
+
+Safe parallel sets: **1 + 4 + 5**. Not safe: **2 or 3 until 1 is merged**; **3 until 1 (and preferably 2) is merged**.
+
+Do not rebase, force-push, or merge other agents’ branches. Do not scrape. Draft PR only.
