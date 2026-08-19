@@ -132,6 +132,21 @@ export const communityCompareCaseSchema = z.object({
 });
 export type CommunityCompareCase = z.infer<typeof communityCompareCaseSchema>;
 
+export const knownVarianceSeedSchema = z.object({
+  area: z.string().trim().min(1).max(80),
+  photoType: z.string().trim().min(1).max(40).optional(),
+  whatBuyersShouldLookFor: z.string().trim().min(1).max(2000),
+  whatPhotosCannotShow: z.string().trim().min(1).max(2000),
+});
+export type KnownVarianceSeed = z.infer<typeof knownVarianceSeedSchema>;
+
+export const highValueCheckSeedSchema = z.object({
+  area: z.string().trim().min(1).max(80),
+  photoType: z.string().trim().min(1).max(40).optional(),
+  sellerQuestion: z.string().trim().min(1).max(2000),
+});
+export type HighValueCheckSeed = z.infer<typeof highValueCheckSeedSchema>;
+
 export const modelDossierSeedSchema = z.object({
   id: z.string().trim().min(1).max(80),
   brand: z.string().trim().min(1).max(80),
@@ -143,6 +158,9 @@ export const modelDossierSeedSchema = z.object({
   riskCheckpoints: z
     .record(z.string(), z.array(z.string().trim().min(1).max(200)))
     .default({}),
+  factoryVersion: z.string().trim().min(1).max(80).optional(),
+  knownVariance: z.array(knownVarianceSeedSchema).default([]),
+  highValueChecks: z.array(highValueCheckSeedSchema).default([]),
   notes: z.string().max(4000).optional(),
 });
 export type ModelDossierSeed = z.infer<typeof modelDossierSeedSchema>;

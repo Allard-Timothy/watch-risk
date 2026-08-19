@@ -4,6 +4,7 @@
   "modelFamily": "Speedmaster",
   "reference": "310.30.42.50.01.001",
   "factory": "unknown",
+  "factoryVersion": "unknown-unspecified",
   "requiredPhotos": ["dial", "caseback", "movement"],
   "optionalPhotos": ["bracelet", "clasp", "papers"],
   "riskCheckpoints": {
@@ -11,5 +12,31 @@
     "caseback": ["caseback markings"],
     "movement": ["movement photo or independent inspection"]
   },
-  "notes": "Generic Speedmaster checklist used when factory attribution is unknown. Movement cannot be assessed without a movement photo."
+  "knownVariance": [
+    {
+      "area": "Movement",
+      "photoType": "movement",
+      "whatBuyersShouldLookFor": "A movement photo, or an offer of independent inspection, before treating the listing as photographically complete.",
+      "whatPhotosCannotShow": "Timekeeping, service history, or how the movement will behave after delivery."
+    },
+    {
+      "area": "Caseback",
+      "photoType": "caseback",
+      "whatBuyersShouldLookFor": "A caseback photo so markings can be compared to the claimed reference notes.",
+      "whatPhotosCannotShow": "Whether the caseback has been opened, resealed, or refinished."
+    }
+  ],
+  "highValueChecks": [
+    {
+      "area": "Movement",
+      "photoType": "movement",
+      "sellerQuestion": "Can you send a movement photo, or confirm that an independent inspection is available before purchase?"
+    },
+    {
+      "area": "Caseback",
+      "photoType": "caseback",
+      "sellerQuestion": "Can you send a caseback photo so markings can be compared to the claimed reference notes?"
+    }
+  ],
+  "notes": "Generic Speedmaster checklist used when factory attribution is unknown. Movement cannot be assessed without a movement photo. Missing a factory name is not a negative by itself."
 }

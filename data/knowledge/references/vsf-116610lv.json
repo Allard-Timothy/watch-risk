@@ -4,6 +4,7 @@
   "modelFamily": "Submariner",
   "reference": "116610LV",
   "factory": "VSF",
+  "factoryVersion": "vsf-current",
   "requiredPhotos": ["dial", "rehaut", "date_cyclops", "clasp"],
   "optionalPhotos": ["caseback", "bracelet", "movement"],
   "riskCheckpoints": {
@@ -11,5 +12,42 @@
     "rehaut": ["rehaut alignment"],
     "clasp": ["SEL fit"]
   },
-  "notes": "Curated starting checklist. Crystal and cyclops observations require a straight-on dial photo."
+  "knownVariance": [
+    {
+      "area": "Dial date centering",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "A straight-on dial photo so date centering in the window can be discussed.",
+      "whatPhotosCannotShow": "Cyclops magnification in person or how centering looks at other wrist angles."
+    },
+    {
+      "area": "Rehaut alignment",
+      "photoType": "rehaut",
+      "whatBuyersShouldLookFor": "A rehaut photo that shows inner-ring alignment relative to the dial.",
+      "whatPhotosCannotShow": "Whether alignment holds after shipping or after the crystal is disturbed."
+    },
+    {
+      "area": "SEL fit",
+      "photoType": "clasp",
+      "whatBuyersShouldLookFor": "Photos of solid end-link fit against the case lugs.",
+      "whatPhotosCannotShow": "Gap feel on the wrist or how the bracelet sits after a few weeks of wear."
+    }
+  ],
+  "highValueChecks": [
+    {
+      "area": "Dial",
+      "photoType": "dial",
+      "sellerQuestion": "Can you send a straight-on dial photo so date centering in the window can be discussed?"
+    },
+    {
+      "area": "Rehaut",
+      "photoType": "rehaut",
+      "sellerQuestion": "Can you send a rehaut photo that shows inner-ring alignment relative to the dial?"
+    },
+    {
+      "area": "Clasp",
+      "photoType": "clasp",
+      "sellerQuestion": "Can you send photos of solid end-link fit against the case lugs?"
+    }
+  ],
+  "notes": "Curated starting checklist. Crystal and cyclops observations require a straight-on dial photo. Factory version vsf-current is a qualitative snapshot, not a production-date score."
 }

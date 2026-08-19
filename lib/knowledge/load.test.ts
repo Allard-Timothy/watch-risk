@@ -36,6 +36,10 @@ describe("knowledge seed corpus", () => {
     expect(compare.overlapPercent).toBeLessThan(50);
     expect(compareCases[0]?.id).toBe("reptime-vs-repwatchforum");
     expect(dossiers.some((item) => item.reference === "126610LN")).toBe(true);
+    const submariner = dossiers.find((item) => item.reference === "126610LN");
+    expect(submariner?.factoryVersion).toBe("vsf-current");
+    expect(submariner?.knownVariance.length).toBeGreaterThan(0);
+    expect(submariner?.highValueChecks.length).toBeGreaterThan(0);
     expect(factories.map((item) => item.factoryId).sort()).toEqual([
       "unknown",
       "vsf",
@@ -66,6 +70,20 @@ describe("knowledge seed corpus", () => {
           defect.whatBuyersShouldLookFor,
           defect.whatPhotosCannotShow,
         ]),
+      ]
+        .filter(Boolean)
+        .join(" ");
+      expect(findForbiddenWords(text)).toEqual([]);
+    }
+
+    for (const dossier of dossiers) {
+      const text = [
+        dossier.notes,
+        ...dossier.knownVariance.flatMap((item) => [
+          item.whatBuyersShouldLookFor,
+          item.whatPhotosCannotShow,
+        ]),
+        ...dossier.highValueChecks.map((item) => item.sellerQuestion),
       ]
         .filter(Boolean)
         .join(" ");
