@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sellerSeedSchema } from "./schemas";
+import { factorySeedSchema, sellerSeedSchema } from "./schemas";
 
 const fixture = {
   sellerId: "ddgtop",
@@ -108,5 +108,28 @@ describe("sellerSeedSchema", () => {
     });
     expect(parsed.aliases).toEqual([]);
     expect(parsed.canonicalName).not.toMatch(/feng/i);
+  });
+});
+
+describe("factorySeedSchema", () => {
+  it("accepts qualitative known-defect notes", () => {
+    const parsed = factorySeedSchema.parse({
+      factoryId: "vsf",
+      canonicalName: "VSF",
+      versions: [{ id: "vsf-current", label: "Current curated notes" }],
+      defects: [
+        {
+          id: "vsf-rehaut",
+          area: "Rehaut",
+          photoType: "rehaut",
+          whatBuyersShouldLookFor: "A rehaut photo in even light.",
+          whatPhotosCannotShow: "Etching depth after delivery.",
+          references: ["126610LN"],
+          factoryVersionId: "vsf-current",
+        },
+      ],
+    });
+    expect(parsed.defects[0]?.photoType).toBe("rehaut");
+    expect(parsed.defects[0]?.references).toEqual(["126610LN"]);
   });
 });

@@ -1,0 +1,77 @@
+{
+  "factoryId": "vsf",
+  "canonicalName": "VSF",
+  "notes": "Curated starting notes for VSF-attributed listings already named on model dossiers. A factory label on a listing is a claim, not a conclusion from photos. Known variance below is what buyers should ask to see; it is not proof that a submitted photo shows a defect.",
+  "versions": [
+    {
+      "id": "vsf-current",
+      "label": "Current curated notes",
+      "notes": "Version is not resolved from listing photos in this MVP. Treat this as a single qualitative snapshot, not a production-date score."
+    }
+  ],
+  "defects": [
+    {
+      "id": "vsf-126610ln-date-alignment",
+      "area": "Dial date window",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "Straight-on dial photo in even light so date-window alignment can be discussed.",
+      "whatPhotosCannotShow": "How the date changes through the month, lume duration, or how the dial looks in person under mixed lighting.",
+      "references": ["126610LN"],
+      "factoryVersionId": "vsf-current"
+    },
+    {
+      "id": "vsf-126610ln-lume-plots",
+      "area": "Dial lume plots",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "A sharp dial photo that shows lume plot shape and placement on the markers.",
+      "whatPhotosCannotShow": "Lume brightness after hours, color shift, or consistency across a batch.",
+      "references": ["126610LN"],
+      "factoryVersionId": "vsf-current"
+    },
+    {
+      "id": "vsf-126610ln-rehaut",
+      "area": "Rehaut",
+      "photoType": "rehaut",
+      "whatBuyersShouldLookFor": "A rehaut photo that shows whether laser etching is visible around the inner ring.",
+      "whatPhotosCannotShow": "Etching depth, durability, or how the rehaut looks off-camera at other angles.",
+      "references": ["126610LN"],
+      "factoryVersionId": "vsf-current"
+    },
+    {
+      "id": "vsf-126610ln-clasp",
+      "area": "Clasp and end links",
+      "photoType": "clasp",
+      "whatBuyersShouldLookFor": "Close photos of clasp code and end-link fit against the case.",
+      "whatPhotosCannotShow": "How the clasp feels in hand, long-term wear, or bracelet stretch.",
+      "references": ["126610LN"],
+      "factoryVersionId": "vsf-current"
+    },
+    {
+      "id": "vsf-116610lv-date-centering",
+      "area": "Dial date centering",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "A straight-on dial photo so date centering in the window can be discussed.",
+      "whatPhotosCannotShow": "Cyclops magnification in person or how centering looks at other wrist angles.",
+      "references": ["116610LV"],
+      "factoryVersionId": "vsf-current"
+    },
+    {
+      "id": "vsf-116610lv-rehaut",
+      "area": "Rehaut alignment",
+      "photoType": "rehaut",
+      "whatBuyersShouldLookFor": "A rehaut photo that shows inner-ring alignment relative to the dial.",
+      "whatPhotosCannotShow": "Whether alignment holds after shipping or after the crystal is disturbed.",
+      "references": ["116610LV"],
+      "factoryVersionId": "vsf-current"
+    },
+    {
+      "id": "vsf-116610lv-sel",
+      "area": "SEL fit",
+      "photoType": "clasp",
+      "whatBuyersShouldLookFor": "Photos of solid end-link fit against the case lugs.",
+      "whatPhotosCannotShow": "Gap feel on the wrist or how the bracelet sits after a few weeks of wear.",
+      "references": ["116610LV"],
+      "factoryVersionId": "vsf-current"
+    }
+  ]
+}

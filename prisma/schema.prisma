@@ -365,3 +365,44 @@ model Claim {
 
   @@index([subjectType, subjectId])
 }
+
+model Factory {
+  id             String           @id
+  canonicalName  String
+  notes          String?
+  versions       FactoryVersion[]
+  defects        Defect[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model FactoryVersion {
+  id        String   @id
+  factoryId String
+  factory   Factory  @relation(fields: [factoryId], references: [id], onDelete: Cascade)
+  label     String
+  notes     String?
+  defects   Defect[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([factoryId])
+}
+
+model Defect {
+  id                       String          @id
+  factoryId                String
+  factory                  Factory         @relation(fields: [factoryId], references: [id], onDelete: Cascade)
+  factoryVersionId         String?
+  factoryVersion           FactoryVersion? @relation(fields: [factoryVersionId], references: [id], onDelete: SetNull)
+  area                     String
+  photoType                String?
+  whatBuyersShouldLookFor  String
+  whatPhotosCannotShow     String
+  references               String[]
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+
+  @@index([factoryId])
+  @@index([factoryVersionId])
+}

@@ -4,14 +4,16 @@ import path from "node:path";
 import {
   communityCompareCaseSchema,
   communitySeedSchema,
+  factorySeedSchema,
   modelDossierSeedSchema,
   sellerSeedSchema,
   type CommunityCompareCase,
   type CommunitySeed,
+  type FactorySeed,
   type ModelDossierSeed,
   type SellerSeed,
 } from "./schemas";
-import { upsertCommunity, upsertSeller } from "./persist";
+import { assertFactorySeed, upsertCommunity, upsertFactory, upsertSeller } from "./persist";
 
 const KNOWLEDGE_ROOT = path.join(process.cwd(), "data", "knowledge");
 
@@ -60,9 +62,21 @@ export async function loadModelDossiers(): Promise<ModelDossierSeed[]> {
   return dossiers;
 }
 
+export async function loadFactories(): Promise<FactorySeed[]> {
+  const dir = path.join(KNOWLEDGE_ROOT, "factories");
+  const files = (await readdir(dir)).filter((name) => name.endsWith(".json"));
+  const factories: FactorySeed[] = [];
+  for (const file of files.sort()) {
+    const payload = await readJsonFile(path.join(dir, file));
+    factories.push(assertFactorySeed(factorySeedSchema.parse(payload)));
+  }
+  return factories;
+}
+
 export async function seedKnowledge(): Promise<{
   communities: number;
   sellers: number;
+  factories: number;
 }> {
   const communities = await loadCommunities();
   for (const community of communities) {
@@ -72,7 +86,15 @@ export async function seedKnowledge(): Promise<{
   for (const seller of sellers) {
     await upsertSeller(seller);
   }
-  return { communities: communities.length, sellers: sellers.length };
+  const factories = await loadFactories();
+  for (const factory of factories) {
+    await upsertFactory(factory);
+  }
+  return {
+    communities: communities.length,
+    sellers: sellers.length,
+    factories: factories.length,
+  };
 }
 
 function zArray<T>(schema: { parse: (value: unknown) => T }): {
