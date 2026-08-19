@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 function isActive(
   pathname: string,
-  match: "exact" | "cases" | "report" | "sellers",
+  match: "exact" | "cases" | "report" | "sellers" | "factories",
   label: string,
 ) {
   if (match === "exact") {
@@ -28,6 +28,9 @@ function isActive(
   }
   if (match === "sellers") {
     return pathname.startsWith("/sellers") || pathname.startsWith("/compare");
+  }
+  if (match === "factories") {
+    return pathname.startsWith("/factories");
   }
   if (match === "report") {
     return label === "Visual QC" && pathname.startsWith("/reports");
@@ -48,6 +51,12 @@ export function Sidebar() {
       label: "Sellers",
       icon: SellerIcon,
       match: "sellers" as const,
+    },
+    {
+      href: "/factories",
+      label: "Factories",
+      icon: MechanicalIcon,
+      match: "factories" as const,
     },
     {
       href: reportBase,
