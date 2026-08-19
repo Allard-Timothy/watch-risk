@@ -10,7 +10,7 @@ import type {
 
 import { getDbClient } from "@/lib/db";
 import { fromPrismaEnum, toPrismaEnum } from "./enums";
-import type { CommunitySeed, SellerSeed } from "./schemas";
+import type { CommunitySeed, FactorySeed, SellerSeed } from "./schemas";
 
 function parseOptionalDate(value: string | undefined): Date | undefined {
   if (!value) {
@@ -175,6 +175,75 @@ export async function getSeller(id: string) {
       riskFlags: true,
       evidence: true,
     },
+  });
+}
+
+export function assertFactorySeed(seed: FactorySeed): FactorySeed {
+  const versionIds = new Set(seed.versions.map((version) => version.id));
+  for (const defect of seed.defects) {
+    if (defect.factoryVersionId && !versionIds.has(defect.factoryVersionId)) {
+      throw new Error(
+        `Defect ${defect.id} references unknown factory version ${defect.factoryVersionId}`,
+      );
+    }
+  }
+  return seed;
+}
+
+export async function upsertFactory(seed: FactorySeed) {
+  const db = getDbClient();
+  assertFactorySeed(seed);
+
+  await db.factory.upsert({
+    where: { id: seed.factoryId },
+    create: {
+      id: seed.factoryId,
+      canonicalName: seed.canonicalName,
+      notes: seed.notes,
+    },
+    update: {
+      canonicalName: seed.canonicalName,
+      notes: seed.notes,
+    },
+  });
+
+  await db.defect.deleteMany({ where: { factoryId: seed.factoryId } });
+  await db.factoryVersion.deleteMany({ where: { factoryId: seed.factoryId } });
+
+  if (seed.versions.length > 0) {
+    await db.factoryVersion.createMany({
+      data: seed.versions.map((version) => ({
+        id: version.id,
+        factoryId: seed.factoryId,
+        label: version.label,
+        notes: version.notes,
+      })),
+    });
+  }
+
+  if (seed.defects.length > 0) {
+    await db.defect.createMany({
+      data: seed.defects.map((defect) => ({
+        id: defect.id,
+        factoryId: seed.factoryId,
+        factoryVersionId: defect.factoryVersionId,
+        area: defect.area,
+        photoType: defect.photoType,
+        whatBuyersShouldLookFor: defect.whatBuyersShouldLookFor,
+        whatPhotosCannotShow: defect.whatPhotosCannotShow,
+        references: defect.references,
+      })),
+    });
+  }
+
+  return getFactory(seed.factoryId);
+}
+
+export async function getFactory(id: string) {
+  const db = getDbClient();
+  return db.factory.findUnique({
+    where: { id },
+    include: { versions: true, defects: true },
   });
 }
 

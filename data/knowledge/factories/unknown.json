@@ -1,0 +1,32 @@
+{
+  "factoryId": "unknown",
+  "canonicalName": "Unknown",
+  "notes": "Use this factory when a listing or dossier does not name a factory, or when attribution is insufficient from curated notes. Missing a factory name is not a negative by itself; it means factory-specific variance cannot be assessed.",
+  "versions": [
+    {
+      "id": "unknown-unspecified",
+      "label": "Unspecified",
+      "notes": "No factory version is claimed. Photo checklists stay generic."
+    }
+  ],
+  "defects": [
+    {
+      "id": "unknown-movement-photo",
+      "area": "Movement",
+      "photoType": "movement",
+      "whatBuyersShouldLookFor": "A movement photo, or an offer of independent inspection, before treating the listing as photographically complete.",
+      "whatPhotosCannotShow": "Timekeeping, service history, or how the movement will behave after delivery.",
+      "references": ["310.30.42.50.01.001"],
+      "factoryVersionId": "unknown-unspecified"
+    },
+    {
+      "id": "unknown-caseback-markings",
+      "area": "Caseback",
+      "photoType": "caseback",
+      "whatBuyersShouldLookFor": "A caseback photo so markings can be compared to the claimed reference notes.",
+      "whatPhotosCannotShow": "Whether the caseback has been opened, resealed, or refinished.",
+      "references": ["310.30.42.50.01.001"],
+      "factoryVersionId": "unknown-unspecified"
+    }
+  ]
+}

@@ -2,8 +2,8 @@ import { afterAll, describe, expect, it } from "vitest";
 
 import { getDbClient } from "@/lib/db";
 import { uniqueIndependenceGroups } from "./independence";
-import { upsertCommunity, upsertSeller } from "./persist";
-import { communitySeedSchema, sellerSeedSchema } from "./schemas";
+import { assertFactorySeed, upsertCommunity, upsertFactory, upsertSeller } from "./persist";
+import { communitySeedSchema, factorySeedSchema, sellerSeedSchema } from "./schemas";
 
 describe("seller knowledge persist", () => {
   it("round-trips a seller without treating RWF evidence as independent", async () => {
@@ -71,6 +71,61 @@ describe("seller knowledge persist", () => {
     ]);
 
     await getDbClient().seller.delete({ where: { id: "ddgtop-test" } });
+  });
+
+  it("round-trips a factory and known-defect notes", async () => {
+    const seed = factorySeedSchema.parse({
+      factoryId: "vsf-test",
+      canonicalName: "VSF",
+      notes: "Curated test notes. A factory label is a claim, not a photo conclusion.",
+      versions: [
+        {
+          id: "vsf-test-current",
+          label: "Current curated notes",
+        },
+      ],
+      defects: [
+        {
+          id: "vsf-test-rehaut",
+          area: "Rehaut",
+          photoType: "rehaut",
+          whatBuyersShouldLookFor:
+            "A rehaut photo so laser etching visibility can be discussed.",
+          whatPhotosCannotShow:
+            "Etching depth or how the ring looks off-camera.",
+          references: ["126610LN"],
+          factoryVersionId: "vsf-test-current",
+        },
+      ],
+    });
+
+    const stored = await upsertFactory(seed);
+    expect(stored?.canonicalName).toBe("VSF");
+    expect(stored?.versions).toHaveLength(1);
+    expect(stored?.defects[0]?.photoType).toBe("rehaut");
+    expect(stored?.defects[0]?.references).toEqual(["126610LN"]);
+
+    await getDbClient().factory.delete({ where: { id: "vsf-test" } });
+  });
+
+  it("rejects a defect that points at an unknown factory version", () => {
+    const seed = factorySeedSchema.parse({
+      factoryId: "vsf-bad-version",
+      canonicalName: "VSF",
+      versions: [{ id: "vsf-current", label: "Current curated notes" }],
+      defects: [
+        {
+          id: "vsf-bad-rehaut",
+          area: "Rehaut",
+          photoType: "rehaut",
+          whatBuyersShouldLookFor: "A rehaut photo in even light.",
+          whatPhotosCannotShow: "Etching depth after delivery.",
+          factoryVersionId: "vsf-missing",
+        },
+      ],
+    });
+
+    expect(() => assertFactorySeed(seed)).toThrow(/unknown factory version/);
   });
 });
 

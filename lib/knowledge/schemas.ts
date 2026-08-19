@@ -146,3 +146,30 @@ export const modelDossierSeedSchema = z.object({
   notes: z.string().max(4000).optional(),
 });
 export type ModelDossierSeed = z.infer<typeof modelDossierSeedSchema>;
+
+export const factoryVersionSeedSchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  label: z.string().trim().min(1).max(120),
+  notes: z.string().max(4000).optional(),
+});
+export type FactoryVersionSeed = z.infer<typeof factoryVersionSeedSchema>;
+
+export const defectSeedSchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  area: z.string().trim().min(1).max(80),
+  photoType: z.string().trim().min(1).max(40).optional(),
+  whatBuyersShouldLookFor: z.string().trim().min(1).max(2000),
+  whatPhotosCannotShow: z.string().trim().min(1).max(2000),
+  references: z.array(z.string().trim().min(1).max(80)).default([]),
+  factoryVersionId: z.string().trim().min(1).max(80).optional(),
+});
+export type DefectSeed = z.infer<typeof defectSeedSchema>;
+
+export const factorySeedSchema = z.object({
+  factoryId: z.string().trim().min(1).max(80),
+  canonicalName: z.string().trim().min(1).max(120),
+  notes: z.string().max(8000).optional(),
+  versions: z.array(factoryVersionSeedSchema).default([]),
+  defects: z.array(defectSeedSchema).default([]),
+});
+export type FactorySeed = z.infer<typeof factorySeedSchema>;

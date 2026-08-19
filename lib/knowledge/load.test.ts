@@ -6,6 +6,7 @@ import { compareCommunitySellers } from "./compare";
 import {
   loadCommunities,
   loadCompareCases,
+  loadFactories,
   loadModelDossiers,
   loadSellers,
   seedKnowledge,
@@ -17,6 +18,7 @@ describe("knowledge seed corpus", () => {
     const sellers = await loadSellers();
     const compareCases = await loadCompareCases();
     const dossiers = await loadModelDossiers();
+    const factories = await loadFactories();
 
     expect(communities.map((item) => item.id)).toContain("repwatchforum");
     expect(sellers.map((item) => item.sellerId)).toEqual(
@@ -34,6 +36,15 @@ describe("knowledge seed corpus", () => {
     expect(compare.overlapPercent).toBeLessThan(50);
     expect(compareCases[0]?.id).toBe("reptime-vs-repwatchforum");
     expect(dossiers.some((item) => item.reference === "126610LN")).toBe(true);
+    expect(factories.map((item) => item.factoryId).sort()).toEqual([
+      "unknown",
+      "vsf",
+    ]);
+    const vsf = factories.find((item) => item.factoryId === "vsf");
+    expect(vsf?.canonicalName).toBe("VSF");
+    expect(vsf?.defects.some((item) => item.references.includes("126610LN"))).toBe(
+      true,
+    );
 
     for (const seller of sellers) {
       const text = [
@@ -46,12 +57,27 @@ describe("knowledge seed corpus", () => {
         .join(" ");
       expect(findForbiddenWords(text)).toEqual([]);
     }
+
+    for (const factory of factories) {
+      const text = [
+        factory.notes,
+        ...factory.versions.map((version) => version.notes),
+        ...factory.defects.flatMap((defect) => [
+          defect.whatBuyersShouldLookFor,
+          defect.whatPhotosCannotShow,
+        ]),
+      ]
+        .filter(Boolean)
+        .join(" ");
+      expect(findForbiddenWords(text)).toEqual([]);
+    }
   });
 
   it("upserts the corpus into Postgres", async () => {
     const result = await seedKnowledge();
     expect(result.communities).toBeGreaterThanOrEqual(8);
     expect(result.sellers).toBeGreaterThanOrEqual(15);
+    expect(result.factories).toBeGreaterThanOrEqual(2);
 
     const stored = await getDbClient().seller.findUnique({
       where: { id: "ddgtop" },
@@ -63,6 +89,13 @@ describe("knowledge seed corpus", () => {
         (row) => row.status === "PROVISIONARY_TD",
       ),
     ).toBe(true);
+
+    const vsf = await getDbClient().factory.findUnique({
+      where: { id: "vsf" },
+      include: { versions: true, defects: true },
+    });
+    expect(vsf?.canonicalName).toBe("VSF");
+    expect(vsf?.defects.length).toBeGreaterThan(0);
   });
 });
 
