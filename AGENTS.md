@@ -116,3 +116,31 @@ Startup/run caveats (non-obvious):
   production build overwrites `.next` and breaks the dev server (500s, e.g.
   missing `.next/dev/routes-manifest.json`). If dev starts 500ing after a build,
   stop dev, `rm -rf .next`, and restart `pnpm dev`.
+- Cloud Agents commit, push, and open **draft** PRs. A human merges. Do not
+  scrape forums. Do not invent dummy numeric scores. Prisma stays on v6.
+
+## Next knowledge-layer PRs (queue)
+
+Land these in order, each as its own `cursor/<short-name>-5373` branch off `main`.
+Keep PRs small. Forbidden conclusion words stay out of seed and UI.
+
+1. **Factory + defect ontology and seed.** Add Factory / FactoryVersion / Defect
+   Zod schemas and Prisma tables. Curated JSON under `data/knowledge/factories/`
+   for the factories already named on model dossiers (at least VSF, plus an
+   `unknown` factory). Known defects are qualitative (area, what buyers should
+   look for, what photos cannot show). No scraping.
+2. **Factory pages.** `/factories` and `/factories/[factoryId]` with known-defect
+   lists, version notes, and source-independence copy. Sidebar + overview link.
+   Match seller-page density; no WatchDesk numeric scores.
+3. **Wire factory defects into reports.** If a case dossier has a factory, show a
+   "Known factory variance" section and add checkpoint concerns only when the
+   relevant photo is missing (`cannot assess from submitted images`). Still no
+   vision model. Do not treat a known variance as proof of a defect in the photos.
+4. **Seller and compare follow-through.** Unresolved intake handles stay visible
+   ("typed X, no curated match"). Seller index filters by community / recognition.
+   Compare page accepts any two community ids (keep the RepTime vs RepWatchForum
+   narrative as the default). TD remains evidence with provenance.
+5. **Thicker model dossiers and QC profiles.** Expand the three existing
+   references with `knownVariance` / `highValueChecks` (and factory version when
+   known). Optional `/references/[id]` read-only page. Generator uses those checks
+   for seller questions. Follow `docs/how-to/add-a-new-watch-reference.md`.
