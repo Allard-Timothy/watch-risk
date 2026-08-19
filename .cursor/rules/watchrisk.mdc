@@ -112,3 +112,10 @@ Preferred long-term flow:
 For MVP work, do not build large-scale crawling, scraping, vector infrastructure, embeddings, or automated ingestion yet. Start with the domain ontology, claim schema, evidence schema, and source/provenance schema, plus a small manually curated seed corpus; add versioned knowledge snapshots later.
 
 Any implementation should extend the current architecture instead of replacing it.
+
+## Parallel agents
+
+One agent per queued PR. Unique `cursor/<name>-5373` branch off `main`.
+Stay inside that PR’s file ownership in `AGENTS.md`. If you need a file
+owned by another in-flight PR, stop. Do not edit Prisma/migrations or
+`pnpm-lock.yaml` unless you are the factory-ontology agent.
