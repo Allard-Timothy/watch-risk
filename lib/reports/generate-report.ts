@@ -7,9 +7,19 @@ import {
   type ImageFinding,
   type RiskLevel,
 } from "@/lib/validation";
-import type { ModelDossierSeed, SellerSeed } from "@/lib/knowledge/schemas";
+import type {
+  FactorySeed,
+  ModelDossierSeed,
+  SellerSeed,
+} from "@/lib/knowledge/schemas";
 import { PHOTO_TYPE_LABELS, isDetectedPhotoType } from "@/lib/photos";
 import type { ClaimedPhotoType } from "@/lib/photos";
+import {
+  CANNOT_ASSESS_FROM_IMAGES,
+  buildFactoryVariance,
+  concernsFromFactoryVariance,
+  type FactoryVariance,
+} from "@/lib/reports/factory-variance";
 
 /**
  * Deterministic placeholder report generator.
@@ -18,9 +28,10 @@ import type { ClaimedPhotoType } from "@/lib/photos";
  * validated `BuyerRiskReport` by applying the deterministic rules and
  * confidence caps in docs/report-rules.md. It does NOT call a model and does
  * NOT invent visual observations from pixels. `visibleConcerns` come from
- * missing dossier checkpoints, curated seller product-claim flags, and
- * optional manual notes. All language stays within the safe wording allowed
- * by docs/report-rules.md and .cursor/rules/watchrisk.mdc.
+ * missing factory-variance photos, missing dossier checkpoints, curated
+ * seller product-claim flags, and optional manual notes. Known factory
+ * variance is a checklist, not a pixel finding. All language stays within
+ * the safe wording allowed by docs/report-rules.md and .cursor/rules/watchrisk.mdc.
  */
 
 export type ImageQuality = "clear" | "mixed" | "poor";
@@ -49,6 +60,7 @@ export type ReportInput = Readonly<{
 
 export type ReportContext = Readonly<{
   dossier?: ModelDossierSeed;
+  factory?: FactorySeed;
   seller?: SellerSeed;
   manualNotes?: readonly string[];
 }>;
@@ -64,7 +76,10 @@ export type GeneratedReport = BuyerRiskReport &
     photoCompleteness: readonly PhotoCompletenessItem[];
     referenceConsistency: string;
     sellerRiskSignals: readonly string[];
+    factoryVariance?: FactoryVariance;
   }>;
+
+export type { FactoryVariance, FactoryVarianceItem } from "@/lib/reports/factory-variance";
 
 type RecommendedPhoto = Readonly<{
   type: DetectedPhotoType;
@@ -193,6 +208,7 @@ function assembleCoreReport(
   input: ReportInput,
   recommended: readonly RecommendedPhoto[],
   context: ReportContext,
+  factoryVariance?: FactoryVariance,
 ): BuyerRiskReport {
   const provided = new Set(input.providedPhotoTypes);
   const missingPhotos = recommended.filter((photo) => !provided.has(photo.type));
@@ -260,7 +276,7 @@ function assembleCoreReport(
     overallRisk,
     confidence,
     missingEvidence,
-    visibleConcerns: buildVisibleConcerns(input, context),
+    visibleConcerns: buildVisibleConcerns(input, context, factoryVariance),
     sellerQuestions,
     recommendedNextStep,
     safeSummary,
@@ -337,9 +353,16 @@ function qualitativeToSeverity(
 function buildVisibleConcerns(
   input: ReportInput,
   context: ReportContext,
+  factoryVariance?: FactoryVariance,
 ): ImageFinding[] {
   const provided = new Set(input.providedPhotoTypes);
-  const concerns: ImageFinding[] = [];
+  const factoryConcerns = concernsFromFactoryVariance(factoryVariance);
+  const coveredPhotoTypes = new Set(
+    factoryVariance?.items
+      .map((item) => item.photoType)
+      .filter((type): type is DetectedPhotoType => Boolean(type)),
+  );
+  const concerns: ImageFinding[] = [...factoryConcerns];
 
   if (context.dossier) {
     for (const [area, checkpoints] of Object.entries(
@@ -348,12 +371,15 @@ function buildVisibleConcerns(
       if (!isDetectedPhotoType(area) || provided.has(area)) {
         continue;
       }
+      if (coveredPhotoTypes.has(area)) {
+        continue;
+      }
       for (const checkpoint of checkpoints) {
         concerns.push({
           area: photoLabel(area),
           severity: "medium",
-          finding: `Cannot assess ${checkpoint} from submitted images.`,
-          visibleEvidence: `No ${photoLabel(area).toLowerCase()} photo was submitted for this checkpoint.`,
+          finding: CANNOT_ASSESS_FROM_IMAGES,
+          visibleEvidence: `No ${photoLabel(area).toLowerCase()} photo was submitted for this checkpoint (${checkpoint}). This is not a pixel finding.`,
         });
       }
     }
@@ -401,7 +427,18 @@ export function generateReport(
 ): GeneratedReport {
   const provided = new Set(input.providedPhotoTypes);
   const recommended = recommendedPhotosFor(context.dossier);
-  const core = assembleCoreReport(input, recommended, context);
+  const factoryVariance = buildFactoryVariance(
+    input.providedPhotoTypes,
+    context.dossier,
+    context.factory,
+    input.reference,
+  );
+  const core = assembleCoreReport(
+    input,
+    recommended,
+    context,
+    factoryVariance,
+  );
 
   const photoCompleteness: PhotoCompletenessItem[] = recommended.map(
     (photo) => ({
@@ -416,5 +453,6 @@ export function generateReport(
     photoCompleteness,
     referenceConsistency: buildReferenceConsistency(input, context.dossier),
     sellerRiskSignals: buildSellerRiskSignals(input),
+    factoryVariance,
   };
 }
