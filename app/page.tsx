@@ -94,6 +94,12 @@ export default async function HomePage() {
               Seller index
             </Link>
             <Link
+              href="/factories"
+              className="inline-flex w-fit items-center rounded-lg border border-border px-4 py-2 text-[13px] font-semibold"
+            >
+              Factories
+            </Link>
+            <Link
               href="/compare/communities"
               className="inline-flex w-fit items-center rounded-lg border border-border px-4 py-2 text-[13px] font-semibold"
             >
