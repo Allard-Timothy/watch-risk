@@ -40,11 +40,13 @@ describe("buyerRiskReportSchema", () => {
   const safe = {
     overallRisk: "medium" as const,
     confidence: "low" as const,
+    qcVerdict: "request_additional_evidence" as const,
     missingEvidence: ["Straight-on dial photo"],
     visibleConcerns: [],
     sellerQuestions: ["Can you provide a dial photo in natural light?"],
     recommendedNextStep: "Request the missing photos before proceeding.",
     safeSummary: "The submitted photo set is incomplete.",
+    provenanceCitations: [],
   };
 
   it("accepts a safe report", () => {

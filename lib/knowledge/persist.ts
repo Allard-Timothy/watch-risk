@@ -180,10 +180,19 @@ export async function getSeller(id: string) {
 
 export function assertFactorySeed(seed: FactorySeed): FactorySeed {
   const versionIds = new Set(seed.versions.map((version) => version.id));
-  for (const defect of seed.defects) {
-    if (defect.factoryVersionId && !versionIds.has(defect.factoryVersionId)) {
+  const variances =
+    seed.knownVariances.length > 0 ? seed.knownVariances : (seed.defects ?? []);
+  for (const item of variances) {
+    if (item.factoryVersionId && !versionIds.has(item.factoryVersionId)) {
       throw new Error(
-        `Defect ${defect.id} references unknown factory version ${defect.factoryVersionId}`,
+        `Known variance ${item.id} references unknown factory version ${item.factoryVersionId}`,
+      );
+    }
+  }
+  for (const tell of seed.tells ?? []) {
+    if (tell.factoryVersionId && !versionIds.has(tell.factoryVersionId)) {
+      throw new Error(
+        `Tell ${tell.id} references unknown factory version ${tell.factoryVersionId}`,
       );
     }
   }
@@ -207,7 +216,7 @@ export async function upsertFactory(seed: FactorySeed) {
     },
   });
 
-  await db.defect.deleteMany({ where: { factoryId: seed.factoryId } });
+  await db.knownVariance.deleteMany({ where: { factoryId: seed.factoryId } });
   await db.factoryVersion.deleteMany({ where: { factoryId: seed.factoryId } });
 
   if (seed.versions.length > 0) {
@@ -221,17 +230,19 @@ export async function upsertFactory(seed: FactorySeed) {
     });
   }
 
-  if (seed.defects.length > 0) {
-    await db.defect.createMany({
-      data: seed.defects.map((defect) => ({
-        id: defect.id,
+  const variances =
+    seed.knownVariances.length > 0 ? seed.knownVariances : (seed.defects ?? []);
+  if (variances.length > 0) {
+    await db.knownVariance.createMany({
+      data: variances.map((item) => ({
+        id: item.id,
         factoryId: seed.factoryId,
-        factoryVersionId: defect.factoryVersionId,
-        area: defect.area,
-        photoType: defect.photoType,
-        whatBuyersShouldLookFor: defect.whatBuyersShouldLookFor,
-        whatPhotosCannotShow: defect.whatPhotosCannotShow,
-        references: defect.references,
+        factoryVersionId: item.factoryVersionId,
+        area: item.area,
+        photoType: item.photoType,
+        whatBuyersShouldLookFor: item.whatBuyersShouldLookFor,
+        whatPhotosCannotShow: item.whatPhotosCannotShow,
+        references: item.references,
       })),
     });
   }
@@ -243,7 +254,7 @@ export async function getFactory(id: string) {
   const db = getDbClient();
   return db.factory.findUnique({
     where: { id },
-    include: { versions: true, defects: true },
+    include: { versions: true, knownVariances: true },
   });
 }
 

@@ -1,0 +1,35 @@
+{
+  "factoryId": "clean",
+  "canonicalName": "Clean Factory",
+  "notes": "Thin curated notes for Clean-attributed listings. A factory label is a claim, not a photo conclusion.",
+  "versions": [
+    {
+      "id": "clean-current",
+      "label": "Current curated notes",
+      "notes": "Single qualitative snapshot; version is not resolved from listing photos."
+    }
+  ],
+  "knownVariances": [
+    {
+      "id": "clean-dial-print",
+      "area": "Dial print alignment",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "Straight-on dial photo in even light so print alignment can be discussed.",
+      "whatPhotosCannotShow": "How the dial reads on the wrist or under mixed lighting.",
+      "references": ["126610LN"],
+      "factoryVersionId": "clean-current"
+    }
+  ],
+  "tells": [
+    {
+      "id": "clean-clasp-code",
+      "area": "Clasp code style",
+      "photoType": "clasp",
+      "whatBuyersShouldLookFor": "Close photos of clasp engravings and end-link fit.",
+      "whatPhotosCannotShow": "Long-term wear or how the clasp feels in hand.",
+      "references": ["126610LN"],
+      "factoryVersionId": "clean-current",
+      "notes": "Curated tell for discussion only; not authentication proof."
+    }
+  ]
+}

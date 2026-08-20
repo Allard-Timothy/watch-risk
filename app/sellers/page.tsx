@@ -1,5 +1,8 @@
 import { DashboardMain, PageTitle } from "@/components/dashboard-main";
+import { ExplorerAccessPanel } from "@/components/explorer-access-panel";
 import { SellerList } from "@/components/seller-profile";
+import { auth } from "@/lib/auth";
+import { canAccessExplorers } from "@/lib/billing/access";
 import {
   COMMUNITY_RECOGNITION_COPY,
   COMMUNITY_RECOGNITION_STATUSES,
@@ -20,6 +23,12 @@ const selectClasses =
   "rounded-lg border border-border bg-card px-3 py-2 text-[13px] text-foreground shadow-sm";
 
 export default async function SellersPage({ searchParams }: SellersPageProps) {
+  const session = await auth();
+  const explorerAccess = await canAccessExplorers(session?.user?.id);
+  if (!explorerAccess.allowed) {
+    return <ExplorerAccessPanel reason={explorerAccess.reason} />;
+  }
+
   const params = await searchParams;
   const [sellers, communities] = await Promise.all([
     loadSellers(),

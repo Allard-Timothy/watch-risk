@@ -28,6 +28,8 @@ Title them so they can be prefixed with “How to”.
 
 - [How to add a new watch reference](how-to/add-a-new-watch-reference.md)
 - [How to persist cases locally](how-to/persist-cases-locally.md)
+- [How to use local magic-link sign-in and mock checkout](how-to/local-auth-and-mock-checkout.md)
+- [How to add a factory tell](how-to/add-a-factory-tell.md)
 
 ## Reference
 

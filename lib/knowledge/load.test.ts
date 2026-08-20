@@ -41,15 +41,17 @@ describe("knowledge seed corpus", () => {
     expect(submariner?.caseSize).toBe("41mm");
     expect(submariner?.knownVariance.length).toBeGreaterThan(0);
     expect(submariner?.highValueChecks.length).toBeGreaterThan(0);
-    expect(factories.map((item) => item.factoryId).sort()).toEqual([
-      "unknown",
-      "vsf",
-    ]);
+    expect(factories.map((item) => item.factoryId).sort()).toEqual(
+      expect.arrayContaining(["unknown", "vsf", "clean", "apsf", "ppf"]),
+    );
     const vsf = factories.find((item) => item.factoryId === "vsf");
     expect(vsf?.canonicalName).toBe("VSF");
-    expect(vsf?.defects.some((item) => item.references.includes("126610LN"))).toBe(
-      true,
-    );
+    const vsfVariances = vsf?.knownVariances?.length
+      ? vsf.knownVariances
+      : vsf?.defects ?? [];
+    expect(
+      vsfVariances.some((item) => item.references.includes("126610LN")),
+    ).toBe(true);
 
     for (const seller of sellers) {
       const text = [
@@ -64,12 +66,20 @@ describe("knowledge seed corpus", () => {
     }
 
     for (const factory of factories) {
+      const variances = factory.knownVariances?.length
+        ? factory.knownVariances
+        : factory.defects ?? [];
       const text = [
         factory.notes,
         ...factory.versions.map((version) => version.notes),
-        ...factory.defects.flatMap((defect) => [
-          defect.whatBuyersShouldLookFor,
-          defect.whatPhotosCannotShow,
+        ...variances.flatMap((item) => [
+          item.whatBuyersShouldLookFor,
+          item.whatPhotosCannotShow,
+        ]),
+        ...(factory.tells ?? []).flatMap((tell) => [
+          tell.whatBuyersShouldLookFor,
+          tell.whatPhotosCannotShow,
+          tell.notes,
         ]),
       ]
         .filter(Boolean)
@@ -112,10 +122,10 @@ describe("knowledge seed corpus", () => {
 
     const vsf = await getDbClient().factory.findUnique({
       where: { id: "vsf" },
-      include: { versions: true, defects: true },
+      include: { versions: true, knownVariances: true },
     });
     expect(vsf?.canonicalName).toBe("VSF");
-    expect(vsf?.defects.length).toBeGreaterThan(0);
+    expect(vsf?.knownVariances.length).toBeGreaterThan(0);
   });
 });
 

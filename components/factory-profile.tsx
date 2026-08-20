@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Card, CardTitle } from "@/components/dashboard-main";
+import { factoryVariancesForDisplay } from "@/lib/knowledge/factory-display";
 import type { FactorySeed } from "@/lib/knowledge";
 
 function photoTypeLabel(value: string | undefined): string | undefined {
@@ -11,6 +12,9 @@ function photoTypeLabel(value: string | undefined): string | undefined {
 }
 
 export function FactoryProfile({ factory }: { factory: FactorySeed }) {
+  const variances = factoryVariancesForDisplay(factory);
+  const tells = factory.tells ?? [];
+
   return (
     <div className="space-y-5">
       <div>
@@ -31,13 +35,13 @@ export function FactoryProfile({ factory }: { factory: FactorySeed }) {
           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             Known-variance notes
           </p>
-          <p className="mt-1 text-[15px] font-semibold">{factory.defects.length}</p>
+          <p className="mt-1 text-[15px] font-semibold">{variances.length}</p>
         </div>
         <div className="rounded-xl border border-border bg-card px-3 py-3">
           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Version snapshots
+            Known tells
           </p>
-          <p className="mt-1 text-[15px] font-semibold">{factory.versions.length}</p>
+          <p className="mt-1 text-[15px] font-semibold">{tells.length}</p>
         </div>
         <div className="rounded-xl border border-border bg-card px-3 py-3">
           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -90,14 +94,14 @@ export function FactoryProfile({ factory }: { factory: FactorySeed }) {
 
       <Card>
         <CardTitle>Known factory variance</CardTitle>
-        {factory.defects.length === 0 ? (
+        {variances.length === 0 ? (
           <p className="text-[13px] leading-6 text-muted-foreground">
             No curated variance notes yet. Missing notes means that area cannot
             be assessed from this seed set.
           </p>
         ) : (
           <ul className="divide-y divide-border">
-            {factory.defects.map((defect) => (
+            {variances.map((defect) => (
               <li key={defect.id} className="py-4 first:pt-0 last:pb-0">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <p className="text-[15px] font-semibold">{defect.area}</p>
@@ -137,6 +141,55 @@ export function FactoryProfile({ factory }: { factory: FactorySeed }) {
           </ul>
         )}
       </Card>
+
+      <Card>
+        <CardTitle>Known factory tells</CardTitle>
+        <p className="mb-4 text-[13px] leading-6 text-muted-foreground">
+          Tells are curated identification and QC cues. They are not
+          authentication proof and are not pixel findings from submitted photos.
+        </p>
+        {tells.length === 0 ? (
+          <p className="text-[13px] leading-6 text-muted-foreground">
+            No curated tells yet for this factory.
+          </p>
+        ) : (
+          <ul className="divide-y divide-border">
+            {tells.map((tell) => (
+              <li key={tell.id} className="py-4 first:pt-0 last:pb-0">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="text-[15px] font-semibold">{tell.area}</p>
+                  {photoTypeLabel(tell.photoType) ? (
+                    <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                      {photoTypeLabel(tell.photoType)} photo
+                    </p>
+                  ) : null}
+                </div>
+                <dl className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      What buyers should look for
+                    </dt>
+                    <dd className="mt-1 text-[13px] leading-6">
+                      {tell.whatBuyersShouldLookFor}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      What photos cannot show
+                    </dt>
+                    <dd className="mt-1 text-[13px] leading-6 text-muted-foreground">
+                      {tell.whatPhotosCannotShow}
+                    </dd>
+                  </div>
+                </dl>
+                {tell.notes ? (
+                  <p className="mt-3 text-[12px] text-muted-foreground">{tell.notes}</p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
     </div>
   );
 }
@@ -144,7 +197,10 @@ export function FactoryProfile({ factory }: { factory: FactorySeed }) {
 export function FactoryList({ factories }: { factories: readonly FactorySeed[] }) {
   return (
     <ul className="grid gap-3 md:grid-cols-2">
-      {factories.map((factory) => (
+      {factories.map((factory) => {
+        const variances = factoryVariancesForDisplay(factory);
+        const tells = factory.tells ?? [];
+        return (
         <li key={factory.factoryId}>
           <Link
             href={`/factories/${factory.factoryId}`}
@@ -154,8 +210,11 @@ export function FactoryList({ factories }: { factories: readonly FactorySeed[] }
               {factory.canonicalName}
             </p>
             <p className="mt-1 text-[13px] text-muted-foreground">
-              {factory.defects.length} known-variance note
-              {factory.defects.length === 1 ? "" : "s"}
+              {variances.length} variance note
+              {variances.length === 1 ? "" : "s"}
+              {tells.length > 0
+                ? ` · ${tells.length} tell${tells.length === 1 ? "" : "s"}`
+                : ""}
               {factory.versions[0]?.label
                 ? ` · ${factory.versions[0].label}`
                 : ""}
@@ -166,7 +225,8 @@ export function FactoryList({ factories }: { factories: readonly FactorySeed[] }
             </p>
           </Link>
         </li>
-      ))}
+        );
+      })}
     </ul>
   );
 }

@@ -1,10 +1,19 @@
 import { DashboardMain, PageTitle } from "@/components/dashboard-main";
+import { ExplorerAccessPanel } from "@/components/explorer-access-panel";
 import { ReferenceList } from "@/components/reference-profile";
+import { auth } from "@/lib/auth";
+import { canAccessExplorers } from "@/lib/billing/access";
 import { loadModelDossiers } from "@/lib/knowledge/load";
 
 export const dynamic = "force-dynamic";
 
 export default async function ReferencesPage() {
+  const session = await auth();
+  const explorerAccess = await canAccessExplorers(session?.user?.id);
+  if (!explorerAccess.allowed) {
+    return <ExplorerAccessPanel reason={explorerAccess.reason} />;
+  }
+
   const dossiers = await loadModelDossiers();
 
   return (

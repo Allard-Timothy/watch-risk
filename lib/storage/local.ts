@@ -1,7 +1,7 @@
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const UPLOAD_ROOT = path.join(process.cwd(), ".data", "uploads");
+export const UPLOAD_ROOT = path.join(process.cwd(), ".data", "uploads");
 
 const MIME_TO_EXT: Record<string, string> = {
   "image/jpeg": ".jpg",

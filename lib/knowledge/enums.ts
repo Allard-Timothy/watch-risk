@@ -77,6 +77,7 @@ export const EVIDENCE_KINDS = [
   "seller_promotion",
   "forum_status",
   "independent_review",
+  "watchtell_outcome",
   "other",
 ] as const;
 export type EvidenceKind = (typeof EVIDENCE_KINDS)[number];
@@ -86,6 +87,7 @@ export const SOURCE_KINDS = [
   "reddit",
   "website",
   "manual_curation",
+  "watchtell_user",
   "other",
 ] as const;
 export type SourceKind = (typeof SOURCE_KINDS)[number];

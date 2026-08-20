@@ -104,7 +104,7 @@ Affects: `QC-001`, `QC-002`, `QC-006`, `MODEL-004`, `EVAL-001`.
 
 ## DEC-005: Rename Prisma `Defect` to match known variance
 
-**Status:** decided (not yet implemented)  
+**Status:** decided (implemented)  
 **Date:** 2026-08-19
 
 Yes. Prisma `Defect` / seed `defects` should be renamed so the schema
@@ -149,3 +149,39 @@ justified by evidence. A precise-looking number with no supporting
 evidence is not allowed (Rule 3).
 
 Affects: `SELLER-002`, `SELLER-003`, `EVAL-002`.
+
+## DEC-008: Commercial MVP includes accounts, billing seams, and outcome capture
+
+**Status:** decided  
+**Date:** 2026-08-20
+
+The commercial MVP **includes** user accounts, single and bundled report
+SKUs, subscription access to knowledge explorers, payment provider seams,
+and post-purchase outcome capture — even though earlier roadmap text
+listed accounts and outcomes as out of scope.
+
+Implementation rules:
+
+- **Auth:** Auth.js email magic link. In development the sign-in URL is
+  logged to the server console; production uses a real email provider when
+  configured.
+- **Payments:** `PaymentProvider` with `mock` as the default. Stripe
+  Checkout activates only when `STRIPE_SECRET_KEY` is set. No live charges
+  are required to develop or demo the flow.
+- **Analysis:** `AnalysisProvider` with deterministic rules as default.
+  OpenAI vision activates only when `OPENAI_API_KEY` is set. Do not invent
+  pixel findings without a configured provider.
+- **Storage:** local disk remains default. GCS activates only when
+  `GCS_BUCKET` is set.
+- **Outcomes:** user-submitted outcomes are stored as provenance-tagged
+  evidence (`OUTCOME-001` / `OUTCOME-002`). They do **not** automatically
+  rewrite curated dossiers.
+- **Ratings:** evidence-based qualitative bands only (`DEC-007`). No dummy
+  numeric scores and no user star ratings in this MVP.
+
+This decision overrides the earlier roadmap line that “MVP does not include
+user accounts.” Pixel/video QC (`DEC-002`) remains a typed seam, not a fake
+vision model.
+
+Affects: `AUTH-001`, `BILL-001`, `BILL-002`, `BILL-003`, `OUTCOME-001`,
+`OUTCOME-002`, `FACTORY-004` (pulled into commercial MVP as curated tells).

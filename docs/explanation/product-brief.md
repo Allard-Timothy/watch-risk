@@ -63,7 +63,7 @@ Secondary users later:
 
 Upload a watch listing before you buy. WatchTell will flag missing evidence, visible concerns, seller-risk signals, QC verdict (GL/RL family), and questions to ask before sending money.
 
-The paid product is this listing report. Subscribers also get access to the knowledge explorers that back it.
+The paid product is this listing report. Subscribers also get access to the knowledge explorers that back it. Users sign in with an email magic link; payments use a mock provider locally and Stripe when configured (`DEC-008`).
 
 ## Non-goals
 

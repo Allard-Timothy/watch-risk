@@ -1,0 +1,35 @@
+{
+  "factoryId": "apsf",
+  "canonicalName": "APSF",
+  "notes": "Thin curated notes for APSF-attributed listings. Known variance and tells are qualitative checklists.",
+  "versions": [
+    {
+      "id": "apsf-current",
+      "label": "Current curated notes",
+      "notes": "Version is not resolved from listing photos in this MVP."
+    }
+  ],
+  "knownVariances": [
+    {
+      "id": "apsf-bezel-action",
+      "area": "Bezel action",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "Photos that show bezel pip alignment and insert seating.",
+      "whatPhotosCannotShow": "Click feel, back-play, or long-term bezel wear.",
+      "references": ["116610LV"],
+      "factoryVersionId": "apsf-current"
+    }
+  ],
+  "tells": [
+    {
+      "id": "apsf-rehaut-text",
+      "area": "Rehaut laser text",
+      "photoType": "rehaut",
+      "whatBuyersShouldLookFor": "A rehaut photo showing inner-ring etching visibility.",
+      "whatPhotosCannotShow": "Etching depth or durability off-camera.",
+      "references": ["116610LV"],
+      "factoryVersionId": "apsf-current",
+      "notes": "Tell is for buyer questions, not a photo conclusion."
+    }
+  ]
+}

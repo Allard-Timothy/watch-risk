@@ -66,16 +66,23 @@ function namedFactoryLabel(
   return undefined;
 }
 
+export function factoryVariances(factory: FactorySeed): DefectSeed[] {
+  return factory.knownVariances?.length
+    ? factory.knownVariances
+    : (factory.defects ?? []);
+}
+
 export function defectsForReference(
   factory: FactorySeed,
   reference?: string,
 ): DefectSeed[] {
+  const variances = factoryVariances(factory);
   if (!reference?.trim()) {
-    return [...factory.defects];
+    return variances;
   }
   const needle = normalizeReference(reference);
-  return factory.defects.filter((defect) =>
-    defect.references.some((ref) => normalizeReference(ref) === needle),
+  return variances.filter((item) =>
+    item.references.some((ref) => normalizeReference(ref) === needle),
   );
 }
 
