@@ -45,8 +45,9 @@ The canonical WatchTell product capability registry is:
 
 `docs/product/features.md`
 
-Also read `docs/product/vision.md`, `docs/product/principles.md`, and
-`docs/product/roadmap.md`. Do not copy the full inventory into this file.
+Also read `docs/product/vision.md`, `docs/product/principles.md`,
+`docs/product/roadmap.md`, and `docs/product/decisions.md`. Do not copy
+the full inventory into this file.
 
 Agents MUST consult the registry when:
 
@@ -103,6 +104,10 @@ Full text: `docs/product/principles.md`.
 9. **Evaluate decisions, not microscopic perfection.** Known factory
    variance is not automatically a defect.
 10. **Model providers are replaceable.** Knowledge stays product-owned.
+11. **Replica and grey-market QC stay separate.** Do not share QC photos
+    or decision trees (`DEC-004`).
+
+Resolved product decisions: `docs/product/decisions.md`.
 
 ## Implementing a requested feature
 
