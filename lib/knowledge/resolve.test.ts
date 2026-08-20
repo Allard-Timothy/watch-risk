@@ -69,4 +69,23 @@ describe("unresolved intake handles", () => {
       listingText: "plain listing",
     });
   });
+
+  it("stores an unmatched handle even when listing text is empty", () => {
+    const stored = encodeUnresolvedHandle(undefined, "  Not A Dealer  ");
+    expect(stored).toBe("[[watchtell:unresolved-seller]]Not A Dealer");
+    expect(decodeUnresolvedHandle(stored)).toEqual({
+      typedSellerHandle: "Not A Dealer",
+    });
+  });
+
+  it("does not treat a marker in the middle of listing text as a stored handle", () => {
+    expect(
+      decodeUnresolvedHandle(
+        "Seller wrote [[watchtell:unresolved-seller]]NotADealer in the ad",
+      ),
+    ).toEqual({
+      listingText:
+        "Seller wrote [[watchtell:unresolved-seller]]NotADealer in the ad",
+    });
+  });
 });

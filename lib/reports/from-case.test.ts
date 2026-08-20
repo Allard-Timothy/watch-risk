@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { reportInputFromCase } from "./from-case";
+import { claimsFullSetFromText, reportInputFromCase } from "./from-case";
 import { generateReport } from "./generate-report";
 import type { PersistedWatchCase } from "@/lib/cases/repository";
 
@@ -74,5 +74,33 @@ describe("reportInputFromCase", () => {
     };
     expect(reportInputFromCase(withSet).claimsFullSet).toBe(true);
     expect(reportInputFromCase(listing).claimsFullSet).toBe(false);
+  });
+
+  it("sets stockPhotosOnly only when the listing says photos are stock-only", () => {
+    expect(
+      reportInputFromCase({
+        ...listing,
+        listingText: "Catalogue photos only. Actual watch may differ.",
+      }).stockPhotosOnly,
+    ).toBe(true);
+    expect(
+      reportInputFromCase({
+        ...listing,
+        sellerClaims: "stock photos only",
+      }).stockPhotosOnly,
+    ).toBe(true);
+    expect(
+      reportInputFromCase({
+        ...listing,
+        listingText: "These are catalogue photos. I can send more of the watch.",
+      }).stockPhotosOnly,
+    ).toBe(false);
+    expect(reportInputFromCase(listing).stockPhotosOnly).toBe(false);
+  });
+
+  it("reads full-set language from seller claims as well as listing text", () => {
+    expect(claimsFullSetFromText(undefined, "Comes with papers")).toBe(true);
+    expect(claimsFullSetFromText("Box and papers included")).toBe(true);
+    expect(claimsFullSetFromText("No extras")).toBe(false);
   });
 });

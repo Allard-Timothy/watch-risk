@@ -33,4 +33,13 @@ describe("matchModelDossier", () => {
   it("returns undefined when no reference is provided", () => {
     expect(matchModelDossier(dossiers, "Rolex")).toBeUndefined();
   });
+
+  it("prefers a brand match and still returns the reference when brand differs", () => {
+    expect(
+      matchModelDossier(dossiers, "Omega", "310.30.42.50.01.001")?.id,
+    ).toBe("cf-31030425001001");
+    expect(
+      matchModelDossier(dossiers, "Rolex", "310.30.42.50.01.001")?.id,
+    ).toBe("cf-31030425001001");
+  });
 });
