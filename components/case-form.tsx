@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import { createCaseAction } from "@/lib/cases/actions";
+import {
+  createCaseAction,
+  type CreateCaseSellerMatch,
+} from "@/lib/cases/actions";
+import { unresolvedSellerCopy } from "@/lib/knowledge/resolve";
 import { cn } from "@/lib/utils";
 import { caseCreateFormSchema, type CaseCreateFormInput } from "@/lib/validation";
 
@@ -39,7 +43,7 @@ const FIELDS: readonly FieldConfig[] = [
     name: "sellerHandle",
     label: "Seller handle",
     placeholder: "DDGTOP, Duke Jones",
-    hint: "Matches a curated seller id or alias. Similar names are not merged.",
+    hint: "Matches a curated seller id or alias. Unmatched handles stay visible.",
   },
   {
     name: "listingUrl",
@@ -92,6 +96,9 @@ export function CaseForm() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<CaseCreateFormInput | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [sellerMatch, setSellerMatch] = useState<CreateCaseSellerMatch>({
+    kind: "none",
+  });
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -141,11 +148,13 @@ export function CaseForm() {
 
     setSavedId(created.id);
     setResult(parsed.data);
+    setSellerMatch(created.sellerMatch);
   }
 
   function handleReset() {
     setResult(null);
     setSavedId(null);
+    setSellerMatch({ kind: "none" });
     setErrors({});
     setFormError(null);
   }
@@ -155,6 +164,7 @@ export function CaseForm() {
       <CaseIntakeConfirmation
         values={result}
         caseId={savedId}
+        sellerMatch={sellerMatch}
         onReset={handleReset}
       />
     );
@@ -253,19 +263,28 @@ export function CaseForm() {
 type CaseIntakeConfirmationProps = Readonly<{
   values: CaseCreateFormInput;
   caseId: string;
+  sellerMatch: CreateCaseSellerMatch;
   onReset: () => void;
 }>;
 
 function CaseIntakeConfirmation({
   values,
   caseId,
+  sellerMatch,
   onReset,
 }: CaseIntakeConfirmationProps) {
-  const entries = FIELDS.map((field) => ({
-    name: field.name,
-    label: FIELD_LABELS[field.name],
-    value: values[field.name],
-  })).filter((entry) => entry.value !== undefined && entry.value !== "");
+  const entries = FIELDS.map((field) => {
+    const raw = values[field.name];
+    const value =
+      field.name === "sellerHandle" && sellerMatch.kind === "unresolved"
+        ? unresolvedSellerCopy(sellerMatch.handle)
+        : raw;
+    return {
+      name: field.name,
+      label: FIELD_LABELS[field.name],
+      value,
+    };
+  }).filter((entry) => entry.value !== undefined && entry.value !== "");
 
   return (
     <div className="space-y-6">

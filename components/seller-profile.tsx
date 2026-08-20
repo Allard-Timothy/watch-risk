@@ -188,6 +188,14 @@ function DepthRow({ label, value }: { label: string; value: string }) {
 }
 
 export function SellerList({ sellers }: { sellers: readonly SellerSeed[] }) {
+  if (sellers.length === 0) {
+    return (
+      <p className="text-[13px] leading-6 text-muted-foreground">
+        No curated sellers match these filters.
+      </p>
+    );
+  }
+
   return (
     <ul className="grid gap-3 md:grid-cols-2">
       {sellers.map((seller) => {

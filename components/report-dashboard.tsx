@@ -17,6 +17,7 @@ import {
   type ModelDossierSeed,
   type SellerSeed,
 } from "@/lib/knowledge";
+import { unresolvedSellerCopy } from "@/lib/knowledge/resolve";
 import { FACTORY_VARIANCE_ASSESSMENT_COPY } from "@/lib/reports/factory-variance";
 import type { GeneratedReport } from "@/lib/reports/generate-report";
 import type { ReportInput } from "@/lib/reports/generate-report";
@@ -88,6 +89,7 @@ type ReportDashboardProps = Readonly<{
   sample?: boolean;
   photos?: readonly ReportPhoto[];
   seller?: SellerSeed;
+  typedSellerHandle?: string;
   communities?: readonly CommunitySeed[];
   dossier?: ModelDossierSeed;
 }>;
@@ -202,6 +204,7 @@ export function ReportDashboard({
   sample = false,
   photos = [],
   seller,
+  typedSellerHandle,
   communities = [],
   dossier,
 }: ReportDashboardProps) {
@@ -221,7 +224,11 @@ export function ReportDashboard({
   const fulfillment =
     seller?.trustDimensions.find((item) => item.key === "fulfillment_confidence")
       ?.label ?? "insufficient_evidence";
-  const sellerName = seller?.canonicalName ?? watch.sellerPlatform ?? "Unknown seller";
+  const sellerName = seller
+    ? seller.canonicalName
+    : typedSellerHandle
+      ? unresolvedSellerCopy(typedSellerHandle)
+      : (watch.sellerPlatform ?? "Unknown seller");
   const recognitionGroups = seller
     ? recognitionsByIndependenceGroup(seller, communities)
     : [];

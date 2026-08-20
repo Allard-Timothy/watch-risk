@@ -6,6 +6,63 @@ export type SellerResolution = Readonly<{
   identityConfidence: number;
 }>;
 
+export type IntakeSellerMatch =
+  | Readonly<{ kind: "none" }>
+  | Readonly<{ kind: "resolved" } & SellerResolution>
+  | Readonly<{ kind: "unresolved"; handle: string }>;
+
+/** Prefix stored in listingText so unmatched handles survive without a new column. */
+export const UNRESOLVED_HANDLE_MARKER = "[[watchtell:unresolved-seller]]";
+
+export function unresolvedSellerCopy(handle: string): string {
+  return `typed ${handle.trim()}, no curated match`;
+}
+
+export function encodeUnresolvedHandle(
+  listingText: string | undefined,
+  handle: string | undefined,
+): string | undefined {
+  const cleaned = handle?.trim().replace(/\s+/g, " ");
+  if (!cleaned) {
+    return listingText;
+  }
+  const line = `${UNRESOLVED_HANDLE_MARKER}${cleaned}`;
+  return listingText ? `${line}\n${listingText}` : line;
+}
+
+export function decodeUnresolvedHandle(listingText: string | undefined): {
+  listingText?: string;
+  typedSellerHandle?: string;
+} {
+  if (!listingText?.startsWith(UNRESOLVED_HANDLE_MARKER)) {
+    return { listingText: listingText || undefined };
+  }
+  const rest = listingText.slice(UNRESOLVED_HANDLE_MARKER.length);
+  const newline = rest.indexOf("\n");
+  if (newline === -1) {
+    return { typedSellerHandle: rest || undefined };
+  }
+  return {
+    typedSellerHandle: rest.slice(0, newline) || undefined,
+    listingText: rest.slice(newline + 1) || undefined,
+  };
+}
+
+export function matchIntakeSeller(
+  sellers: readonly SellerSeed[],
+  handle: string | undefined,
+): IntakeSellerMatch {
+  const trimmed = handle?.trim();
+  if (!trimmed) {
+    return { kind: "none" };
+  }
+  const resolved = resolveSeller(sellers, trimmed);
+  if (resolved) {
+    return { kind: "resolved", ...resolved };
+  }
+  return { kind: "unresolved", handle: trimmed };
+}
+
 function normalizeHandle(value: string): string {
   return value.trim().toLowerCase().replace(/[\s_-]+/g, "");
 }

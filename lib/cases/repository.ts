@@ -7,6 +7,10 @@ import {
   type ClaimedPhotoType,
 } from "@/lib/photos";
 import type { CaseCreateInput } from "@/lib/validation";
+import {
+  decodeUnresolvedHandle,
+  encodeUnresolvedHandle,
+} from "@/lib/knowledge/resolve";
 
 export type CasePhoto = Readonly<{
   id: string;
@@ -21,6 +25,7 @@ export type PersistedWatchCase = CaseCreateInput &
     id: string;
     createdAt: Date;
     sellerId?: string;
+    typedSellerHandle?: string;
     photos: readonly CasePhoto[];
   }>;
 
@@ -51,6 +56,7 @@ function toCasePhoto(row: CaseImage): CasePhoto {
 function toCaseCreateInput(
   row: WatchCase & { images?: CaseImage[] },
 ): PersistedWatchCase {
+  const decoded = decodeUnresolvedHandle(row.listingText ?? undefined);
   return {
     id: row.id,
     brand: row.brand,
@@ -61,17 +67,18 @@ function toCaseCreateInput(
       row.askingPrice === null ? undefined : Number(row.askingPrice),
     sellerPlatform: row.sellerPlatform ?? undefined,
     listingUrl: row.listingUrl ?? undefined,
-    listingText: row.listingText ?? undefined,
+    listingText: decoded.listingText,
     sellerClaims: row.sellerClaims ?? undefined,
     createdAt: row.createdAt,
     sellerId: row.sellerId ?? undefined,
+    typedSellerHandle: decoded.typedSellerHandle,
     photos: (row.images ?? []).map(toCasePhoto),
   };
 }
 
 export async function createWatchCase(
   input: CaseCreateInput,
-  options?: { sellerId?: string },
+  options?: { sellerId?: string; typedSellerHandle?: string },
 ): Promise<PersistedWatchCase> {
   const db = getDbClient();
   const row = await db.watchCase.create({
@@ -83,7 +90,10 @@ export async function createWatchCase(
       askingPrice: input.askingPrice,
       sellerPlatform: input.sellerPlatform,
       listingUrl: input.listingUrl,
-      listingText: input.listingText,
+      listingText: encodeUnresolvedHandle(
+        input.listingText,
+        options?.typedSellerHandle,
+      ),
       sellerClaims: input.sellerClaims,
       sellerId: options?.sellerId,
       status: "DRAFT",

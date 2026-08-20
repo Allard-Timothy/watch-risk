@@ -19,7 +19,10 @@ import {
 } from "@/lib/storage/local";
 import { loadCommunities, loadSellers } from "@/lib/knowledge/load";
 import { ensureSellerPersisted } from "@/lib/knowledge/persist";
-import { resolveSeller } from "@/lib/knowledge/resolve";
+import {
+  matchIntakeSeller,
+  type IntakeSellerMatch,
+} from "@/lib/knowledge/resolve";
 import {
   caseCreateFormSchema,
   type CaseCreateFormInput,
@@ -27,13 +30,34 @@ import {
 
 type FieldName = keyof CaseCreateFormInput;
 
+export type CreateCaseSellerMatch =
+  | Readonly<{ kind: "none" }>
+  | Readonly<{ kind: "resolved"; id: string; name: string }>
+  | Readonly<{ kind: "unresolved"; handle: string }>;
+
 export type CreateCaseResult =
-  | Readonly<{ ok: true; id: string }>
+  | Readonly<{ ok: true; id: string; sellerMatch: CreateCaseSellerMatch }>
   | Readonly<{
       ok: false;
       errors?: Partial<Record<FieldName, string>>;
       message?: string;
     }>;
+
+function toCreateCaseSellerMatch(
+  match: IntakeSellerMatch,
+): CreateCaseSellerMatch {
+  if (match.kind === "resolved") {
+    return {
+      kind: "resolved",
+      id: match.seller.sellerId,
+      name: match.seller.canonicalName,
+    };
+  }
+  if (match.kind === "unresolved") {
+    return { kind: "unresolved", handle: match.handle };
+  }
+  return { kind: "none" };
+}
 
 export async function createCaseAction(
   raw: Record<string, string>,
@@ -53,15 +77,21 @@ export async function createCaseAction(
   try {
     const { sellerHandle, ...listing } = parsed.data;
     const sellers = await loadSellers();
-    const resolved = resolveSeller(sellers, sellerHandle);
-    if (resolved) {
+    const match = matchIntakeSeller(sellers, sellerHandle);
+    if (match.kind === "resolved") {
       const communities = await loadCommunities();
-      await ensureSellerPersisted(resolved.seller, communities);
+      await ensureSellerPersisted(match.seller, communities);
     }
     const created = await createWatchCase(listing, {
-      sellerId: resolved?.seller.sellerId,
+      sellerId: match.kind === "resolved" ? match.seller.sellerId : undefined,
+      typedSellerHandle:
+        match.kind === "unresolved" ? match.handle : undefined,
     });
-    return { ok: true, id: created.id };
+    return {
+      ok: true,
+      id: created.id,
+      sellerMatch: toCreateCaseSellerMatch(match),
+    };
   } catch (error) {
     console.error("createWatchCase failed", error);
     return {
