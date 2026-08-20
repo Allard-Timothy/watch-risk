@@ -26,12 +26,12 @@ import {
  *
  * This turns case details, image type labels, and curated knowledge into a
  * validated `BuyerRiskReport` by applying the deterministic rules and
- * confidence caps in docs/report-rules.md. It does NOT call a model and does
+ * confidence caps in docs/reference/report-rules.md. It does NOT call a model and does
  * NOT invent visual observations from pixels. `visibleConcerns` come from
  * missing factory-variance photos, missing dossier checkpoints, curated
  * seller product-claim flags, and optional manual notes. Known factory
  * variance is a checklist, not a pixel finding. All language stays within
- * the safe wording allowed by docs/report-rules.md and .cursor/rules/watchrisk.mdc.
+ * the safe wording allowed by docs/reference/report-rules.md and .cursor/rules/watchrisk.mdc.
  */
 
 export type ImageQuality = "clear" | "mixed" | "poor";
@@ -265,7 +265,7 @@ function assembleCoreReport(
   const missingPhotos = recommended.filter((photo) => !provided.has(photo.type));
   const missingCount = missingPhotos.length;
 
-  // Confidence caps (docs/report-rules.md).
+  // Confidence caps (docs/reference/report-rules.md).
   let confidence: ConfidenceLevel = "high";
   if (!provided.has("dial")) {
     confidence = capConfidence(confidence, "medium");

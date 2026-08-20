@@ -12,10 +12,10 @@ Users upload listing details, seller claims, price, reference information, and p
 
 Forum TD status is evidence, not a universal trust score.
 
-The canonical product capability registry is `docs/product/features.md`.
+The canonical product capability registry is `docs/reference/features.md`.
 A listed feature is not evidence it is implemented. Consult that registry
 before adding QC, factory, seller, knowledge, evidence, or scoring work.
-Principles: `docs/product/principles.md`. Decisions: `docs/product/decisions.md`.
+Principles: `docs/explanation/principles.md`. Decisions: `docs/explanation/decisions.md`.
 
 ## Product boundary
 
@@ -86,21 +86,28 @@ been removed.
 
 Use these repo files as source context:
 - AGENTS.md
-- docs/product-brief.md
-- docs/architecture-typescript.md
-- docs/design-guidance.md
-- docs/ai-contract.md
-- docs/report-rules.md
-- docs/migration-plan.md
-- docs/knowledge-architecture.md
+- docs/README.md
+- docs/explanation/product-brief.md
+- docs/reference/architecture-typescript.md
+- docs/reference/design-guidance.md
+- docs/reference/ai-contract.md
+- docs/reference/report-rules.md
+- docs/explanation/migration-plan.md
+- docs/explanation/knowledge-architecture.md
 - prompts/pycharm-typescript-rewrite.md
 - assets/watchdesk-risk-report-dashboard.png
 
-Follow the design direction in docs/design-guidance.md and use assets/watchdesk-risk-report-dashboard.png as visual guidance.
+Follow the design direction in docs/reference/design-guidance.md and use assets/watchdesk-risk-report-dashboard.png as visual guidance.
+
+## Documentation
+
+Follow the Divio system in `docs/README.md` and `.cursor/rules/docs.mdc`.
+Put new pages in `docs/tutorials/`, `docs/how-to/`, `docs/reference/`, or
+`docs/explanation/`. Do not mix those purposes on one page.
 
 ## Knowledge architecture (later-phase)
 
-WatchTell should eventually include a persistent, structured intelligence layer built from seller reviews, QC feedback, factory/model discussions, technical deep dives, transaction reports, and WatchTell user outcomes. See docs/knowledge-architecture.md.
+WatchTell should eventually include a persistent, structured intelligence layer built from seller reviews, QC feedback, factory/model discussions, technical deep dives, transaction reports, and WatchTell user outcomes. See docs/explanation/knowledge-architecture.md.
 
 Do not make raw semantic RAG the primary runtime intelligence path.
 

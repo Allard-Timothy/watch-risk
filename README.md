@@ -9,7 +9,7 @@ before purchase.
 WatchTell does not authenticate, certify, or verify watches, and it is not a
 substitute for a watchmaker or brand service center. See
 [`.cursor/rules/watchrisk.mdc`](.cursor/rules/watchrisk.mdc) and
-[`docs/report-rules.md`](docs/report-rules.md) for the product and language
+[`docs/reference/report-rules.md`](docs/reference/report-rules.md) for the product and language
 rules.
 
 ## Stack
@@ -34,6 +34,8 @@ exact version into a per-user cache and does not install a system-wide package
 manager.
 
 ## Run locally
+
+Full lesson: [`docs/tutorials/getting-started.md`](docs/tutorials/getting-started.md).
 
 ```bash
 corepack enable
@@ -60,6 +62,8 @@ pnpm build
 
 ## Database
 
+Full recipe: [`docs/how-to/persist-cases-locally.md`](docs/how-to/persist-cases-locally.md).
+
 Case intake writes `WatchCase` rows and `CaseImage` metadata to Postgres.
 Photo bytes are stored under `.data/uploads/` on the app machine (not GCS yet).
 Start the database, copy env, and apply migrations before saving a case:
@@ -79,21 +83,18 @@ or opening a saved case requires Postgres.
 
 ## Documentation
 
-Product direction (intended capabilities, not current implementation):
+Docs follow the [Divio documentation system](https://docs.divio.com/documentation-system/).
+The map is [`docs/README.md`](docs/README.md):
 
-- [`docs/product/vision.md`](docs/product/vision.md)
-- [`docs/product/features.md`](docs/product/features.md) — canonical feature registry
-- [`docs/product/roadmap.md`](docs/product/roadmap.md)
-- [`docs/product/principles.md`](docs/product/principles.md)
-- [`docs/product/decisions.md`](docs/product/decisions.md) — resolved product questions
-- [`AGENTS.md`](AGENTS.md) — agent rules; points at the registry rather than duplicating it
+- Tutorials (learning): [`docs/tutorials/`](docs/tutorials/)
+- How-to guides (goals): [`docs/how-to/`](docs/how-to/)
+- Reference (information): [`docs/reference/`](docs/reference/), including the
+  [feature registry](docs/reference/features.md)
+- Explanation (understanding): [`docs/explanation/`](docs/explanation/)
 
 A feature listed in the registry is not evidence that it is implemented.
-Code is the source of truth for what exists today.
-
-Also see [`docs/`](docs/) for `product-brief.md` (near-term MVP),
-`architecture-typescript.md`, `ai-contract.md`, `report-rules.md`,
-`migration-plan.md`, `design-guidance.md`, and `knowledge-architecture.md`.
+Code is the source of truth for what exists today. Agent rules:
+[`AGENTS.md`](AGENTS.md).
 
 ## Current boundaries
 

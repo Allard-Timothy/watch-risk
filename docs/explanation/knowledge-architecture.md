@@ -2,7 +2,7 @@
 
 This document describes **how** the knowledge layer is designed. Intended
 product capabilities and current implementation status live in
-[`docs/product/features.md`](product/features.md). Do not treat a later-phase
+[`docs/reference/features.md`](../reference/features.md). Do not treat a later-phase
 diagram here as permission to implement embeddings, scraping, or retrieval.
 
 Incorporate this architecture into the WatchTell implementation plan.
@@ -639,15 +639,15 @@ community, evidence, and claim ontology with Zod seed schemas
 replacing it:
 
 * The existing Zod report schema, deterministic report rules, and confidence caps
-  (`docs/ai-contract.md`, `docs/report-rules.md`) remain the near-term analysis
+  (`docs/reference/ai-contract.md`, `docs/reference/report-rules.md`) remain the near-term analysis
   path and are the natural place to later consume compact dossiers/snapshots.
-* The current data model (`docs/architecture-typescript.md`) is extended with
+* The current data model (`docs/reference/architecture-typescript.md`) is extended with
   Community, Seller, SellerAlias, SellerCommunity, Evidence, Source, Claim,
   RiskFlag, and TrustDimension. `WatchCase.sellerId` is optional.
 * Product positioning is unchanged on authentication: WatchTell remains a
   pre-purchase, photo-based buyer-risk assessment tool and does not
   authenticate, certify, or verify watches; keep the safer language in
-  `docs/report-rules.md`. Forum TD labels are stored as community recognition
+  `docs/reference/report-rules.md`. Forum TD labels are stored as community recognition
   with an `independenceGroup` so one ecosystem cannot count as several
   confirmations.
 * No crawling, scraping, embeddings, vector search, or automated ingestion is in

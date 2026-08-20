@@ -1,20 +1,20 @@
 # WatchTell product roadmap
 
-This roadmap groups [`features.md`](features.md) IDs into phases. It does **not**
+This roadmap groups [`features.md`](../reference/features.md) IDs into phases. It does **not**
 replace the registry, and it is **not** permission to implement anything.
 
 Assumptions below are product judgments unless a matching entry exists in
-[`docs/product/decisions.md`](decisions.md). Decisions win over this file.
+[`docs/explanation/decisions.md`](decisions.md). Decisions win over this file.
 
 Existing architecture plans remain:
 
-- [`docs/architecture-typescript.md`](../architecture-typescript.md) — app
+- [`docs/reference/architecture-typescript.md`](../reference/architecture-typescript.md) — app
   shape, placeholders, report module
-- [`docs/knowledge-architecture.md`](../knowledge-architecture.md) — ontology,
+- [`docs/explanation/knowledge-architecture.md`](knowledge-architecture.md) — ontology,
   claims, snapshots, later retrieval
-- [`docs/migration-plan.md`](../migration-plan.md) — TypeScript rewrite and
+- [`docs/explanation/migration-plan.md`](migration-plan.md) — TypeScript rewrite and
   integration order
-- [`docs/ai-contract.md`](../ai-contract.md) — structured output and safety
+- [`docs/reference/ai-contract.md`](../reference/ai-contract.md) — structured output and safety
 
 Those documents describe **how**. This file describes **when, hypothetically**.
 
@@ -44,7 +44,7 @@ The live product is a **buyer-risk report**. QC GL/RL verdicts belong
 **in** that report (`DEC-001`). Pixel and video analysis are MVP
 (`DEC-002`) but are not implemented yet.
 
-Resolved questions: [`docs/product/decisions.md`](decisions.md).
+Resolved questions: [`docs/explanation/decisions.md`](decisions.md).
 
 ## Core systems (planning context only)
 
@@ -213,7 +213,7 @@ curated dossiers are trustworthy.
 
 Why this stage is last: crawling, embeddings, and outcome loops are
 expensive and easy to build in the wrong shape. See Rule 4 and
-[`docs/knowledge-architecture.md`](../knowledge-architecture.md) Phase 3–4.
+[`docs/explanation/knowledge-architecture.md`](knowledge-architecture.md) Phase 3–4.
 
 - `KNOW-005` Selective raw retrieval
 - `RESEARCH-005` Community intelligence summaries

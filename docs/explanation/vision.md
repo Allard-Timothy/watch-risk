@@ -29,8 +29,8 @@ watches, or guarantee authenticity. Forum TD status is evidence, not a universal
 trust score. Independent inspection remains appropriate when purchase risk is
 material.
 
-See [`docs/explanation/product-boundaries.md`](../explanation/product-boundaries.md)
-and [`docs/report-rules.md`](../report-rules.md).
+See [`docs/explanation/product-boundaries.md`](product-boundaries.md)
+and [`docs/reference/report-rules.md`](../reference/report-rules.md).
 
 ## Near-term product
 
@@ -55,11 +55,11 @@ provenance, factory/reference/movement dossiers, seller intelligence, and
 real-world outcomes. LLMs, if used, consume that knowledge. They are not the
 knowledge store.
 
-The canonical capability list is [`docs/product/features.md`](features.md).
-Principles are in [`docs/product/principles.md`](principles.md). Phasing is in
-[`docs/product/roadmap.md`](roadmap.md). Resolved questions are in
-[`docs/product/decisions.md`](decisions.md).
+The canonical capability list is [`docs/reference/features.md`](../reference/features.md).
+Principles are in [`docs/explanation/principles.md`](principles.md). Phasing is in
+[`docs/explanation/roadmap.md`](roadmap.md). Resolved questions are in
+[`docs/explanation/decisions.md`](decisions.md).
 
-The existing short MVP brief remains [`docs/product-brief.md`](../product-brief.md).
+The existing short MVP brief remains [`docs/explanation/product-brief.md`](product-brief.md).
 Do not treat that brief as a reason to delete later-phase capabilities from the
 registry.

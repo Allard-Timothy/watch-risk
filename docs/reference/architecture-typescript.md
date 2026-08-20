@@ -2,7 +2,7 @@
 
 This document describes **how** the TypeScript app is designed. Intended
 product capabilities and implementation status live in
-[`docs/product/features.md`](product/features.md). Placeholder modules
+[`docs/reference/features.md`](features.md). Placeholder modules
 (Stripe, OpenAI, GCS) in this file are not evidence those integrations exist.
 
 ## Goal
@@ -196,7 +196,7 @@ structured claims, evidence, and source provenance; time-aware seller/factory
 intelligence; and materialized dossiers/snapshots that the runtime consumes
 instead of raw retrieval on every call. This extends the data model above rather
 than replacing it, and is later-phase work — not immediate MVP scope. See
-`docs/knowledge-architecture.md`.
+`docs/explanation/knowledge-architecture.md`.
 
 ### Curated model dossiers (MVP)
 

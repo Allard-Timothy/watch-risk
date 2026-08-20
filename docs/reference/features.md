@@ -14,15 +14,15 @@ registry update. Do not infer implementation from architecture diagrams.
 
 Related documents:
 
-- Vision: [`docs/product/vision.md`](vision.md)
-- Principles: [`docs/product/principles.md`](principles.md)
-- Roadmap: [`docs/product/roadmap.md`](roadmap.md)
-- Resolved decisions: [`docs/product/decisions.md`](decisions.md)
-- Current MVP brief: [`docs/product-brief.md`](../product-brief.md)
-- Architecture: [`docs/architecture-typescript.md`](../architecture-typescript.md)
-- Knowledge architecture: [`docs/knowledge-architecture.md`](../knowledge-architecture.md)
-- AI contract: [`docs/ai-contract.md`](../ai-contract.md)
-- Report rules: [`docs/report-rules.md`](../report-rules.md)
+- Vision: [`docs/explanation/vision.md`](../explanation/vision.md)
+- Principles: [`docs/explanation/principles.md`](../explanation/principles.md)
+- Roadmap: [`docs/explanation/roadmap.md`](../explanation/roadmap.md)
+- Resolved decisions: [`docs/explanation/decisions.md`](../explanation/decisions.md)
+- Current MVP brief: [`docs/explanation/product-brief.md`](../explanation/product-brief.md)
+- Architecture: [`docs/reference/architecture-typescript.md`](architecture-typescript.md)
+- Knowledge architecture: [`docs/explanation/knowledge-architecture.md`](../explanation/knowledge-architecture.md)
+- AI contract: [`docs/reference/ai-contract.md`](ai-contract.md)
+- Report rules: [`docs/reference/report-rules.md`](report-rules.md)
 
 ## How agents should use this file
 
@@ -558,7 +558,7 @@ defect list.
 `ImageFinding` has `area`, `severity`, `finding`, `visibleEvidence`.
 Current concerns are mostly missing-checkpoint, seller `product_claim`
 flags, and manual notes. No classification enum yet. User-facing text
-must still follow `docs/report-rules.md`.
+must still follow `docs/reference/report-rules.md`.
 
 ## VERDICT-002: Severity scoring
 
@@ -622,7 +622,7 @@ Give users a clear recommendation while retaining nuance.
 Not implemented. Current reports use `overallRisk` buyer-risk language.
 **Decided:** include GL/RL QC verdicts inside the buyer-risk report
 (`DEC-001`). Do not replace the headline with GL/RL alone. See mapping
-in `docs/product/decisions.md`.
+in `docs/explanation/decisions.md`.
 
 ## VERDICT-004: Confidence score
 
@@ -645,7 +645,7 @@ Make uncertainty visible (Rule 3).
 
 - Confidence can attach to individual observations, identification,
   knowledge claims, seller assessments, and the overall verdict.
-- Caps apply when evidence is missing (`docs/report-rules.md`).
+- Caps apply when evidence is missing (`docs/reference/report-rules.md`).
 
 ### Implementation Notes
 
@@ -2226,7 +2226,7 @@ direct verification is requested.
 
 ### Implementation Notes
 
-Explicitly out of current scope (`docs/knowledge-architecture.md`).
+Explicitly out of current scope (`docs/explanation/knowledge-architecture.md`).
 Do not add vector DBs or Reddit scrapers because this ID exists.
 
 ---
@@ -2256,7 +2256,7 @@ evidence, confidence, seller/process risk, verdict, and next steps.
 
 ### Acceptance Criteria
 
-- Reports follow `docs/report-rules.md` structure and language.
+- Reports follow `docs/reference/report-rules.md` structure and language.
 - Forbidden conclusion words cannot reach the user.
 - Sample and saved-case reports share the same dashboard language.
 
@@ -2484,7 +2484,7 @@ identity.
 
 ### Acceptance Criteria
 
-- Visual language follows `docs/design-guidance.md` and
+- Visual language follows `docs/reference/design-guidance.md` and
   `assets/watchdesk-risk-report-dashboard.png`.
 - UI reduces anxiety rather than encouraging microscopic panic (Rule 9).
 
@@ -2920,6 +2920,6 @@ After material implementation, change **status** and rewrite
 **Implementation Notes** with file evidence. Do not mark `implemented`
 from architecture intent alone.
 
-Resolved product questions live in [`docs/product/decisions.md`](decisions.md).
+Resolved product questions live in [`docs/explanation/decisions.md`](../explanation/decisions.md).
 When a decision changes phase or acceptance criteria, update this registry
 in the same change.

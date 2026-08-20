@@ -3,12 +3,12 @@
 Read these files before making changes:
 
 - `.junie/AGENTS.md`
-- `docs/product-brief.md`
-- `docs/architecture-typescript.md`
-- `docs/migration-plan.md`
-- `docs/report-rules.md`
-- `docs/ai-contract.md`
-- `docs/design-guidance.md`
+- `docs/explanation/product-brief.md`
+- `docs/reference/architecture-typescript.md`
+- `docs/explanation/migration-plan.md`
+- `docs/reference/report-rules.md`
+- `docs/reference/ai-contract.md`
+- `docs/reference/design-guidance.md`
 - `assets/watchdesk-risk-report-dashboard.png`
 
 We are rewriting the current Django scaffold into a TypeScript-first Next.js app.
@@ -42,7 +42,7 @@ First create:
 - Zod schemas
 - placeholder report generator
 - design tokens or Tailwind theme direction
-- `docs/architecture-typescript.md` updates if needed
+- `docs/reference/architecture-typescript.md` updates if needed
 
 Follow the product constraints in `.junie/AGENTS.md`.
 

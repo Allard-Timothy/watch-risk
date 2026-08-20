@@ -6,7 +6,7 @@ roadmap hypothesis disagrees.
 Feature status still comes from the codebase. A decision to implement
 something does not mark it `implemented`.
 
-Related: [`features.md`](features.md), [`roadmap.md`](roadmap.md),
+Related: [`features.md`](../reference/features.md), [`roadmap.md`](roadmap.md),
 [`principles.md`](principles.md), [`vision.md`](vision.md).
 
 ## DEC-001: Buyer-risk report includes QC verdicts (GL/RL)

@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 /**
  * Prisma client singleton for WatchTell.
  *
- * `lib/db` owns database access (docs/architecture-typescript.md). The client is
+ * `lib/db` owns database access (docs/reference/architecture-typescript.md). The client is
  * created lazily so importing this module never opens a connection. The first
  * query requires `DATABASE_URL`. Reused across hot reloads in development to
  * avoid exhausting connections.

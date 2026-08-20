@@ -1,0 +1,34 @@
+---
+description: Divio documentation system for WatchTell docs
+globs: docs/**/*.md
+alwaysApply: true
+---
+
+# WatchTell documentation (Divio)
+
+Docs follow https://docs.divio.com/documentation-system/.
+Index: `docs/README.md`.
+
+Every page belongs in **exactly one** quadrant:
+
+| Folder | Purpose | Write it as |
+|---|---|---|
+| `docs/tutorials/` | Learning | A lesson you lead. Concrete steps. Visible result quickly. Minimum theory. |
+| `docs/how-to/` | A goal | A recipe. Title works after “How to”. No conceptual essays. |
+| `docs/reference/` | Information | Describe the machinery: feature IDs, contracts, architecture, design spec. |
+| `docs/explanation/` | Understanding | Why, context, alternatives. No step lists or inventories. |
+
+## Rules
+
+- Do not mix types on one page. Split and link across quadrants.
+- Do not add new pages at `docs/*.md`. Use a quadrant folder.
+- Update `docs/README.md` when adding or renaming a page.
+- Feature inventory stays in `docs/reference/features.md`. Vision, principles, decisions, and roadmap stay in `docs/explanation/`.
+- Product language rules still apply in every quadrant.
+
+## Examples
+
+- First-run walkthrough → `docs/tutorials/`
+- Adding a watch reference → `docs/how-to/`
+- JSON AI contract or report wording → `docs/reference/`
+- Why WatchTell does not authenticate → `docs/explanation/`

@@ -4,9 +4,9 @@ import { findForbiddenWords } from "./safe-language";
 
 /**
  * Zod schemas for AI output. All model output must be validated with these
- * before it is saved or shown to a user (docs/ai-contract.md).
+ * before it is saved or shown to a user (docs/reference/ai-contract.md).
  *
- * Field names follow the camelCase JSON contract in docs/ai-contract.md.
+ * Field names follow the camelCase JSON contract in docs/reference/ai-contract.md.
  * The string enum values (e.g. "cannot_assess") are the on-the-wire values;
  * the Prisma layer stores the corresponding uppercase enum variants.
  */

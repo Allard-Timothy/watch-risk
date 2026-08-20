@@ -43,10 +43,10 @@ Use safer language:
 
 The canonical WatchTell product capability registry is:
 
-`docs/product/features.md`
+`docs/reference/features.md`
 
-Also read `docs/product/vision.md`, `docs/product/principles.md`,
-`docs/product/roadmap.md`, and `docs/product/decisions.md`. Do not copy
+Also read `docs/explanation/vision.md`, `docs/explanation/principles.md`,
+`docs/explanation/roadmap.md`, and `docs/explanation/decisions.md`. Do not copy
 the full inventory into this file.
 
 Agents MUST consult the registry when:
@@ -83,7 +83,7 @@ Code is the source of truth for current implementation.
 
 ## Product principles (summary)
 
-Full text: `docs/product/principles.md`.
+Full text: `docs/explanation/principles.md`.
 
 1. **Specificity over generic analysis.** Prefer brand → reference →
    factory → version → batch. Do not propagate knowledge sideways.
@@ -107,19 +107,21 @@ Full text: `docs/product/principles.md`.
 11. **Replica and grey-market QC stay separate.** Do not share QC photos
     or decision trees (`DEC-004`).
 
-Resolved product decisions: `docs/product/decisions.md`.
+Resolved product decisions: `docs/explanation/decisions.md`.
 
 ## Implementing a requested feature
 
 1. Read this file.
 2. Open only the relevant feature IDs and their dependencies in
-   `docs/product/features.md`.
+   `docs/reference/features.md`.
 3. Inspect current implementation.
 4. Check whether architecture docs already govern the area.
 5. Plan only the requested IDs.
 6. Preserve provenance, confidence, and language rules.
 7. Update feature status after material implementation.
-8. Update architecture docs when architecture materially changes.
+8. Update the matching Divio doc when architecture or product
+   understanding materially changes (`docs/reference/` vs
+   `docs/explanation/`; see `docs/README.md`).
 9. Add or update tests where relevant.
 10. Do not build vector databases, scrapers, extra model providers, or
     other later-phase infrastructure because a future ID exists.
@@ -137,6 +139,30 @@ Resolved product decisions: `docs/product/decisions.md`.
 - OpenAI placeholders
 - Google Cloud Storage placeholders
 - Cloud Run later
+
+## Documentation (Divio)
+
+WatchTell docs follow the
+[Divio documentation system](https://docs.divio.com/documentation-system/).
+The map is `docs/README.md`. Put every new or moved page in exactly one
+quadrant:
+
+| Folder | Oriented to | Write |
+|---|---|---|
+| `docs/tutorials/` | Learning | A lesson you lead. Concrete steps. Minimum theory. |
+| `docs/how-to/` | A goal | A recipe titled so it can follow “How to”. No essays. |
+| `docs/reference/` | Information | Describe machinery: feature IDs, contracts, architecture, design spec. |
+| `docs/explanation/` | Understanding | Why, context, alternatives. No step lists or inventories. |
+
+Do not leave new pages at `docs/*.md`. Do not mix types on one page; split
+and link. Update `docs/README.md` when adding or renaming a page.
+
+Canonical paths:
+
+- Feature registry: `docs/reference/features.md`
+- Vision / principles / roadmap / decisions: `docs/explanation/`
+- Report wording contract: `docs/reference/report-rules.md`
+- AI I/O contract: `docs/reference/ai-contract.md`
 
 ## Existing detailed guidance
 
