@@ -8,6 +8,10 @@ import {
   uniqueIndependenceGroups,
   type SellerSeed,
 } from "@/lib/knowledge";
+import {
+  computeSellerRatings,
+  ratingLabelCopy,
+} from "@/lib/knowledge/ratings";
 import { cn } from "@/lib/utils";
 
 const OVERVIEW_KEYS = [
@@ -25,7 +29,11 @@ export function SellerProfile({ seller }: { seller: SellerSeed }) {
   const dimensions = new Map(
     seller.trustDimensions.map((item) => [item.key, item.label]),
   );
-  const overall = dimensions.get("overall") ?? "insufficient_evidence";
+  const computed = computeSellerRatings(seller);
+  const overall =
+    computed.find((item) => item.key === "overall")?.label ??
+    dimensions.get("overall") ??
+    "insufficient_evidence";
   const groups = uniqueIndependenceGroups(seller.evidence);
 
   return (
@@ -39,18 +47,46 @@ export function SellerProfile({ seller }: { seller: SellerSeed }) {
             {seller.canonicalName}
           </h1>
         </div>
-        <p
-          className={cn(
-            "rounded-full border px-3 py-1 text-[12px] font-semibold",
-            overall === "high" || overall === "very_high"
-              ? "border-accent/20 bg-accent/10 text-accent"
-              : overall === "low"
-                ? "border-red-200 bg-red-50 text-danger"
-                : "border-border bg-muted text-muted-foreground",
-          )}
-        >
-          WatchTell confidence: {QUALITATIVE_LABEL_COPY[overall]}
-        </p>
+        <div className="text-right">
+          <p
+            className={cn(
+              "inline-flex rounded-full border px-3 py-1 text-[12px] font-semibold",
+              overall === "high" || overall === "very_high"
+                ? "border-accent/20 bg-accent/10 text-accent"
+                : overall === "low"
+                  ? "border-red-200 bg-red-50 text-danger"
+                  : "border-border bg-muted text-muted-foreground",
+            )}
+          >
+            WatchTell confidence: {ratingLabelCopy(overall)}
+          </p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            {computed.find((item) => item.key === "overall")?.basis}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        {computed.map((rating) => (
+          <div
+            key={rating.key}
+            className="rounded-xl border border-border bg-card px-3 py-3"
+          >
+            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+              {rating.key === "overall"
+                ? "Overall"
+                : rating.key === "qc_communication"
+                  ? "QC communication"
+                  : "Fulfillment"}
+            </p>
+            <p className="mt-1 text-[15px] font-semibold">
+              {ratingLabelCopy(rating.label)}
+            </p>
+            <p className="mt-1 text-[12px] leading-5 text-muted-foreground">
+              {rating.basis}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

@@ -25,6 +25,24 @@ export type ConfidenceLevel = z.infer<typeof confidenceLevelSchema>;
 export const severitySchema = z.enum(["low", "medium", "high"]);
 export type Severity = z.infer<typeof severitySchema>;
 
+export const qcVerdictSchema = z.enum([
+  "gl",
+  "gl_with_reservations",
+  "conditional_gl",
+  "request_additional_evidence",
+  "rl",
+  "insufficient_evidence",
+]);
+export type QcVerdict = z.infer<typeof qcVerdictSchema>;
+
+export const provenanceCitationSchema = z.object({
+  kind: z.enum(["seller_evidence", "factory_variance", "factory_tell"]),
+  id: z.string().min(1),
+  label: z.string().min(1),
+  independenceGroup: z.string().optional(),
+});
+export type ProvenanceCitation = z.infer<typeof provenanceCitationSchema>;
+
 export const DETECTED_PHOTO_TYPES = [
   "dial",
   "clasp",
@@ -69,11 +87,13 @@ export const buyerRiskReportSchema = z
   .object({
     overallRisk: riskLevelSchema,
     confidence: confidenceLevelSchema,
+    qcVerdict: qcVerdictSchema,
     missingEvidence: z.array(z.string()).default([]),
     visibleConcerns: z.array(imageFindingSchema).default([]),
     sellerQuestions: z.array(z.string()).default([]),
     recommendedNextStep: z.string().min(1),
     safeSummary: z.string().min(1),
+    provenanceCitations: z.array(provenanceCitationSchema).default([]),
   })
   .superRefine((report, ctx) => {
     const userFacing: Array<{ path: (string | number)[]; text: string }> = [
@@ -110,6 +130,7 @@ export type BuyerRiskReport = z.infer<typeof buyerRiskReportSchema>;
 export const SAFE_FALLBACK_REPORT: BuyerRiskReport = {
   overallRisk: "cannot_assess",
   confidence: "low",
+  qcVerdict: "insufficient_evidence",
   missingEvidence: [],
   visibleConcerns: [],
   sellerQuestions: [],
@@ -117,4 +138,5 @@ export const SAFE_FALLBACK_REPORT: BuyerRiskReport = {
     "We could not produce a report from the submitted images. Request additional photos and consider an independent inspection before proceeding.",
   safeSummary:
     "The submitted evidence could not be assessed. This is a photo-based buyer-risk report, not an authentication certificate.",
+  provenanceCitations: [],
 };

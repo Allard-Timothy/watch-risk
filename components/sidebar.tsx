@@ -132,16 +132,36 @@ export function Sidebar() {
           <CaseIcon className="h-[18px] w-[18px]" />
           New case
         </Link>
+        <Link
+          href="/pricing"
+          className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13.5px] text-sidebar-muted transition hover:bg-sidebar-hover/70 hover:text-sidebar-foreground"
+        >
+          Pricing
+        </Link>
       </nav>
 
       <div className="mt-auto border-t border-white/10 px-4 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2">
+          <Link
+            href="/login"
+            className="text-[12px] text-sidebar-muted underline hover:text-sidebar-foreground"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/account"
+            className="text-[12px] text-sidebar-muted underline hover:text-sidebar-foreground"
+          >
+            Account
+          </Link>
+        </div>
+        <div className="mt-3 flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-xs font-semibold">
             WT
           </span>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">Local preview</p>
-            <p className="truncate text-[11px] text-sidebar-muted">Sample session</p>
+            <p className="truncate text-[11px] text-sidebar-muted">Mock billing mode</p>
           </div>
         </div>
       </div>

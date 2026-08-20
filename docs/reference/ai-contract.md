@@ -43,11 +43,13 @@ The final report should produce:
 {
   "overallRisk": "low | medium | high | cannot_assess",
   "confidence": "low | medium | high",
+  "qcVerdict": "gl | gl_with_reservations | conditional_gl | request_additional_evidence | rl | insufficient_evidence",
   "missingEvidence": [],
   "visibleConcerns": [],
   "sellerQuestions": [],
   "recommendedNextStep": "",
-  "safeSummary": ""
+  "safeSummary": "",
+  "provenanceCitations": []
 }
 ```
 

@@ -116,7 +116,7 @@ These are related but not the same capability:
 | FACTORY-001 | Factory dossiers | in-progress | MVP | critical |
 | FACTORY-002 | Factory-by-reference knowledge | in-progress | MVP | critical |
 | FACTORY-003 | Factory version history | in-progress | V1 | high |
-| FACTORY-004 | Known tells database | proposed | V1 | high |
+| FACTORY-004 | Known tells database | in-progress | MVP | high |
 | FACTORY-005 | Known defect database | in-progress | MVP | critical |
 | FACTORY-006 | Acceptable variance database | in-progress | MVP | high |
 | FACTORY-007 | Factory comparison | proposed | V2 | high |
@@ -168,8 +168,8 @@ These are related but not the same capability:
 | REPORT-007 | Recency indicators | proposed | V1 | medium |
 | REPORT-008 | Disagreement indicators | proposed | V1 | high |
 | REPORT-009 | Calm decision-oriented UI | in-progress | MVP | high |
-| OUTCOME-001 | Post-purchase outcome reporting | proposed | Later | medium |
-| OUTCOME-002 | Seller outcome feedback | proposed | Later | medium |
+| OUTCOME-001 | Post-purchase outcome reporting | in-progress | MVP | medium |
+| OUTCOME-002 | Seller outcome feedback | in-progress | MVP | medium |
 | OUTCOME-003 | Factory and version confirmation | proposed | Later | medium |
 | OUTCOME-004 | Service and failure reports | proposed | Later | medium |
 | OUTCOME-005 | Prediction versus outcome tracking | proposed | Later | high |
@@ -182,6 +182,10 @@ These are related but not the same capability:
 | RESEARCH-003 | Seller intelligence explorer | in-progress | V1 | high |
 | RESEARCH-004 | Factory comparison explorer | proposed | V2 | medium |
 | RESEARCH-005 | Community intelligence summaries | proposed | Later | medium |
+| AUTH-001 | User accounts (magic link) | in-progress | MVP | critical |
+| BILL-001 | Single report purchase | in-progress | MVP | critical |
+| BILL-002 | Bundled report credits | in-progress | MVP | high |
+| BILL-003 | Subscription and explorer access | in-progress | MVP | high |
 
 ---
 
@@ -2902,6 +2906,108 @@ conflicting posts.
 
 One curated compare-case narrative exists. That is not a general
 summarization product. Do not scrape to implement this.
+
+---
+
+# Domain 14: Accounts and billing
+
+## AUTH-001: User accounts (magic link)
+
+**Category:** Platform  
+**Status:** in-progress  
+**Phase:** MVP  
+**Priority:** critical
+
+### Purpose
+
+Let buyers sign in, own saved cases, and access purchased report credits.
+
+### Dependencies
+
+- Prisma `User`, Auth.js tables
+
+### Acceptance Criteria
+
+- Email magic-link sign-in works locally (link logged in dev).
+- Saved cases are scoped to the signed-in user.
+- Sample report remains public without login.
+
+### Implementation Notes
+
+Auth.js Email provider with `lib/email` console transport in development.
+See `DEC-008`.
+
+## BILL-001: Single report purchase
+
+**Category:** Platform  
+**Status:** in-progress  
+**Phase:** MVP  
+**Priority:** critical
+
+### Purpose
+
+Sell one listing report per credit or checkout session.
+
+### Dependencies
+
+- AUTH-001
+- `PaymentRecord`, `ReportCredit`
+
+### Acceptance Criteria
+
+- Mock checkout marks a case paid and consumes one credit.
+- Stripe activates when `STRIPE_SECRET_KEY` is configured.
+
+### Implementation Notes
+
+`lib/payments` with `PAYMENTS_MODE=mock` default. See `DEC-003`, `DEC-008`.
+
+## BILL-002: Bundled report credits
+
+**Category:** Platform  
+**Status:** in-progress  
+**Phase:** MVP  
+**Priority:** high
+
+### Purpose
+
+Let buyers purchase multiple report credits in one transaction.
+
+### Dependencies
+
+- BILL-001
+- `ReportCredit`
+
+### Acceptance Criteria
+
+- Bundle SKUs add N credits to the user wallet.
+- Credits decrement when a saved-case report is generated.
+
+## BILL-003: Subscription and explorer access
+
+**Category:** Platform  
+**Status:** in-progress  
+**Phase:** MVP  
+**Priority:** high
+
+### Purpose
+
+Grant subscribers access to knowledge explorers and optional monthly credits.
+
+### Dependencies
+
+- BILL-001
+- `Subscription`
+- `DEC-003`
+
+### Acceptance Criteria
+
+- Active subscription unlocks seller/factory/reference/compare pages.
+- Explorers are not a separate first paid SKU.
+
+### Implementation Notes
+
+Mock subscription activation in development. Stripe Billing when configured.
 
 ---
 

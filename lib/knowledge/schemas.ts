@@ -189,11 +189,30 @@ export const defectSeedSchema = z.object({
 });
 export type DefectSeed = z.infer<typeof defectSeedSchema>;
 
+/** Factory-level known variance record (DEC-005). */
+export const factoryKnownVarianceSeedSchema = defectSeedSchema;
+export type FactoryKnownVarianceSeed = DefectSeed;
+
+export const factoryTellSeedSchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  area: z.string().trim().min(1).max(80),
+  photoType: z.string().trim().min(1).max(40).optional(),
+  whatBuyersShouldLookFor: z.string().trim().min(1).max(2000),
+  whatPhotosCannotShow: z.string().trim().min(1).max(2000),
+  references: z.array(z.string().trim().min(1).max(80)).default([]),
+  factoryVersionId: z.string().trim().min(1).max(80).optional(),
+  notes: z.string().max(2000).optional(),
+});
+export type FactoryTellSeed = z.infer<typeof factoryTellSeedSchema>;
+
 export const factorySeedSchema = z.object({
   factoryId: z.string().trim().min(1).max(80),
   canonicalName: z.string().trim().min(1).max(120),
   notes: z.string().max(8000).optional(),
   versions: z.array(factoryVersionSeedSchema).default([]),
+  /** @deprecated use knownVariances */
   defects: z.array(defectSeedSchema).default([]),
+  knownVariances: z.array(factoryKnownVarianceSeedSchema).default([]),
+  tells: z.array(factoryTellSeedSchema).default([]),
 });
 export type FactorySeed = z.infer<typeof factorySeedSchema>;

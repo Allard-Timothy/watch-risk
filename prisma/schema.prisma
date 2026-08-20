@@ -1,12 +1,12 @@
-// WatchTell data model (initial).
+// WatchTell data model.
 //
 // This schema mirrors the entities described in docs/reference/architecture-typescript.md
-// and docs/explanation/knowledge-architecture.md. Auth, storage, payments, and model calls
-// are still placeholders. WatchCase listing details and CaseImage metadata are
-// persisted; photo bytes live under .data/uploads until GCS is wired.
-// Seller/community/evidence tables hold curated local knowledge (seed JSON),
-// not scraped forum dumps. TD status is stored as community recognition, not
-// a universal trust boolean.
+// and docs/explanation/knowledge-architecture.md. Auth, storage, payments, and model
+// calls use provider seams (mock/local by default). WatchCase listing details and
+// CaseImage metadata are persisted; photo bytes live under .data/uploads until GCS is
+// wired. Seller/community/evidence tables hold curated local knowledge (seed JSON),
+// not scraped forum dumps. TD status is stored as community recognition, not a
+// universal trust boolean.
 
 generator client {
   provider = "prisma-client-js"
@@ -68,6 +68,13 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIAL
+}
+
 enum SellerLifecycleStatus {
   ACTIVE
   INACTIVE
@@ -113,6 +120,7 @@ enum EvidenceKind {
   SELLER_PROMOTION
   FORUM_STATUS
   INDEPENDENT_REVIEW
+  WATCHTELL_OUTCOME
   OTHER
 }
 
@@ -121,6 +129,7 @@ enum SourceKind {
   REDDIT
   WEBSITE
   MANUAL_CURATION
+  WATCHTELL_USER
   OTHER
 }
 
@@ -132,12 +141,78 @@ enum ClaimSentiment {
 }
 
 model User {
-  id        String      @id @default(cuid())
-  email     String      @unique
-  name      String?
-  cases     WatchCase[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id            String         @id @default(cuid())
+  email         String         @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  cases         WatchCase[]
+  credits       ReportCredit?
+  subscription  Subscription?
+  payments      PaymentRecord[]
+  outcomes      Outcome[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model ReportCredit {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status               SubscriptionStatus @default(ACTIVE)
+  stripeSubscriptionId String?
+  currentPeriodEnd     DateTime?
+  monthlyCredits       Int                @default(3)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 }
 
 model WatchCase {
@@ -160,6 +235,7 @@ model WatchCase {
   analysisRuns   AnalysisRun[]
   reports        Report[]
   payments       PaymentRecord[]
+  outcomes       Outcome[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
@@ -219,8 +295,11 @@ model Report {
 
 model PaymentRecord {
   id                      String        @id @default(cuid())
-  caseId                  String
-  case                    WatchCase     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  userId                  String?
+  user                    User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  caseId                  String?
+  case                    WatchCase?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  sku                     String?
   stripeCheckoutSessionId String?
   stripePaymentIntentId   String?
   amountCents             Int           @default(0)
@@ -230,6 +309,24 @@ model PaymentRecord {
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
 
+  @@index([caseId])
+  @@index([userId])
+}
+
+model Outcome {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caseId           String
+  case             WatchCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  receivedWatch    Boolean?
+  qcPhotosMatched  Boolean?
+  fulfillmentIssue String?
+  factoryClaimNote String?
+  consentToStore   Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
   @@index([caseId])
 }
 
@@ -367,41 +464,41 @@ model Claim {
 }
 
 model Factory {
-  id             String           @id
-  canonicalName  String
-  notes          String?
-  versions       FactoryVersion[]
-  defects        Defect[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id              String           @id
+  canonicalName   String
+  notes           String?
+  versions        FactoryVersion[]
+  knownVariances  KnownVariance[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model FactoryVersion {
-  id        String   @id
-  factoryId String
-  factory   Factory  @relation(fields: [factoryId], references: [id], onDelete: Cascade)
-  label     String
-  notes     String?
-  defects   Defect[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String          @id
+  factoryId      String
+  factory        Factory         @relation(fields: [factoryId], references: [id], onDelete: Cascade)
+  label          String
+  notes          String?
+  knownVariances KnownVariance[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([factoryId])
 }
 
-model Defect {
-  id                       String          @id
-  factoryId                String
-  factory                  Factory         @relation(fields: [factoryId], references: [id], onDelete: Cascade)
-  factoryVersionId         String?
-  factoryVersion           FactoryVersion? @relation(fields: [factoryVersionId], references: [id], onDelete: SetNull)
-  area                     String
-  photoType                String?
-  whatBuyersShouldLookFor  String
-  whatPhotosCannotShow     String
-  references               String[]
-  createdAt                DateTime        @default(now())
-  updatedAt                DateTime        @updatedAt
+model KnownVariance {
+  id                      String          @id
+  factoryId               String
+  factory                 Factory         @relation(fields: [factoryId], references: [id], onDelete: Cascade)
+  factoryVersionId        String?
+  factoryVersion          FactoryVersion? @relation(fields: [factoryVersionId], references: [id], onDelete: SetNull)
+  area                    String
+  photoType               String?
+  whatBuyersShouldLookFor   String
+  whatPhotosCannotShow      String
+  references              String[]
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
 
   @@index([factoryId])
   @@index([factoryVersionId])

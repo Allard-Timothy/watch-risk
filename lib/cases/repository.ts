@@ -23,9 +23,11 @@ export type CasePhoto = Readonly<{
 export type PersistedWatchCase = CaseCreateInput &
   Readonly<{
     id: string;
+    userId?: string;
     createdAt: Date;
     sellerId?: string;
     typedSellerHandle?: string;
+    status: string;
     photos: readonly CasePhoto[];
   }>;
 
@@ -59,6 +61,7 @@ function toCaseCreateInput(
   const decoded = decodeUnresolvedHandle(row.listingText ?? undefined);
   return {
     id: row.id,
+    userId: row.userId ?? undefined,
     brand: row.brand,
     model: row.model ?? undefined,
     reference: row.reference ?? undefined,
@@ -72,13 +75,18 @@ function toCaseCreateInput(
     createdAt: row.createdAt,
     sellerId: row.sellerId ?? undefined,
     typedSellerHandle: decoded.typedSellerHandle,
+    status: row.status,
     photos: (row.images ?? []).map(toCasePhoto),
   };
 }
 
 export async function createWatchCase(
   input: CaseCreateInput,
-  options?: { sellerId?: string; typedSellerHandle?: string },
+  options?: {
+    sellerId?: string;
+    typedSellerHandle?: string;
+    userId?: string;
+  },
 ): Promise<PersistedWatchCase> {
   const db = getDbClient();
   const row = await db.watchCase.create({
@@ -96,6 +104,7 @@ export async function createWatchCase(
       ),
       sellerClaims: input.sellerClaims,
       sellerId: options?.sellerId,
+      userId: options?.userId,
       status: "DRAFT",
     },
     include: { images: true },
@@ -103,14 +112,26 @@ export async function createWatchCase(
   return toCaseCreateInput(row);
 }
 
-export async function listWatchCases(limit = 12): Promise<PersistedWatchCase[]> {
+export async function listWatchCases(
+  limit = 12,
+  userId?: string,
+): Promise<PersistedWatchCase[]> {
   const db = getDbClient();
   const rows = await db.watchCase.findMany({
+    where: userId ? { userId } : undefined,
     orderBy: { createdAt: "desc" },
     take: limit,
     include: { images: { orderBy: { createdAt: "asc" } } },
   });
   return rows.map(toCaseCreateInput);
+}
+
+export async function getWatchCaseWithOwner(id: string) {
+  const db = getDbClient();
+  return db.watchCase.findUnique({
+    where: { id },
+    select: { id: true, userId: true, status: true },
+  });
 }
 
 export async function getWatchCase(

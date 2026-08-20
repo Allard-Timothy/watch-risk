@@ -2,6 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { getSessionUserId } from "@/lib/auth/actions";
 import {
   createCaseImage,
   createWatchCase,
@@ -82,10 +83,12 @@ export async function createCaseAction(
       const communities = await loadCommunities();
       await ensureSellerPersisted(match.seller, communities);
     }
+    const userId = await getSessionUserId();
     const created = await createWatchCase(listing, {
       sellerId: match.kind === "resolved" ? match.seller.sellerId : undefined,
       typedSellerHandle:
         match.kind === "unresolved" ? match.handle : undefined,
+      userId,
     });
     return {
       ok: true,

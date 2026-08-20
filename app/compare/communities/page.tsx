@@ -1,6 +1,9 @@
 import Link from "next/link";
 
 import { Card, CardTitle, DashboardMain, PageTitle } from "@/components/dashboard-main";
+import { ExplorerAccessPanel } from "@/components/explorer-access-panel";
+import { auth } from "@/lib/auth";
+import { canAccessExplorers } from "@/lib/billing/access";
 import {
   compareCommunitySellers,
   resolveComparePair,
@@ -31,6 +34,12 @@ function communityLabel(
 export default async function CompareCommunitiesPage({
   searchParams,
 }: ComparePageProps) {
+  const session = await auth();
+  const explorerAccess = await canAccessExplorers(session?.user?.id);
+  if (!explorerAccess.allowed) {
+    return <ExplorerAccessPanel reason={explorerAccess.reason} />;
+  }
+
   const params = await searchParams;
   const [sellers, cases, communities] = await Promise.all([
     loadSellers(),

@@ -102,8 +102,8 @@ describe("seller knowledge persist", () => {
     const stored = await upsertFactory(seed);
     expect(stored?.canonicalName).toBe("VSF");
     expect(stored?.versions).toHaveLength(1);
-    expect(stored?.defects[0]?.photoType).toBe("rehaut");
-    expect(stored?.defects[0]?.references).toEqual(["126610LN"]);
+    expect(stored?.knownVariances[0]?.photoType).toBe("rehaut");
+    expect(stored?.knownVariances[0]?.references).toEqual(["126610LN"]);
 
     await getDbClient().factory.delete({ where: { id: "vsf-test" } });
   });

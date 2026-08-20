@@ -20,6 +20,8 @@ import {
   concernsFromFactoryVariance,
   type FactoryVariance,
 } from "@/lib/reports/factory-variance";
+import { deriveQcVerdict } from "@/lib/reports/qc-verdict";
+import type { ProvenanceCitation } from "@/lib/validation";
 
 /**
  * Deterministic placeholder report generator.
@@ -316,14 +318,24 @@ function assembleCoreReport(
 
   const safeSummary = buildSafeSummary(overallRisk, missingCount);
 
+  const visibleConcerns = buildVisibleConcerns(input, context, factoryVariance);
+  const qcVerdict = deriveQcVerdict({
+    overallRisk,
+    missingEvidenceCount: missingCount,
+    visibleConcerns,
+    stockPhotosOnly: input.stockPhotosOnly,
+  });
+
   const core: BuyerRiskReport = {
     overallRisk,
     confidence,
+    qcVerdict,
     missingEvidence,
-    visibleConcerns: buildVisibleConcerns(input, context, factoryVariance),
+    visibleConcerns,
     sellerQuestions,
     recommendedNextStep,
     safeSummary,
+    provenanceCitations: buildProvenanceCitations(context, factoryVariance),
   };
 
   // Validate before returning; fall back to a safe report if anything drifts.
@@ -463,6 +475,49 @@ function buildVisibleConcerns(
   }
 
   return concerns;
+}
+
+function buildProvenanceCitations(
+  context: ReportContext,
+  factoryVariance?: FactoryVariance,
+): ProvenanceCitation[] {
+  const citations: ProvenanceCitation[] = [];
+
+  if (context.seller) {
+    const groups = new Set(
+      context.seller.evidence.map((item) => item.independenceGroup),
+    );
+    for (const group of groups) {
+      citations.push({
+        kind: "seller_evidence",
+        id: context.seller.sellerId,
+        label: `${context.seller.canonicalName} evidence (${group})`,
+        independenceGroup: group,
+      });
+    }
+  }
+
+  if (factoryVariance) {
+    for (const item of factoryVariance.items) {
+      citations.push({
+        kind: "factory_variance",
+        id: item.id,
+        label: `${factoryVariance.factoryName}: ${item.area}`,
+      });
+    }
+  }
+
+  if (context.factory?.tells?.length) {
+    for (const tell of context.factory.tells) {
+      citations.push({
+        kind: "factory_tell",
+        id: tell.id,
+        label: `${context.factory.canonicalName} tell: ${tell.area}`,
+      });
+    }
+  }
+
+  return citations;
 }
 
 export function generateReport(

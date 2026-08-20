@@ -131,8 +131,10 @@ repository already ships seller dossiers and community comparison.
 - `EVAL-003` Provider-independent reasoning (knowledge stays in WatchTell)
 
 **MVP does not include:** timegrapher interpretation (`QC-004`), scraping,
-embeddings, or user accounts. Pixel/video QC and GL/RL **are** MVP
-(`DEC-002`, `DEC-001`) even though they are not in the codebase yet.
+or embeddings. **Commercial MVP now includes** user accounts, billing
+seams, bundled credits, subscription explorer access, and outcome capture
+(`DEC-008`). Pixel/video QC and GL/RL **are** MVP (`DEC-002`, `DEC-001`)
+even when only the deterministic seam is wired.
 
 The paid SKU is the listing report; subscribers also get knowledge
 explorers (`DEC-003`). Replica and grey-market QC trees stay separate

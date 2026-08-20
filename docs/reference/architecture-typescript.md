@@ -63,31 +63,49 @@ Owns Zod schemas for forms, API input, and AI output validation.
 
 ### `lib/storage`
 
-Owns Google Cloud Storage helpers.
+Owns file storage through a `StorageProvider` adapter (`lib/storage/index.ts`).
 
-Responsibilities:
+- **Default:** local disk under `.data/uploads/` (`lib/storage/local.ts`).
+- **Later:** GCS when `GCS_BUCKET` is set (client stub throws
+  `StorageNotConfiguredError` until wired).
 
-- create signed upload URLs
-- store image metadata
-- generate temporary read URLs for analysis
-- prevent public image exposure by default
+### `lib/payments`
 
-### `lib/stripe`
+Owns checkout through a `PaymentProvider` adapter (`lib/payments/index.ts`).
 
-Owns Stripe Checkout and webhook verification.
+- **Default:** `PAYMENTS_MODE=mock` writes `PaymentRecord` rows and grants
+  credits or subscriptions via `lib/billing/credits.ts`.
+- **Later:** Stripe Checkout when `STRIPE_SECRET_KEY` is present.
 
-Webhook handling must be idempotent.
+Webhook handling must be idempotent when Stripe is enabled.
 
-### `lib/openai`
+### `lib/analysis`
 
-Owns OpenAI calls.
+Owns report generation through an `AnalysisProvider` adapter
+(`lib/analysis/index.ts`).
 
-Rules:
+- **Default:** existing deterministic rules in `lib/reports/generate-report.ts`
+  (`modelUsed: deterministic-rules`).
+- **Later:** OpenAI vision when `OPENAI_API_KEY` is set (adapter returns not
+  configured until wired).
 
-- use structured JSON output
-- validate output with Zod
-- store model name and prompt version
-- do not let model output become final report without rules applied
+### `lib/email`
+
+Sends Auth.js magic links. Default implementation logs the URL to the server
+console in development (`lib/email/console.ts`).
+
+### `lib/auth` and `lib/billing`
+
+- Auth.js (Email magic link) with Prisma adapter tables (`Account`, `Session`,
+  `VerificationToken`).
+- Credits (`ReportCredit`), subscriptions (`Subscription`), and SKU helpers in
+  `lib/billing/`.
+- Access helpers in `lib/billing/access.ts` gate explorers and report generation.
+
+### Legacy module names
+
+Older docs refer to `lib/stripe` and `lib/openai`. Commercial MVP code uses the
+provider adapters above instead of separate top-level modules.
 
 ### `lib/reports`
 

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DashboardMain } from "@/components/dashboard-main";
+import { ExplorerAccessPanel } from "@/components/explorer-access-panel";
 import { ReferenceProfile } from "@/components/reference-profile";
+import { auth } from "@/lib/auth";
+import { canAccessExplorers } from "@/lib/billing/access";
 import { loadModelDossiers } from "@/lib/knowledge/load";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +28,12 @@ export async function generateMetadata({
 }
 
 export default async function ReferencePage({ params }: ReferencePageProps) {
+  const session = await auth();
+  const explorerAccess = await canAccessExplorers(session?.user?.id);
+  if (!explorerAccess.allowed) {
+    return <ExplorerAccessPanel reason={explorerAccess.reason} />;
+  }
+
   const { referenceId } = await params;
   const dossiers = await loadModelDossiers();
   const dossier = dossiers.find((item) => item.id === referenceId);

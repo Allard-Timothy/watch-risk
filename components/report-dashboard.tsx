@@ -9,6 +9,7 @@ import {
   SellerIcon,
   VisualQcIcon,
 } from "@/components/icons";
+import type { QualitativeLabel } from "@/lib/knowledge/enums";
 import {
   COMMUNITY_RECOGNITION_COPY,
   QUALITATIVE_LABEL_COPY,
@@ -19,6 +20,11 @@ import {
 } from "@/lib/knowledge";
 import { unresolvedSellerCopy } from "@/lib/knowledge/resolve";
 import { FACTORY_VARIANCE_ASSESSMENT_COPY } from "@/lib/reports/factory-variance";
+import { QC_VERDICT_COPY } from "@/lib/reports/qc-verdict";
+import {
+  computeSellerRatings,
+  ratingLabelCopy,
+} from "@/lib/knowledge/ratings";
 import type { GeneratedReport } from "@/lib/reports/generate-report";
 import type { ReportInput } from "@/lib/reports/generate-report";
 import {
@@ -221,9 +227,10 @@ export function ReportDashboard({
     dossier?.factory && dossier.factory !== "unknown"
       ? dossier.factory
       : "Insufficient evidence";
-  const fulfillment =
-    seller?.trustDimensions.find((item) => item.key === "fulfillment_confidence")
-      ?.label ?? "insufficient_evidence";
+  const fulfillmentLabel: QualitativeLabel = seller
+    ? (computeSellerRatings(seller).find((item) => item.key === "fulfillment")
+        ?.label ?? "insufficient_evidence")
+    : "insufficient_evidence";
   const sellerName = seller
     ? seller.canonicalName
     : typedSellerHandle
@@ -318,6 +325,17 @@ export function ReportDashboard({
               </div>
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                  QC verdict
+                </p>
+                <p className="text-[1.35rem] font-semibold leading-none text-foreground">
+                  {QC_VERDICT_COPY[report.qcVerdict]}
+                </p>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Included with buyer-risk headline (DEC-001)
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                   Confidence
                 </p>
                 <p className="text-[1.65rem] font-semibold leading-none text-foreground">
@@ -392,7 +410,7 @@ export function ReportDashboard({
         <MetricCard
           icon={<SellerIcon className="h-4 w-4" />}
           label="Fulfillment"
-          value={QUALITATIVE_LABEL_COPY[fulfillment]}
+          value={QUALITATIVE_LABEL_COPY[fulfillmentLabel]}
           hint="Seller knowledge"
         />
       </div>
@@ -651,6 +669,25 @@ export function ReportDashboard({
           </ol>
         </Card>
       </div>
+
+      {report.provenanceCitations.length > 0 ? (
+        <Card>
+          <CardTitle>Provenance citations</CardTitle>
+          <ul className="divide-y divide-border text-[13px]">
+            {report.provenanceCitations.map((citation) => (
+              <li key={`${citation.kind}-${citation.id}`} className="py-2">
+                <p className="font-medium">{citation.label}</p>
+                <p className="text-[12px] text-muted-foreground">
+                  {citation.kind.replaceAll("_", " ")}
+                  {citation.independenceGroup
+                    ? ` · ${citation.independenceGroup}`
+                    : ""}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
     </div>
   );
 }
