@@ -15,7 +15,7 @@ Forum TD status is evidence, not a universal trust score.
 The canonical product capability registry is `docs/product/features.md`.
 A listed feature is not evidence it is implemented. Consult that registry
 before adding QC, factory, seller, knowledge, evidence, or scoring work.
-Principles: `docs/product/principles.md`.
+Principles: `docs/product/principles.md`. Decisions: `docs/product/decisions.md`.
 
 ## Product boundary
 

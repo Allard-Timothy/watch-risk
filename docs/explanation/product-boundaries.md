@@ -44,6 +44,11 @@ Allowed:
 - missing evidence
 - request more photos
 - use independent inspection
+- GL / GL with reservations / Conditional GL (QC verdict in the buyer-risk report)
+- RL (QC verdict: photo-based reason to decline or request a replacement)
+
+GL/RL is replica-community QC language. It is not an authenticity or
+certification conclusion (`DEC-001`).
 
 Avoid:
 

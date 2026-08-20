@@ -3,9 +3,8 @@
 This roadmap groups [`features.md`](features.md) IDs into phases. It does **not**
 replace the registry, and it is **not** permission to implement anything.
 
-Assumptions below are product judgments. They are not finalized if they
-conflict with a current implementation task or with
-[`docs/product-brief.md`](../product-brief.md).
+Assumptions below are product judgments unless a matching entry exists in
+[`docs/product/decisions.md`](decisions.md). Decisions win over this file.
 
 Existing architecture plans remain:
 
@@ -41,16 +40,19 @@ As of the registry's first writing, WatchTell already has:
 - No vision model, no video/timegrapher interpretation, no GL/RL verdicts,
   no outcome loop, no scraping, no embeddings
 
-The live product is a **buyer-risk report**, not a replica QC GL/RL engine.
-That distinction is an open product question; see `VERDICT-003`.
+The live product is a **buyer-risk report**. QC GL/RL verdicts belong
+**in** that report (`DEC-001`). Pixel and video analysis are MVP
+(`DEC-002`) but are not implemented yet.
+
+Resolved questions: [`docs/product/decisions.md`](decisions.md).
 
 ## Core systems (planning context only)
 
 | System | Includes | Typical phase |
 |---|---|---|
 | A. Watch identification | `IDENT-001`–`IDENT-005` | MVP match from listing claims; V1–V2 from photos/movement |
-| B. Factory-specific QC engine | `QC-001`–`QC-010` | MVP checklists; V1 photo analysis; V2 video/timegrapher |
-| C. Verdict and risk engine | `VERDICT-001`–`VERDICT-005` | MVP buyer-risk + confidence; V1 GL/RL taxonomy |
+| B. Factory-specific QC engine | `QC-001`–`QC-010` | MVP checklists plus photo/video analysis (`DEC-002`) |
+| C. Verdict and risk engine | `VERDICT-001`–`VERDICT-005` | MVP buyer-risk headline plus GL/RL QC verdicts (`DEC-001`) |
 | D. Watch knowledge layer | `FACTORY-*`, `MODEL-*`, `MOVE-*`, `KNOW-*` | MVP curated dossiers; V2 snapshots/movements |
 | E. Seller intelligence | `SELLER-*`, `TD-*` | MVP curated dossiers; V1 time-aware scores |
 | F. Evidence system | `EVID-*` | MVP provenance fields; V1 scoring; V2 conflict engine |
@@ -81,18 +83,23 @@ repository already implements much of this loop.
 - `KNOW-002` Entity resolution (exact alias / normalized reference)
 - `KNOW-004` Compact knowledge dossiers (manually curated)
 
-### QC without inventing pixel findings
+### QC without inventing pixel findings (until QC-002 lands)
 
 - `QC-001` Model-specific QC analysis (checklist + known variance)
+- `QC-002` QC photo analysis (**ASAP / MVP**, `DEC-002`; not implemented)
+- `QC-003` QC video analysis (**ASAP / MVP**, `DEC-002`; not implemented)
 - `QC-006` Factory-specific QC profiles
 - `QC-007` Known flaw recognition (as curated notes, not photo detection)
 - `QC-008` Normal variance recognition (as curated notes)
+- `QC-009` Photo and lighting artifact detection (with `QC-002`)
 - `QC-010` Additional evidence requests
 
 ### Verdict, report, and uncertainty
 
 - `VERDICT-001` Issue classification (missing evidence vs seller/process)
 - `VERDICT-002` Severity scoring (coarse)
+- `VERDICT-003` QC verdict system (GL/RL **inside** the buyer-risk report,
+  `DEC-001`)
 - `VERDICT-004` Confidence score (report-level caps)
 - `VERDICT-005` Explainable verdict (safe summary + next step)
 - `REPORT-001` Structured QC / buyer-risk report
@@ -107,6 +114,7 @@ Seller work is **alongside** the QC MVP, not a later add-on, because the
 repository already ships seller dossiers and community comparison.
 
 - `SELLER-001` Seller dossiers
+- `SELLER-002` Seller reliability scoring (evidence-based, `DEC-007`)
 - `SELLER-004` QC communication rating (curated qualitative)
 - `SELLER-005` Fulfillment reliability (curated qualitative)
 - `TD-001` Cross-forum TD comparison
@@ -122,32 +130,28 @@ repository already ships seller dossiers and community comparison.
 
 - `EVAL-003` Provider-independent reasoning (knowledge stays in WatchTell)
 
-**MVP does not include:** pixel QC (`QC-002`), GL/RL (`VERDICT-003`),
-timegrapher interpretation (`QC-004`), scraping, embeddings, or user
-accounts.
+**MVP does not include:** timegrapher interpretation (`QC-004`), scraping,
+embeddings, or user accounts. Pixel/video QC and GL/RL **are** MVP
+(`DEC-002`, `DEC-001`) even though they are not in the codebase yet.
+
+The paid SKU is the listing report; subscribers also get knowledge
+explorers (`DEC-003`). Replica and grey-market QC trees stay separate
+(`DEC-004`).
 
 ## V1
 
-**Hypothesis:** once checklist reports are useful, WatchTell should start
-*observing* submitted photos, classify findings honestly, and make seller
-reputation time-aware — still without treating the model as the knowledge
-store.
+**Hypothesis:** after photo/video QC and GL/RL are in the listing report,
+thicken identification, tells, time-aware seller history, and citations.
 
-Why this stage exists: missing-photo reports plateau. Buyers then need
-help interpreting what *is* in the photos, and whether a seller's recent
-behavior matches a long TD history.
+Why this stage exists: MVP visual QC still needs version/tells depth,
+recency-aware seller reputation, and traceable sources.
 
-- `QC-002` QC photo analysis
-- `QC-009` Photo and lighting artifact detection
 - `VERDICT-001` fuller taxonomy (defect vs variance vs artifact)
-- `VERDICT-003` QC verdict system (GL / RL / additional evidence), **if**
-  reconciled with buyer-risk language
 - `IDENT-003` Factory version identification
 - `FACTORY-003` Factory version history
 - `FACTORY-004` Known tells database
 - `MODEL-001` Brand knowledge pages
 - `MODEL-003` Top replicated brands and models
-- `SELLER-002` Seller reliability scoring (evidence-based, not dummy)
 - `SELLER-003` Time-aware seller reputation
 - `SELLER-006` Issue resolution history
 - `SELLER-007` Representation accuracy
@@ -169,14 +173,15 @@ Those integrations are infrastructure, not registry features.
 
 ## V2
 
-**Hypothesis:** WatchTell becomes a research and comparison product, not
-only a per-listing report.
+**Hypothesis:** deepen comparison and movement intelligence. Knowledge
+explorers remain subscriber access to the listing-report product
+(`DEC-003`), not a separate first SKU.
 
 Why this stage exists: buyers choose factory and seller *before* QC photos
 exist. Movement reliability and version/batch differences also cannot be
-judged from a dial macro alone.
+judged from a dial macro alone. `FACTORY-007` waits on top-10 factory
+coverage (`DEC-006`).
 
-- `QC-003` QC video analysis
 - `QC-004` Timegrapher analysis
 - `QC-005` Weight and dimension analysis
 - `IDENT-004` Batch and production-period awareness
@@ -235,11 +240,11 @@ Reference / factory identification (IDENT-001, IDENT-002)
       ↓
 Factory-specific QC profiles (QC-006, MODEL-004)
       ↓
-QC observations (QC-001, later QC-002)
+QC observations (QC-001, QC-002, QC-003)
       ↓
 Severity + confidence (VERDICT-002, VERDICT-004)
       ↓
-Verdict / assessment (REPORT-002, later VERDICT-003)
+Verdict / assessment (REPORT-002 + VERDICT-003)
       ↓
 Outcome feedback (OUTCOME-*)
       ↓
@@ -288,7 +293,8 @@ Do not implement a later box in a chain because an earlier box exists.
 
 ## What this roadmap is not
 
-- Not a commitment to visual QC in MVP
-- Not a commitment to GL/RL language
-- Not a replacement for the current buyer-risk report rules
+- Not permission to implement adjacent IDs
+- Not a replacement for buyer-risk language: GL/RL is included, not a
+  substitute (`DEC-001`)
 - Not a license to scrape, embed, or add new cloud services
+- Not a license to share replica and grey-market QC photos (`DEC-004`)

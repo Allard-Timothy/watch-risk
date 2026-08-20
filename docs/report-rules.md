@@ -9,6 +9,11 @@ is currently generated.
 
 WatchTell produces buyer-risk reports. It does not authenticate watches.
 
+QC verdicts (GL, GL with reservations, Conditional GL, request additional
+evidence, RL, insufficient evidence) may appear **inside** the report.
+They are photo-based QC language, not authenticity conclusions. The
+buyer-risk headline remains the primary shipped conclusion (`DEC-001`).
+
 ## Forbidden final-output words
 
 Do not use these words in final user-facing conclusions:
@@ -39,22 +44,26 @@ Use:
 - low visible risk
 - photo set is incomplete
 - claim is not supported by submitted images
+- GL / GL with reservations / Conditional GL (QC verdict, not authenticity)
+- RL (QC verdict: photo-based reason to decline or request a replacement)
+- insufficient evidence / request additional evidence
 
 ## Report structure
 
 Every report should include:
 
 1. Summary
-2. Overall risk
-3. Confidence level
-4. Photo completeness
-5. Missing evidence
-6. Visible concerns
-7. Reference consistency notes
-8. Seller-risk signals
-9. Seller questions
-10. Recommended next step
-11. Disclaimer
+2. Overall risk (buyer-risk headline)
+3. QC verdict (GL / RL family; `DEC-001`)
+4. Confidence level
+5. Photo completeness
+6. Missing evidence
+7. Visible concerns
+8. Reference consistency notes
+9. Seller-risk signals
+10. Seller questions
+11. Recommended next step
+12. Disclaimer
 
 ## Confidence caps
 

@@ -39,6 +39,13 @@ captures listing details, photos, and seller claims; WatchTell flags missing
 evidence, curated concerns, seller-risk signals, and questions to ask before
 purchase.
 
+The paid product is that listing report. It is backed by WatchTell
+knowledge explorers; subscribers get explorer access (`DEC-003`).
+
+QC GL/RL verdicts belong in the report alongside buyer-risk (`DEC-001`).
+Pixel and video analysis are in MVP scope (`DEC-002`). Replica and
+grey-market QC stay on separate trees and photo corpora (`DEC-004`).
+
 That loop is the first useful product. It is not the whole product.
 
 ## Long-term product
@@ -50,7 +57,8 @@ knowledge store.
 
 The canonical capability list is [`docs/product/features.md`](features.md).
 Principles are in [`docs/product/principles.md`](principles.md). Phasing is in
-[`docs/product/roadmap.md`](roadmap.md).
+[`docs/product/roadmap.md`](roadmap.md). Resolved questions are in
+[`docs/product/decisions.md`](decisions.md).
 
 The existing short MVP brief remains [`docs/product-brief.md`](../product-brief.md).
 Do not treat that brief as a reason to delete later-phase capabilities from the

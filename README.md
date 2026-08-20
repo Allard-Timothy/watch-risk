@@ -85,6 +85,7 @@ Product direction (intended capabilities, not current implementation):
 - [`docs/product/features.md`](docs/product/features.md) — canonical feature registry
 - [`docs/product/roadmap.md`](docs/product/roadmap.md)
 - [`docs/product/principles.md`](docs/product/principles.md)
+- [`docs/product/decisions.md`](docs/product/decisions.md) — resolved product questions
 - [`AGENTS.md`](AGENTS.md) — agent rules; points at the registry rather than duplicating it
 
 A feature listed in the registry is not evidence that it is implemented.
