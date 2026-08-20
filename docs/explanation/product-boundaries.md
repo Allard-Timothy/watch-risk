@@ -20,7 +20,7 @@ A watch can look fine in listing photos and still have:
 A buyer-risk report can reduce obvious mistakes. It cannot remove purchase risk.
 
 Long-term product capabilities are listed in
-[`docs/product/features.md`](../product/features.md). This page remains the
+[`docs/reference/features.md`](../reference/features.md). This page remains the
 authentication/certification boundary for all of them.
 
 ## Product promise

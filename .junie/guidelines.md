@@ -40,3 +40,5 @@ Target stack:
 - Cloud Run later
 
 Work in small, reviewable steps. The TypeScript app now lives at the repository root; the earlier Django scaffold has been removed.
+
+Documentation follows the Divio system (`docs/README.md`): tutorials, how-to guides, reference, and explanation.

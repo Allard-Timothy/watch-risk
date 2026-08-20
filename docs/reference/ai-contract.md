@@ -3,7 +3,7 @@
 The AI layer generates structured buyer-risk observations. It does not authenticate watches.
 
 Intended analysis capabilities and their implementation status are tracked in
-[`docs/product/features.md`](product/features.md). This contract is the
+[`docs/reference/features.md`](features.md). This contract is the
 near-term input/output and safety shape, not the full product inventory.
 
 ## Inputs
@@ -89,4 +89,4 @@ Longer term, the model should reason over compact, versioned WatchTell knowledge
 — structured claims, evidence, and provenance, temporal seller/factory
 intelligence, and materialized dossiers/snapshots — rather than raw retrieval on
 every call. This is later-phase architecture, not current MVP scope. See
-`docs/knowledge-architecture.md`.
+`docs/explanation/knowledge-architecture.md`.

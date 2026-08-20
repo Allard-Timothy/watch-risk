@@ -24,12 +24,12 @@ rsync -av --ignore-existing /tmp/watchrisk-context/watchrisk-pycharm-context/ .
 
 ```text
 .junie/AGENTS.md
-docs/product-brief.md
-docs/architecture-typescript.md
-docs/migration-plan.md
-docs/report-rules.md
-docs/ai-contract.md
-docs/design-guidance.md
+docs/explanation/product-brief.md
+docs/reference/architecture-typescript.md
+docs/explanation/migration-plan.md
+docs/reference/report-rules.md
+docs/reference/ai-contract.md
+docs/reference/design-guidance.md
 prompts/pycharm-typescript-rewrite.md
 assets/watchdesk-risk-report-dashboard.png
 ```
@@ -38,9 +38,9 @@ assets/watchdesk-risk-report-dashboard.png
 
 1. Open the repo in PyCharm.
 2. Open `.junie/AGENTS.md`.
-3. Open `docs/product-brief.md`.
-4. Open `docs/architecture-typescript.md`.
-5. Open `docs/design-guidance.md`.
+3. Open `docs/explanation/product-brief.md`.
+4. Open `docs/reference/architecture-typescript.md`.
+5. Open `docs/reference/design-guidance.md`.
 6. Open `assets/watchdesk-risk-report-dashboard.png`.
 7. Ask PyCharm AI Assistant or Junie to read those files before changing code.
 8. Use the prompt in `prompts/pycharm-typescript-rewrite.md`.

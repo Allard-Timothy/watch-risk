@@ -5,8 +5,8 @@ agent implementation. They are not optional when a feature is listed as later
 phase.
 
 Existing wording and authentication boundaries in
-[`docs/report-rules.md`](../report-rules.md) and
-[`docs/explanation/product-boundaries.md`](../explanation/product-boundaries.md)
+[`docs/reference/report-rules.md`](../reference/report-rules.md) and
+[`docs/explanation/product-boundaries.md`](product-boundaries.md)
 still apply.
 
 ## Rule 1: Specificity over generic analysis

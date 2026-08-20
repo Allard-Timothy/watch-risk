@@ -3,11 +3,11 @@
 This is the near-term MVP brief. It does not replace the long-term product
 capability list.
 
-- Vision: [`docs/product/vision.md`](product/vision.md)
-- Canonical feature registry: [`docs/product/features.md`](product/features.md)
-- Roadmap: [`docs/product/roadmap.md`](product/roadmap.md)
-- Principles: [`docs/product/principles.md`](product/principles.md)
-- Resolved decisions: [`docs/product/decisions.md`](product/decisions.md)
+- Vision: [`docs/explanation/vision.md`](vision.md)
+- Canonical feature registry: [`docs/reference/features.md`](../reference/features.md)
+- Roadmap: [`docs/explanation/roadmap.md`](roadmap.md)
+- Principles: [`docs/explanation/principles.md`](principles.md)
+- Resolved decisions: [`docs/explanation/decisions.md`](decisions.md)
 
 A listed feature is not evidence that it is implemented.
 

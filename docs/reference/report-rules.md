@@ -1,7 +1,7 @@
 # Report rules
 
 The intended report capabilities and status live in
-[`docs/product/features.md`](product/features.md) (`REPORT-*`, `VERDICT-*`).
+[`docs/reference/features.md`](features.md) (`REPORT-*`, `VERDICT-*`).
 This file remains the wording and confidence-cap contract for whatever report
 is currently generated.
 
@@ -90,4 +90,4 @@ Longer term, report inputs will draw on structured WatchTell knowledge — claim
 evidence, and provenance, temporal seller/factory intelligence, and materialized
 dossiers/snapshots — rather than ad hoc retrieval. This is later-phase
 architecture, not current MVP scope, and the wording rules above still apply.
-See `docs/knowledge-architecture.md`.
+See `docs/explanation/knowledge-architecture.md`.

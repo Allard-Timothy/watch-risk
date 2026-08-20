@@ -1,7 +1,7 @@
 // WatchTell data model (initial).
 //
-// This schema mirrors the entities described in docs/architecture-typescript.md
-// and docs/knowledge-architecture.md. Auth, storage, payments, and model calls
+// This schema mirrors the entities described in docs/reference/architecture-typescript.md
+// and docs/explanation/knowledge-architecture.md. Auth, storage, payments, and model calls
 // are still placeholders. WatchCase listing details and CaseImage metadata are
 // persisted; photo bytes live under .data/uploads until GCS is wired.
 // Seller/community/evidence tables hold curated local knowledge (seed JSON),

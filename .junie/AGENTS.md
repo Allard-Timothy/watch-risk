@@ -9,11 +9,14 @@ Users upload listing details, photos, seller claims, reference information, and 
 
 WatchTell does not authenticate watches. It does not certify watches. It does not guarantee authenticity. Forum TD status is evidence, not a universal trust score.
 
-The canonical product capability registry is `docs/product/features.md`
-(see also `docs/product/vision.md`, `docs/product/principles.md`,
-`docs/product/roadmap.md`, `docs/product/decisions.md`). A listed feature is not evidence it exists.
+The canonical product capability registry is `docs/reference/features.md`
+(see also `docs/explanation/vision.md`, `docs/explanation/principles.md`,
+`docs/explanation/roadmap.md`, `docs/explanation/decisions.md`). A listed feature is not evidence it exists.
 If this file conflicts with the root `AGENTS.md` or uploaded project files,
 those take precedence.
+
+Docs follow the Divio system (`docs/README.md`): tutorials, how-to guides,
+reference, and explanation. Put new pages in those folders only.
 
 ## Product language rules
 
@@ -157,12 +160,11 @@ prisma/
   schema.prisma
 
 docs/
-  product-brief.md
-  architecture-typescript.md
-  migration-plan.md
-  report-rules.md
-  ai-contract.md
-  design-guidance.md
+  README.md
+  tutorials/
+  how-to/
+  reference/
+  explanation/
 
 assets/
   watchdesk-risk-report-dashboard.png

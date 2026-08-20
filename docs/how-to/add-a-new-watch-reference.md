@@ -96,7 +96,8 @@ Add or extend tests for:
 
 ## 6. Update docs
 
-Update:
+Update the matching Divio page (see `docs/README.md`):
 
-- `docs/architecture-typescript.md` (data model) when the dossier shape changes
+- `docs/reference/architecture-typescript.md` when the dossier shape changes
 - this file if you add required dossier fields
+- `docs/explanation/` only if you need to discuss why the shape changed

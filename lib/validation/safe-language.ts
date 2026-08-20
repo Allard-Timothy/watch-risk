@@ -1,6 +1,6 @@
 /**
  * Guards user-facing report language against unsupported authentication or
- * certification wording. See docs/report-rules.md and docs/ai-contract.md.
+ * certification wording. See docs/reference/report-rules.md and docs/reference/ai-contract.md.
  *
  * These words may appear in internal tests and safety docs, but must not appear
  * in final user-facing report conclusions.
