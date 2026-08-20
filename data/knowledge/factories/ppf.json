@@ -1,0 +1,35 @@
+{
+  "factoryId": "ppf",
+  "canonicalName": "PPF",
+  "notes": "Thin curated notes for PPF-attributed listings.",
+  "versions": [
+    {
+      "id": "ppf-current",
+      "label": "Current curated notes",
+      "notes": "Single qualitative snapshot."
+    }
+  ],
+  "knownVariances": [
+    {
+      "id": "ppf-bracelet-fit",
+      "area": "Bracelet end-link fit",
+      "photoType": "clasp",
+      "whatBuyersShouldLookFor": "Photos of solid end-link fit against the case lugs.",
+      "whatPhotosCannotShow": "Gap feel on the wrist after wear.",
+      "references": ["126610LN"],
+      "factoryVersionId": "ppf-current"
+    }
+  ],
+  "tells": [
+    {
+      "id": "ppf-dial-lume",
+      "area": "Dial lume plot shape",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "Sharp dial photo showing lume plot placement.",
+      "whatPhotosCannotShow": "Lume brightness after hours or batch consistency.",
+      "references": ["126610LN"],
+      "factoryVersionId": "ppf-current",
+      "notes": "Not a pixel finding from submitted photos."
+    }
+  ]
+}
