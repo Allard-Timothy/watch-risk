@@ -183,6 +183,57 @@ export function recommendedPhotosFor(
     : DEFAULT_RECOMMENDED_TYPES.map((type) => PHOTO_CHECKLIST[type]);
 }
 
+function collectSellerQuestions(
+  input: ReportInput,
+  missingPhotos: readonly RecommendedPhoto[],
+  context: ReportContext,
+): string[] {
+  const provided = new Set(input.providedPhotoTypes);
+  const questions: string[] = [];
+  const seen = new Set<string>();
+
+  const push = (question: string) => {
+    const trimmed = question.trim();
+    if (!trimmed || seen.has(trimmed)) {
+      return;
+    }
+    seen.add(trimmed);
+    questions.push(trimmed);
+  };
+
+  const checks = context.dossier?.highValueChecks ?? [];
+
+  for (const photo of missingPhotos) {
+    const matching = checks.filter((check) => check.photoType === photo.type);
+    if (matching.length > 0) {
+      for (const check of matching) {
+        push(check.sellerQuestion);
+      }
+    } else {
+      push(photo.sellerQuestion);
+    }
+  }
+
+  for (const check of checks) {
+    const photoType = check.photoType;
+    if (
+      !photoType ||
+      !isDetectedPhotoType(photoType) ||
+      provided.has(photoType)
+    ) {
+      push(check.sellerQuestion);
+    }
+  }
+
+  if (input.claimsFullSet && !provided.has("papers")) {
+    push("Can you show the box and papers referenced in the listing?");
+  }
+  if (questions.length === 0) {
+    push("Can you confirm the service history and provide any receipts?");
+  }
+  return questions;
+}
+
 function capConfidence(
   current: ConfidenceLevel,
   max: ConfidenceLevel,
@@ -251,18 +302,11 @@ function assembleCoreReport(
     missingEvidence.push("Asking price, to assess price risk");
   }
 
-  // Seller questions derived from what is missing, plus a full-set follow-up.
-  const sellerQuestions = missingPhotos.map((photo) => photo.sellerQuestion);
-  if (input.claimsFullSet && !provided.has("papers")) {
-    sellerQuestions.push(
-      "Can you show the box and papers referenced in the listing?",
-    );
-  }
-  if (sellerQuestions.length === 0) {
-    sellerQuestions.push(
-      "Can you confirm the service history and provide any receipts?",
-    );
-  }
+  const sellerQuestions = collectSellerQuestions(
+    input,
+    missingPhotos,
+    context,
+  );
 
   const hasEvidenceGaps = missingCount > 0 || overallRisk === "cannot_assess";
 

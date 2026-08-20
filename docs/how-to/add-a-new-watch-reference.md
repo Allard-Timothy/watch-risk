@@ -17,6 +17,9 @@ Add `data/knowledge/references/<id>.json` with:
 - `factory` (use a canonical factory label already in
   `data/knowledge/factories/`, or `unknown`)
 - `factoryVersion` when a curated factory version id is known
+- `caseSize`, `movementFamily`, `braceletOptions`, `claspType`, `bezelType`,
+  `dialVariants` when those details are curated (movement family is a listing
+  claim, not a photo conclusion)
 - `requiredPhotos` and `optionalPhotos` (photo-type keys such as `dial`,
   `rehaut`, `clasp`)
 - `riskCheckpoints` keyed by photo type
@@ -67,12 +70,19 @@ Rolex Submariner 126610LN:
 
 ## 4. High-value seller questions
 
-`highValueChecks` are questions to ask when the matching photo is missing.
-They should use safer language (`cannot assess from submitted images`,
-`independent inspection recommended`).
+`highValueChecks` become seller questions in `generateReport`.
 
-The report generator can consume these later; this seed is still useful as a
-read-only dossier at `/references/[id]`.
+- Missing required photos use the matching `sellerQuestion` instead of the
+  generic photo prompt.
+- Checks with no `photoType`, and checks whose photo is already present, are
+  still asked (for example a timegrapher request).
+- The generic service-history fallback is used only when no questions remain.
+
+They should use safer language (`cannot assess from submitted images`,
+`independent inspection recommended`). Do not let checks produce authentication
+claims or pixel findings.
+
+Read-only dossiers remain at `/references` and `/references/[id]`.
 
 ## 5. Add tests
 
@@ -80,6 +90,7 @@ Add or extend tests for:
 
 - seed parse of the new JSON file
 - forbidden-word scan on notes, known variance, and seller questions
+- `highValueChecks` appearing in `sellerQuestions`
 - missing required photos
 - reference mismatch handling
 

@@ -159,6 +159,12 @@ export const modelDossierSeedSchema = z.object({
     .record(z.string(), z.array(z.string().trim().min(1).max(200)))
     .default({}),
   factoryVersion: z.string().trim().min(1).max(80).optional(),
+  caseSize: z.string().trim().min(1).max(80).optional(),
+  movementFamily: z.string().trim().min(1).max(120).optional(),
+  braceletOptions: z.array(z.string().trim().min(1).max(120)).default([]),
+  claspType: z.string().trim().min(1).max(120).optional(),
+  bezelType: z.string().trim().min(1).max(120).optional(),
+  dialVariants: z.array(z.string().trim().min(1).max(120)).default([]),
   knownVariance: z.array(knownVarianceSeedSchema).default([]),
   highValueChecks: z.array(highValueCheckSeedSchema).default([]),
   notes: z.string().max(4000).optional(),

@@ -192,3 +192,11 @@ intelligence; and materialized dossiers/snapshots that the runtime consumes
 instead of raw retrieval on every call. This extends the data model above rather
 than replacing it, and is later-phase work — not immediate MVP scope. See
 `docs/knowledge-architecture.md`.
+
+### Curated model dossiers (MVP)
+
+JSON under `data/knowledge/references/` is validated by
+`modelDossierSeedSchema`. `knownVariance` and `highValueChecks` (plus
+`factoryVersion` when known) thicken the QC profile. `generateReport` uses
+`highValueChecks` for seller questions. Read-only UI lives at `/references` and
+`/references/[id]`. Follow `docs/how-to/add-a-new-watch-reference.md`.

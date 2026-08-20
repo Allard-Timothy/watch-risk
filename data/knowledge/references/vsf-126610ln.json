@@ -5,6 +5,12 @@
   "reference": "126610LN",
   "factory": "VSF",
   "factoryVersion": "vsf-current",
+  "caseSize": "41mm",
+  "movementFamily": "Listing-claimed 3235-family; cannot assess from case photos",
+  "braceletOptions": ["Oyster-style steel"],
+  "claspType": "Folding clasp with Glidelock-style extension",
+  "bezelType": "Black ceramic insert",
+  "dialVariants": ["Black"],
   "requiredPhotos": ["dial", "rehaut", "clasp", "caseback"],
   "optionalPhotos": ["bracelet", "movement", "papers"],
   "riskCheckpoints": {
@@ -53,6 +59,10 @@
       "area": "Clasp",
       "photoType": "clasp",
       "sellerQuestion": "Can you send close photos of the clasp code and how the end links sit against the case?"
+    },
+    {
+      "area": "Timekeeping",
+      "sellerQuestion": "Can you share a timegrapher reading, or allow an independent inspection before purchase?"
     }
   ],
   "notes": "Curated starting checklist only. Missing a required photo means that area cannot be assessed from submitted images. Factory version vsf-current is a qualitative snapshot, not a production-date score."

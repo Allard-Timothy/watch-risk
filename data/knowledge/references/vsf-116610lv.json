@@ -5,6 +5,12 @@
   "reference": "116610LV",
   "factory": "VSF",
   "factoryVersion": "vsf-current",
+  "caseSize": "40mm",
+  "movementFamily": "Listing-claimed 3135-family; cannot assess from case photos",
+  "braceletOptions": ["Oyster-style steel"],
+  "claspType": "Folding clasp",
+  "bezelType": "Green ceramic insert",
+  "dialVariants": ["Green"],
   "requiredPhotos": ["dial", "rehaut", "date_cyclops", "clasp"],
   "optionalPhotos": ["caseback", "bracelet", "movement"],
   "riskCheckpoints": {
@@ -18,6 +24,18 @@
       "photoType": "dial",
       "whatBuyersShouldLookFor": "A straight-on dial photo so date centering in the window can be discussed.",
       "whatPhotosCannotShow": "Cyclops magnification in person or how centering looks at other wrist angles."
+    },
+    {
+      "area": "Date / cyclops",
+      "photoType": "date_cyclops",
+      "whatBuyersShouldLookFor": "A straight-on date-window photo so cyclops alignment can be discussed. Minor alignment variation appears in curated notes; it is not proof of a defect in submitted photos.",
+      "whatPhotosCannotShow": "How the cyclops magnifies in person, or how alignment reads at other wrist angles."
+    },
+    {
+      "area": "Dial lighting",
+      "photoType": "dial",
+      "whatBuyersShouldLookFor": "A straight-on dial photo in even light. Green dial appearance changes significantly with lighting.",
+      "whatPhotosCannotShow": "How the dial reads on the wrist in mixed light, or color match to a buyer's expectation."
     },
     {
       "area": "Rehaut alignment",
@@ -44,9 +62,23 @@
       "sellerQuestion": "Can you send a rehaut photo that shows inner-ring alignment relative to the dial?"
     },
     {
+      "area": "Date / cyclops",
+      "photoType": "date_cyclops",
+      "sellerQuestion": "Can you send a straight-on photo of the date window and cyclops?"
+    },
+    {
       "area": "Clasp",
       "photoType": "clasp",
       "sellerQuestion": "Can you send photos of solid end-link fit against the case lugs?"
+    },
+    {
+      "area": "Bezel alignment",
+      "photoType": "dial",
+      "sellerQuestion": "Can you share a straight-on photo that shows bezel pip and insert alignment?"
+    },
+    {
+      "area": "Timekeeping",
+      "sellerQuestion": "Can you share a timegrapher reading, or allow an independent inspection before purchase?"
     }
   ],
   "notes": "Curated starting checklist. Crystal and cyclops observations require a straight-on dial photo. Factory version vsf-current is a qualitative snapshot, not a production-date score."

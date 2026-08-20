@@ -143,6 +143,7 @@ describe("modelDossierSeedSchema", () => {
       reference: "126610LN",
       factory: "VSF",
       factoryVersion: "vsf-current",
+      caseSize: "41mm",
       requiredPhotos: ["dial"],
       knownVariance: [
         {
@@ -162,6 +163,7 @@ describe("modelDossierSeedSchema", () => {
       ],
     });
     expect(parsed.factoryVersion).toBe("vsf-current");
+    expect(parsed.caseSize).toBe("41mm");
     expect(parsed.knownVariance).toHaveLength(1);
     expect(parsed.highValueChecks[0]?.sellerQuestion).toMatch(/rehaut/i);
   });

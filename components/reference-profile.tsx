@@ -48,18 +48,18 @@ export function ReferenceProfile({ dossier }: { dossier: ModelDossierSeed }) {
         </div>
         <div className="rounded-xl border border-border bg-card px-3 py-3">
           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Required photos
+            Case size
           </p>
           <p className="mt-1 text-[15px] font-semibold">
-            {dossier.requiredPhotos.length}
+            {dossier.caseSize ?? "—"}
           </p>
         </div>
         <div className="rounded-xl border border-border bg-card px-3 py-3">
           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            High-value checks
+            Movement family
           </p>
           <p className="mt-1 text-[15px] font-semibold">
-            {dossier.highValueChecks.length}
+            {dossier.movementFamily ?? "Cannot assess from case photos"}
           </p>
         </div>
       </div>
@@ -96,8 +96,8 @@ export function ReferenceProfile({ dossier }: { dossier: ModelDossierSeed }) {
               a defect in the photos.
             </li>
             <li>
-              High-value checks are seller questions for missing evidence, not a
-              numeric QC score.
+              High-value checks become seller questions on the photo-based
+              buyer-risk report. They are not a numeric QC score.
             </li>
           </ul>
         </Card>

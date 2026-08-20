@@ -66,3 +66,10 @@ Examples:
 The model should not be the only decision-maker.
 
 Rules keep the product conservative, repeatable, and safer.
+
+## High-value checks
+
+When a listing matches a curated model dossier, `highValueChecks` become seller
+questions on the photo-based buyer-risk report. They do not invent pixel
+findings. Known variance is what buyers should ask to see; it is not proof of a
+defect in submitted photos.
