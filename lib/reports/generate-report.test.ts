@@ -208,3 +208,62 @@ describe("generateReport factory variance", () => {
     ).toBe(true);
   });
 });
+
+describe("generateReport high-value checks", () => {
+  it("uses dossier highValueChecks for seller questions", () => {
+    const dossier = modelDossierSeedSchema.parse({
+      ...speedmasterDossier,
+      highValueChecks: [
+        {
+          area: "Movement",
+          photoType: "movement",
+          sellerQuestion:
+            "Can you photograph the movement through the exhibition caseback, or allow an independent inspection?",
+        },
+        {
+          area: "Timekeeping",
+          sellerQuestion:
+            "Can you share a timegrapher reading, or allow an independent inspection before purchase?",
+        },
+      ],
+    });
+
+    const missingMovement = generateReport(
+      {
+        brand: "Omega",
+        reference: "310.30.42.50.01.001",
+        askingPrice: 6400,
+        providedPhotoTypes: ["dial", "caseback"],
+      },
+      { dossier },
+    );
+    expect(missingMovement.sellerQuestions).toEqual(
+      expect.arrayContaining([
+        "Can you photograph the movement through the exhibition caseback, or allow an independent inspection?",
+        "Can you share a timegrapher reading, or allow an independent inspection before purchase?",
+      ]),
+    );
+    expect(missingMovement.sellerQuestions).not.toContain(
+      "Can you provide a movement photo, or allow an independent inspection?",
+    );
+
+    const completePhotos = generateReport(
+      {
+        brand: "Omega",
+        reference: "310.30.42.50.01.001",
+        askingPrice: 6400,
+        providedPhotoTypes: ["dial", "caseback", "movement"],
+      },
+      { dossier },
+    );
+    expect(completePhotos.sellerQuestions).toEqual(
+      expect.arrayContaining([
+        "Can you photograph the movement through the exhibition caseback, or allow an independent inspection?",
+        "Can you share a timegrapher reading, or allow an independent inspection before purchase?",
+      ]),
+    );
+    expect(completePhotos.sellerQuestions).not.toContain(
+      "Can you confirm the service history and provide any receipts?",
+    );
+  });
+});

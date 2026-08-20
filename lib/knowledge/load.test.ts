@@ -38,6 +38,7 @@ describe("knowledge seed corpus", () => {
     expect(dossiers.some((item) => item.reference === "126610LN")).toBe(true);
     const submariner = dossiers.find((item) => item.reference === "126610LN");
     expect(submariner?.factoryVersion).toBe("vsf-current");
+    expect(submariner?.caseSize).toBe("41mm");
     expect(submariner?.knownVariance.length).toBeGreaterThan(0);
     expect(submariner?.highValueChecks.length).toBeGreaterThan(0);
     expect(factories.map((item) => item.factoryId).sort()).toEqual([
@@ -79,6 +80,7 @@ describe("knowledge seed corpus", () => {
     for (const dossier of dossiers) {
       const text = [
         dossier.notes,
+        dossier.movementFamily,
         ...dossier.knownVariance.flatMap((item) => [
           item.whatBuyersShouldLookFor,
           item.whatPhotosCannotShow,
