@@ -60,6 +60,28 @@ describe("watch case repository", () => {
     await getDbClient().watchCase.delete({ where: { id: created.id } });
   });
 
+  it("persists an unmatched typed seller handle", async () => {
+    process.env.DATABASE_URL = DATABASE_URL;
+
+    const created = await createWatchCase(
+      {
+        brand: "Rolex",
+        listingText: "Seller description",
+        sellerClaims: undefined,
+      },
+      { typedSellerHandle: "NotADealer" },
+    );
+    expect(created.typedSellerHandle).toBe("NotADealer");
+    expect(created.listingText).toBe("Seller description");
+    expect(created.sellerId).toBeUndefined();
+
+    const loaded = await getWatchCase(created.id);
+    expect(loaded?.typedSellerHandle).toBe("NotADealer");
+    expect(loaded?.listingText).toBe("Seller description");
+
+    await getDbClient().watchCase.delete({ where: { id: created.id } });
+  });
+
   it("stores CaseImage rows and claimed types with the case", async () => {
     process.env.DATABASE_URL = DATABASE_URL;
 

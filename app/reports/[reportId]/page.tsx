@@ -109,6 +109,7 @@ export default async function ReportPage({ params }: ReportPageProps) {
         generatedAt={generatedAt}
         photos={listing.photos}
         seller={seller}
+        typedSellerHandle={listing.typedSellerHandle}
         communities={communities}
         dossier={dossier}
       />

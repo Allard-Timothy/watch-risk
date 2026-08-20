@@ -59,6 +59,7 @@ export default async function CaseDetailPage({ params }: CaseDetailPageProps) {
               ? { id: seller.sellerId, name: seller.canonicalName }
               : undefined
           }
+          typedSellerHandle={listing.typedSellerHandle}
           recommendedPhotoAreas={recommendedPhotoAreasFor(
             dossier?.requiredPhotos,
           )}

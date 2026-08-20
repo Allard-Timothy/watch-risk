@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { PhotoUpload, type DraftPhoto } from "@/components/photo-upload";
 import { loadDraftCase } from "@/lib/cases/draft-store";
+import { unresolvedSellerCopy } from "@/lib/knowledge/resolve";
 import { providedDetectedTypes } from "@/lib/photos";
 import { sampleReportInput } from "@/lib/reports/sample-case";
 import type { CaseCreateInput } from "@/lib/validation";
@@ -54,6 +55,7 @@ type CaseDetailViewProps = Readonly<{
   initialListing?: CaseCreateInput | null;
   initialPhotos?: readonly DraftPhoto[];
   seller?: { id: string; name: string };
+  typedSellerHandle?: string;
   recommendedPhotoAreas?: readonly {
     type: DetectedPhotoType;
     label: string;
@@ -65,6 +67,7 @@ export function CaseDetailView({
   initialListing,
   initialPhotos = [],
   seller,
+  typedSellerHandle,
   recommendedPhotoAreas,
 }: CaseDetailViewProps) {
   const [listing, setListing] = useState<CaseCreateInput>(
@@ -165,6 +168,15 @@ export function CaseDetailView({
                 >
                   {seller.name}
                 </Link>
+              </dd>
+            </div>
+          ) : typedSellerHandle ? (
+            <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-4">
+              <dt className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
+                Seller
+              </dt>
+              <dd className="text-sm">
+                {unresolvedSellerCopy(typedSellerHandle)}
               </dd>
             </div>
           ) : null}

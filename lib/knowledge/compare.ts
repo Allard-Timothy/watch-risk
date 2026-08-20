@@ -1,5 +1,11 @@
-import type { CommunityRecognitionStatus } from "./enums";
+import {
+  COMMUNITY_RECOGNITION_STATUSES,
+  type CommunityRecognitionStatus,
+} from "./enums";
 import type { SellerSeed } from "./schemas";
+
+export const DEFAULT_COMPARE_COMMUNITY_A = "reptime";
+export const DEFAULT_COMPARE_COMMUNITY_B = "repwatchforum";
 
 const CURRENT_RECOGNITION = new Set<CommunityRecognitionStatus>([
   "full_td",
@@ -9,6 +15,55 @@ const CURRENT_RECOGNITION = new Set<CommunityRecognitionStatus>([
   "recommended_seller",
   "listed_seller",
 ]);
+
+export type SellerIndexFilters = Readonly<{
+  communityId?: string;
+  status?: CommunityRecognitionStatus;
+}>;
+
+export function parseRecognitionStatus(
+  value: string | undefined,
+): CommunityRecognitionStatus | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  return COMMUNITY_RECOGNITION_STATUSES.find((status) => status === trimmed);
+}
+
+export function resolveComparePair(params: {
+  a?: string;
+  b?: string;
+}): Readonly<{ communityAId: string; communityBId: string }> {
+  const a = params.a?.trim();
+  const b = params.b?.trim();
+  return {
+    communityAId: a ? a : DEFAULT_COMPARE_COMMUNITY_A,
+    communityBId: b ? b : DEFAULT_COMPARE_COMMUNITY_B,
+  };
+}
+
+export function filterSellers(
+  sellers: readonly SellerSeed[],
+  filters: SellerIndexFilters,
+): SellerSeed[] {
+  const communityId = filters.communityId?.trim();
+  const status = filters.status;
+  if (!communityId && !status) {
+    return [...sellers];
+  }
+  return sellers.filter((seller) =>
+    seller.communities.some((record) => {
+      if (communityId && record.communityId !== communityId) {
+        return false;
+      }
+      if (status && record.status !== status) {
+        return false;
+      }
+      return true;
+    }),
+  );
+}
 
 export function sellerRecognizedIn(
   seller: SellerSeed,
