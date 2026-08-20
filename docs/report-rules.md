@@ -1,5 +1,10 @@
 # Report rules
 
+The intended report capabilities and status live in
+[`docs/product/features.md`](product/features.md) (`REPORT-*`, `VERDICT-*`).
+This file remains the wording and confidence-cap contract for whatever report
+is currently generated.
+
 ## Core rule
 
 WatchTell produces buyer-risk reports. It does not authenticate watches.

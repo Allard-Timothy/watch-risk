@@ -2,6 +2,10 @@
 
 The AI layer generates structured buyer-risk observations. It does not authenticate watches.
 
+Intended analysis capabilities and their implementation status are tracked in
+[`docs/product/features.md`](product/features.md). This contract is the
+near-term input/output and safety shape, not the full product inventory.
+
 ## Inputs
 
 A case includes:

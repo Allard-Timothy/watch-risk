@@ -1,5 +1,10 @@
 # TypeScript architecture
 
+This document describes **how** the TypeScript app is designed. Intended
+product capabilities and implementation status live in
+[`docs/product/features.md`](product/features.md). Placeholder modules
+(Stripe, OpenAI, GCS) in this file are not evidence those integrations exist.
+
 ## Goal
 
 Rewrite the initial Django scaffold as a TypeScript-first web app.

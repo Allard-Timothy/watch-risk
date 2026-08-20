@@ -1,5 +1,15 @@
 # Product brief
 
+This is the near-term MVP brief. It does not replace the long-term product
+capability list.
+
+- Vision: [`docs/product/vision.md`](product/vision.md)
+- Canonical feature registry: [`docs/product/features.md`](product/features.md)
+- Roadmap: [`docs/product/roadmap.md`](product/roadmap.md)
+- Principles: [`docs/product/principles.md`](product/principles.md)
+
+A listed feature is not evidence that it is implemented.
+
 ## Name
 
 Working name: WatchTell.
