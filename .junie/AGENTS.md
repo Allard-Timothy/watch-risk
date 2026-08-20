@@ -11,7 +11,7 @@ WatchTell does not authenticate watches. It does not certify watches. It does no
 
 The canonical product capability registry is `docs/product/features.md`
 (see also `docs/product/vision.md`, `docs/product/principles.md`,
-`docs/product/roadmap.md`). A listed feature is not evidence it exists.
+`docs/product/roadmap.md`, `docs/product/decisions.md`). A listed feature is not evidence it exists.
 If this file conflicts with the root `AGENTS.md` or uploaded project files,
 those take precedence.
 

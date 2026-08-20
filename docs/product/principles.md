@@ -230,6 +230,18 @@ as WatchTell's durable knowledge store.
 
 Related features: `EVAL-003`, `KNOW-003`, `KNOW-004`.
 
+## Rule 11: Replica and grey-market QC stay separate
+
+Replica listings and grey-market genuine listings must not share QC photos.
+
+They use separate QC decision trees: checklists, known variance, pixel and
+video rules, and verdicts.
+
+A replica factory tell is not a grey-market inspection rule. Knowledge may
+name the same brand or reference; QC assets and decision logic are not mixed.
+
+Related features: `QC-001`, `QC-002`, `MODEL-004`. Decision: `DEC-004`.
+
 ## Additional WatchTell constraints
 
 These are already in force in the current product:
@@ -245,3 +257,8 @@ These are already in force in the current product:
 - A factory or seller label on a listing is a claim, not a photo conclusion.
 - Known factory variance is what buyers should look for. It is not proof that
   a submitted photo shows a defect.
+- Prisma `Defect` should be renamed to match that language (`DEC-005`).
+- Dummy numeric scores remain forbidden. Evidence-based seller reliability
+  scores are in scope (`DEC-007`).
+- Factory comparison (`FACTORY-007`) requires top-10 factory coverage
+  (`DEC-006`).

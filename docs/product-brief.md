@@ -7,6 +7,7 @@ capability list.
 - Canonical feature registry: [`docs/product/features.md`](product/features.md)
 - Roadmap: [`docs/product/roadmap.md`](product/roadmap.md)
 - Principles: [`docs/product/principles.md`](product/principles.md)
+- Resolved decisions: [`docs/product/decisions.md`](product/decisions.md)
 
 A listed feature is not evidence that it is implemented.
 
@@ -60,7 +61,9 @@ Secondary users later:
 
 ## MVP promise
 
-Upload a watch listing before you buy. WatchTell will flag missing evidence, visible concerns, seller-risk signals, and questions to ask before sending money.
+Upload a watch listing before you buy. WatchTell will flag missing evidence, visible concerns, seller-risk signals, QC verdict (GL/RL family), and questions to ask before sending money.
+
+The paid product is this listing report. Subscribers also get access to the knowledge explorers that back it.
 
 ## Non-goals
 

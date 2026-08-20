@@ -17,6 +17,7 @@ Related documents:
 - Vision: [`docs/product/vision.md`](vision.md)
 - Principles: [`docs/product/principles.md`](principles.md)
 - Roadmap: [`docs/product/roadmap.md`](roadmap.md)
+- Resolved decisions: [`docs/product/decisions.md`](decisions.md)
 - Current MVP brief: [`docs/product-brief.md`](../product-brief.md)
 - Architecture: [`docs/architecture-typescript.md`](../architecture-typescript.md)
 - Knowledge architecture: [`docs/knowledge-architecture.md`](../knowledge-architecture.md)
@@ -82,7 +83,7 @@ These are related but not the same capability:
 | Factory QC profile vs known flaw vs known defect vs variance | `QC-006`, `QC-007`, `FACTORY-005`, `QC-008`, `FACTORY-006` | Profile = expectations; recognition = applying them to a watch; defect DB = durable catalog; variance DB = acceptable spread |
 | Model dossier vs QC checklist vs model-specific QC | `MODEL-002`, `MODEL-004`, `QC-001` | Dossier = knowledge; checklist = what to inspect; analysis = using that on a case |
 | Compact dossiers vs entity pages vs explorers | `KNOW-004`, `FACTORY-001`, `MODEL-002`, `SELLER-001`, `RESEARCH-*` | Runtime artifacts vs browsable research UI |
-| Buyer-risk headline vs QC verdict | `REPORT-002`, `VERDICT-003` | Current product uses risk levels; replica QC wants GL/RL |
+| Buyer-risk headline vs QC verdict | `REPORT-002`, `VERDICT-003` | Both ship: buyer-risk is the primary conclusion; GL/RL QC verdicts are included in the report (`DEC-001`) |
 | Claim vs evidence vs source | `EVID-001`, `EVID-002`, `EVID-003` | Statement vs support vs origin |
 | Independence vs corroboration vs consensus | `EVID-006`, `EVID-005`, Rule 2 | Same ecosystem ≠ more evidence |
 
@@ -93,18 +94,18 @@ These are related but not the same capability:
 | ID | Name | Status | Phase | Priority |
 |---|---|---|---|---|
 | QC-001 | Model-specific QC analysis | in-progress | MVP | critical |
-| QC-002 | QC photo analysis | proposed | V1 | critical |
-| QC-003 | QC video analysis | proposed | V2 | high |
+| QC-002 | QC photo analysis | proposed | MVP | critical |
+| QC-003 | QC video analysis | proposed | MVP | critical |
 | QC-004 | Timegrapher analysis | proposed | V2 | high |
 | QC-005 | Weight and dimension analysis | proposed | V2 | medium |
 | QC-006 | Factory-specific QC profiles | in-progress | MVP | critical |
 | QC-007 | Known flaw recognition | in-progress | MVP | critical |
 | QC-008 | Normal variance recognition | in-progress | MVP | high |
-| QC-009 | Photo and lighting artifact detection | proposed | V1 | high |
+| QC-009 | Photo and lighting artifact detection | proposed | MVP | high |
 | QC-010 | Additional evidence requests | implemented | MVP | critical |
 | VERDICT-001 | Issue classification | in-progress | MVP | critical |
 | VERDICT-002 | Severity scoring | in-progress | MVP | high |
-| VERDICT-003 | QC verdict system | proposed | V1 | critical |
+| VERDICT-003 | QC verdict system | proposed | MVP | critical |
 | VERDICT-004 | Confidence score | in-progress | MVP | critical |
 | VERDICT-005 | Explainable verdict | in-progress | MVP | critical |
 | IDENT-001 | Brand and reference identification | in-progress | MVP | critical |
@@ -128,7 +129,7 @@ These are related but not the same capability:
 | MOVE-002 | Movement reliability history | proposed | V2 | high |
 | MOVE-003 | Movement and reference compatibility | proposed | V2 | high |
 | SELLER-001 | Seller dossiers | in-progress | MVP | critical |
-| SELLER-002 | Seller reliability scoring | in-progress | V1 | high |
+| SELLER-002 | Seller reliability scoring | in-progress | MVP | high |
 | SELLER-003 | Time-aware seller reputation | in-progress | V1 | high |
 | SELLER-004 | QC communication rating | in-progress | MVP | high |
 | SELLER-005 | Fulfillment reliability | in-progress | MVP | high |
@@ -215,20 +216,24 @@ watch-quality rules.
 - Unsupported specificity is not invented.
 - When the exact factory/version is unknown, the system falls back explicitly
   and lowers confidence (Rule 1).
+- Replica and grey-market genuine listings use separate QC decision trees
+  and must not share QC photos (`DEC-004`).
 
 ### Implementation Notes
 
 Curated dossiers under `data/knowledge/references/` supply
 `requiredPhotos`, `riskCheckpoints`, `knownVariance`, and
 `highValueChecks`. `generateReport` uses those for missing-evidence concerns
-and seller questions. There is **no pixel analysis**. A matched dossier is
-not a conclusion that the watch is that reference.
+and seller questions. There is **no pixel analysis** yet (`QC-002` is MVP
+per `DEC-002`). A matched dossier is not a conclusion that the watch is
+that reference. Listing-market type (replica vs grey-market) is not
+modeled on `WatchCase` yet.
 
 ## QC-002: QC photo analysis
 
 **Category:** QC Analysis  
 **Status:** proposed  
-**Phase:** V1  
+**Phase:** MVP  
 **Priority:** critical
 
 ### Purpose
@@ -260,14 +265,16 @@ community inspection.
 `CaseImage` has unused `detectedType`, `qualityScore`, `usable`, and
 `analysisJson` fields. `imageClassificationSchema` exists in
 `lib/validation/report.ts`. OpenAI is a placeholder; the generator
-explicitly does not inspect pixels. Do not implement this unless requested.
+explicitly does not inspect pixels. **Decided:** implement as soon as
+practical (`DEC-002`). Replica and grey-market photo corpora must stay
+separate (`DEC-004`).
 
 ## QC-003: QC video analysis
 
 **Category:** QC Analysis  
 **Status:** proposed  
-**Phase:** V2  
-**Priority:** high
+**Phase:** MVP  
+**Priority:** critical
 
 ### Purpose
 
@@ -289,8 +296,9 @@ photographs.
 
 ### Implementation Notes
 
-No video upload, storage type, or analysis path exists. Do not add media
-infrastructure until this feature is requested.
+No video upload, storage type, or analysis path exists. **Decided:**
+implement as soon as practical (`DEC-002`). Do not mix replica and
+grey-market QC video (`DEC-004`).
 
 ## QC-004: Timegrapher analysis
 
@@ -379,6 +387,8 @@ PPF, CCF, RXF, RGF/RCF, QF, GMF, BPF, ZF, ARF, and others).
 - Generic “factory X is good” rules are not applied sideways to other
   references (Rule 1).
 - Unknown factory falls back explicitly.
+- Top-10 major factory coverage is required before `FACTORY-007`
+  comparison is honest (`DEC-006`).
 
 ### Implementation Notes
 
@@ -453,7 +463,7 @@ there are no visual observations.
 
 **Category:** QC Analysis  
 **Status:** proposed  
-**Phase:** V1  
+**Phase:** MVP  
 **Priority:** high
 
 ### Purpose
@@ -477,7 +487,7 @@ Prevent confident QC conclusions from misleading photography.
 ### Implementation Notes
 
 `imageQuality` on `ReportInput` (`clear` / `mixed` / `poor`) only caps
-confidence. No artifact detector exists.
+confidence. No artifact detector exists. Travels with `QC-002` (`DEC-002`).
 
 ## QC-010: Additional evidence requests
 
@@ -583,7 +593,7 @@ are hardcoded `medium`. No wrist-visibility or fixability model.
 
 **Category:** Verdicts  
 **Status:** proposed  
-**Phase:** V1  
+**Phase:** MVP  
 **Priority:** critical
 
 ### Purpose
@@ -604,14 +614,15 @@ Give users a clear recommendation while retaining nuance.
   Request additional evidence, RL, and Insufficient evidence.
 - Verdicts remain explainable and must not use forbidden authentication
   words.
-- Mapping to the current buyer-risk levels (`low` / `medium` / `high` /
-  `cannot_assess`) must be an explicit product decision before
-  implementation.
+- The buyer-risk headline (`REPORT-002`) remains the primary shipped
+  conclusion; QC verdicts are included in the same report (`DEC-001`).
 
 ### Implementation Notes
 
 Not implemented. Current reports use `overallRisk` buyer-risk language.
-Do not silently replace that with GL/RL.
+**Decided:** include GL/RL QC verdicts inside the buyer-risk report
+(`DEC-001`). Do not replace the headline with GL/RL alone. See mapping
+in `docs/product/decisions.md`.
 
 ## VERDICT-004: Confidence score
 
@@ -980,8 +991,8 @@ chronograph, waterproofing, decoration, and similar).
 ### Implementation Notes
 
 Prisma `Defect` and factory seed `defects`. Product copy treats these as
-known-variance notes. Naming overlap with “defect” vs “variance” is an
-open product/schema question.
+known-variance notes. **Decided:** rename the Prisma model/seed to match
+known variance (`DEC-005`). Not renamed yet.
 
 ## FACTORY-006: Acceptable variance database
 
@@ -1037,10 +1048,13 @@ same watch.
   weight, finishing, known flaws, price, and availability.
 - Comparisons cite evidence and recency; they are not global ranking
   scores.
+- Comparison is not shipped until the **top 10 major factories** have
+  curated coverage (`DEC-006`). VSF-versus-unknown is not sufficient.
 
 ### Implementation Notes
 
-None yet. Do not invent dummy comparison scores.
+None yet. Do not invent dummy comparison scores. Do not ship this on a
+two-row seed.
 
 ## FACTORY-008: Best factory by model guidance
 
@@ -1181,12 +1195,13 @@ instead of a generic checklist.
 - The highest-value QC checks for the exact watch can be generated.
 - Missing required photos map to those checks.
 - Checks do not invent pixel findings.
+- Replica and grey-market checklists are separate (`DEC-004`).
 
 ### Implementation Notes
 
 `requiredPhotos`, `riskCheckpoints`, and `highValueChecks` drive
 `generateReport` and the case photo checklist. Generic default photo set
-is used when no dossier matches.
+is used when no dossier matches. Listing-market type is not modeled yet.
 
 ---
 
@@ -1318,7 +1333,7 @@ canonical name, or alias via `resolveSeller`. Many intended fields
 
 **Category:** Seller Intelligence  
 **Status:** in-progress  
-**Phase:** V1  
+**Phase:** MVP  
 **Priority:** high
 
 ### Purpose
@@ -1338,11 +1353,14 @@ label.
 - Reputation can improve or decline.
 - No universal `trusted: true`.
 - No dummy numeric scores.
+- Evidence-based reliability scores are in scope (`DEC-007`).
 
 ### Implementation Notes
 
 Curated qualitative `trustDimensions` (including `overall`). Not a
-computed score from evidence. Report fulfillment chip reads that label.
+computed score from evidence yet. Report fulfillment chip reads that
+label. **Decided:** implement evidence-based scores; decorative numbers
+remain forbidden (`DEC-007`).
 
 ## SELLER-003: Time-aware seller reputation
 
@@ -2246,9 +2264,11 @@ evidence, confidence, seller/process risk, verdict, and next steps.
 
 `/reports/[reportId]` + `ReportDashboard`. Sections include overall risk,
 confidence, photos, missing evidence, visible concerns, factory variance,
-seller recognition, questions, next step. No GL/RL, no movement
-assessment, no source citations. Saved reports persist `reportJson` with
-`modelUsed: deterministic-rules`.
+seller recognition, questions, next step. No GL/RL yet (`DEC-001` says
+include them). No movement assessment, no source citations. Saved reports
+persist `reportJson` with `modelUsed: deterministic-rules`. The listing
+report is the paid product; subscribers also get knowledge explorers
+(`DEC-003`).
 
 ## REPORT-002: Overall WatchTell assessment
 
@@ -2276,8 +2296,8 @@ numerical score the sole authority.
 
 ### Implementation Notes
 
-`overallRisk` + `safeSummary` headline. No dummy numeric score. Not a
-QC GL/RL verdict (`VERDICT-003`).
+`overallRisk` + `safeSummary` headline. No dummy numeric score. QC GL/RL
+verdicts belong **in** this report, not instead of it (`DEC-001`).
 
 ## REPORT-003: Risk breakdown
 
@@ -2764,7 +2784,8 @@ brand, model, reference, version, movement, tells, and known issues.
 ### Implementation Notes
 
 Separate indexes: `/factories`, `/references`, `/sellers`. No joined
-explorer or brand hub. Partial surface only.
+explorer or brand hub. Partial surface only. Paying listing-report
+subscribers get explorer access (`DEC-003`).
 
 ## RESEARCH-002: Known tells explorer
 
@@ -2789,7 +2810,8 @@ version, component, and tell type.
 
 ### Implementation Notes
 
-Depends on `FACTORY-004`. None yet.
+Depends on `FACTORY-004`. None yet. Subscriber access to explorers is
+part of the paid listing-report product (`DEC-003`).
 
 ## RESEARCH-003: Seller intelligence explorer
 
@@ -2819,6 +2841,7 @@ issue resolution, factory access, fulfillment).
 
 `/sellers` lists all seeds; no community/recognition filters yet.
 Detail pages show recognition, dimensions, likes/concerns, evidence.
+Paying listing-report subscribers get explorer access (`DEC-003`).
 
 ## RESEARCH-004: Factory comparison explorer
 
@@ -2845,7 +2868,9 @@ same reference side by side.
 
 ### Implementation Notes
 
-None yet. Distinct from community seller comparison (`TD-001`).
+None yet. Distinct from community seller comparison (`TD-001`). Requires
+top-10 factory coverage before it is honest (`DEC-006`). Subscriber
+access is part of the paid listing-report product (`DEC-003`).
 
 ## RESEARCH-005: Community intelligence summaries
 
@@ -2894,3 +2919,7 @@ Update this registry when:
 After material implementation, change **status** and rewrite
 **Implementation Notes** with file evidence. Do not mark `implemented`
 from architecture intent alone.
+
+Resolved product questions live in [`docs/product/decisions.md`](decisions.md).
+When a decision changes phase or acceptance criteria, update this registry
+in the same change.
