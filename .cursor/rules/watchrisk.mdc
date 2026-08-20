@@ -12,6 +12,11 @@ Users upload listing details, seller claims, price, reference information, and p
 
 Forum TD status is evidence, not a universal trust score.
 
+The canonical product capability registry is `docs/product/features.md`.
+A listed feature is not evidence it is implemented. Consult that registry
+before adding QC, factory, seller, knowledge, evidence, or scoring work.
+Principles: `docs/product/principles.md`.
+
 ## Product boundary
 
 Do not describe WatchTell as an authentication product.

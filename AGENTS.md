@@ -39,6 +39,86 @@ Use safer language:
 - no obvious photo-based red flags detected
 - independent inspection recommended
 
+## WatchTell product feature registry
+
+The canonical WatchTell product capability registry is:
+
+`docs/product/features.md`
+
+Also read `docs/product/vision.md`, `docs/product/principles.md`, and
+`docs/product/roadmap.md`. Do not copy the full inventory into this file.
+
+Agents MUST consult the registry when:
+
+- planning new functionality
+- implementing product features
+- changing domain models
+- proposing architecture
+- modifying the knowledge system
+- modifying AI analysis behavior
+- adding or changing QC, factory, seller, watch/reference, movement,
+  evidence, provenance, scoring, or recommendation capabilities
+
+The feature registry describes WatchTell's intended long-term product.
+
+A listed feature is NOT evidence that the feature currently exists.
+
+Before implementing functionality:
+
+1. Identify relevant feature IDs.
+2. Inspect current implementation.
+3. Determine current feature status.
+4. Identify dependencies.
+5. Limit work to requested feature scope.
+6. Do not automatically implement adjacent backlog items.
+7. Update the registry when implementation materially changes feature status.
+
+Use feature IDs in plans, implementation notes, and architectural
+discussions where useful.
+
+The feature registry is the product source of truth.
+Architecture documentation describes implementation strategy.
+Code is the source of truth for current implementation.
+
+## Product principles (summary)
+
+Full text: `docs/product/principles.md`.
+
+1. **Specificity over generic analysis.** Prefer brand → reference →
+   factory → version → batch. Do not propagate knowledge sideways.
+   Fall back explicitly and lower confidence when specificity is missing.
+2. **Evidence over consensus.** Repetition is not independence.
+3. **Uncertainty must remain visible.** Do not fabricate certainty or
+   dummy numeric scores.
+4. **Retrieval is not the knowledge model.** Routine analysis uses
+   curated dossiers. Do not scrape forums or add RAG/embeddings unless
+   that work is explicitly requested.
+5. **Claims and evidence are different.** Do not store extracted text as
+   unquestioned fact.
+6. **Preserve conflict.** Do not discard disagreement for a cleaner
+   answer.
+7. **Temporal knowledge matters.** Seller and factory facts go stale.
+8. **Explain recommendations.** Observation → knowledge → evidence →
+   risk → recommendation.
+9. **Evaluate decisions, not microscopic perfection.** Known factory
+   variance is not automatically a defect.
+10. **Model providers are replaceable.** Knowledge stays product-owned.
+
+## Implementing a requested feature
+
+1. Read this file.
+2. Open only the relevant feature IDs and their dependencies in
+   `docs/product/features.md`.
+3. Inspect current implementation.
+4. Check whether architecture docs already govern the area.
+5. Plan only the requested IDs.
+6. Preserve provenance, confidence, and language rules.
+7. Update feature status after material implementation.
+8. Update architecture docs when architecture materially changes.
+9. Add or update tests where relevant.
+10. Do not build vector databases, scrapers, extra model providers, or
+    other later-phase infrastructure because a future ID exists.
+
 ## Target stack
 
 - Next.js

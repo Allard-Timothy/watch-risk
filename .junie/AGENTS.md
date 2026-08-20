@@ -9,6 +9,12 @@ Users upload listing details, photos, seller claims, reference information, and 
 
 WatchTell does not authenticate watches. It does not certify watches. It does not guarantee authenticity. Forum TD status is evidence, not a universal trust score.
 
+The canonical product capability registry is `docs/product/features.md`
+(see also `docs/product/vision.md`, `docs/product/principles.md`,
+`docs/product/roadmap.md`). A listed feature is not evidence it exists.
+If this file conflicts with the root `AGENTS.md` or uploaded project files,
+those take precedence.
+
 ## Product language rules
 
 Never describe a watch as:

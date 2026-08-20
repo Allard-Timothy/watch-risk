@@ -1,5 +1,10 @@
 # WatchTell AI Knowledge Architecture
 
+This document describes **how** the knowledge layer is designed. Intended
+product capabilities and current implementation status live in
+[`docs/product/features.md`](product/features.md). Do not treat a later-phase
+diagram here as permission to implement embeddings, scraping, or retrieval.
+
 Incorporate this architecture into the WatchTell implementation plan.
 
 ## Goal

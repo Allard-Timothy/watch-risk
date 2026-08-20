@@ -79,9 +79,20 @@ or opening a saved case requires Postgres.
 
 ## Documentation
 
-See [`docs/`](docs/) — notably `product-brief.md`, `architecture-typescript.md`,
-`ai-contract.md`, `report-rules.md`, `migration-plan.md`, `design-guidance.md`,
-and `knowledge-architecture.md`.
+Product direction (intended capabilities, not current implementation):
+
+- [`docs/product/vision.md`](docs/product/vision.md)
+- [`docs/product/features.md`](docs/product/features.md) — canonical feature registry
+- [`docs/product/roadmap.md`](docs/product/roadmap.md)
+- [`docs/product/principles.md`](docs/product/principles.md)
+- [`AGENTS.md`](AGENTS.md) — agent rules; points at the registry rather than duplicating it
+
+A feature listed in the registry is not evidence that it is implemented.
+Code is the source of truth for what exists today.
+
+Also see [`docs/`](docs/) for `product-brief.md` (near-term MVP),
+`architecture-typescript.md`, `ai-contract.md`, `report-rules.md`,
+`migration-plan.md`, `design-guidance.md`, and `knowledge-architecture.md`.
 
 ## Current boundaries
 
