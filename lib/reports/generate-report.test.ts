@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { generateReport } from "./generate-report";
+import { generateReport, recommendedPhotosFor } from "./generate-report";
 import type { ReportInput } from "./generate-report";
 import {
   factorySeedSchema,
@@ -10,7 +10,10 @@ import {
   sellerSeedSchema,
 } from "@/lib/knowledge/schemas";
 import { CANNOT_ASSESS_FROM_IMAGES } from "./factory-variance";
-import { containsForbiddenLanguage } from "@/lib/validation";
+import {
+  SAFE_FALLBACK_REPORT,
+  containsForbiddenLanguage,
+} from "@/lib/validation";
 
 const baseInput: ReportInput = {
   brand: "Tudor",
@@ -265,5 +268,197 @@ describe("generateReport high-value checks", () => {
     expect(completePhotos.sellerQuestions).not.toContain(
       "Can you confirm the service history and provide any receipts?",
     );
+  });
+});
+
+const completeRecommendedTypes = [
+  "dial",
+  "caseback",
+  "rehaut",
+  "clasp",
+  "bracelet",
+  "movement",
+] as const;
+
+describe("generateReport risk and confidence rules", () => {
+  it("treats stock-photos-only listings as cannot assess with low confidence", () => {
+    const report = generateReport({
+      ...baseInput,
+      stockPhotosOnly: true,
+    });
+    expect(report.overallRisk).toBe("cannot_assess");
+    expect(report.confidence).toBe("low");
+    expect(report.sellerRiskSignals).toContain(
+      "Listing appears to reuse stock photos rather than the actual watch.",
+    );
+    expect(report.safeSummary).toMatch(/cannot be assessed from photos/i);
+  });
+
+  it("cannot assess when four or more recommended photo areas are missing", () => {
+    const report = generateReport({
+      brand: "Tudor",
+      askingPrice: 2950,
+      providedPhotoTypes: ["dial", "bracelet"],
+    });
+    expect(report.overallRisk).toBe("cannot_assess");
+    expect(report.confidence).toBe("low");
+    expect(report.sellerRiskSignals).toContain(
+      "Most detail areas rely on a single or very few images.",
+    );
+  });
+
+  it("raises risk when the seller refused more photos, but keeps cannot_assess", () => {
+    const complete = generateReport({
+      ...baseInput,
+      providedPhotoTypes: completeRecommendedTypes,
+      claimsFullSet: false,
+      imageQuality: undefined,
+    });
+    expect(complete.overallRisk).toBe("low");
+    expect(complete.confidence).toBe("high");
+
+    const refusedComplete = generateReport({
+      ...baseInput,
+      providedPhotoTypes: completeRecommendedTypes,
+      claimsFullSet: false,
+      imageQuality: undefined,
+      sellerRefusedMorePhotos: true,
+    });
+    expect(refusedComplete.overallRisk).toBe("medium");
+    expect(refusedComplete.sellerRiskSignals).toContain(
+      "Seller declined to provide additional photos on request.",
+    );
+
+    const missingAndRefused = generateReport({
+      ...baseInput,
+      sellerRefusedMorePhotos: true,
+    });
+    expect(missingAndRefused.overallRisk).toBe("high");
+
+    const stockAndRefused = generateReport({
+      ...baseInput,
+      stockPhotosOnly: true,
+      sellerRefusedMorePhotos: true,
+    });
+    expect(stockAndRefused.overallRisk).toBe("cannot_assess");
+  });
+
+  it("caps confidence at low for poor image quality even with a complete photo set", () => {
+    const report = generateReport({
+      ...baseInput,
+      providedPhotoTypes: completeRecommendedTypes,
+      claimsFullSet: false,
+      imageQuality: "poor",
+    });
+    expect(report.overallRisk).toBe("low");
+    expect(report.confidence).toBe("low");
+  });
+
+  it("records missing asking price as missing evidence", () => {
+    const report = generateReport({
+      brand: "Tudor",
+      providedPhotoTypes: ["dial", "caseback", "bracelet"],
+    });
+    expect(report.missingEvidence).toContain(
+      "Asking price, to assess price risk",
+    );
+  });
+
+  it("does not invent a reference match when none was provided", () => {
+    const report = generateReport({
+      brand: "Tudor",
+      askingPrice: 2950,
+      providedPhotoTypes: ["dial"],
+    });
+    expect(report.referenceConsistency).toMatch(
+      /No reference was provided/i,
+    );
+  });
+});
+
+describe("generateReport seller flags and notes", () => {
+  it("maps product-claim severity and ignores non-product and insufficient flags", () => {
+    const seller = sellerSeedSchema.parse({
+      sellerId: "mixed-flags",
+      canonicalName: "Mixed Flags",
+      riskFlags: [
+        {
+          category: "product_claim",
+          label: "high",
+          summary: "Factory attribution is often overstated.",
+        },
+        {
+          category: "product_claim",
+          label: "very_high",
+          summary:
+            "Repeated mismatches between listing claims and later QC photos.",
+        },
+        {
+          category: "product_claim",
+          label: "low",
+          summary: "Occasional overstated movement claims.",
+        },
+        {
+          category: "product_claim",
+          label: "insufficient_evidence",
+          summary: "Not enough notes to judge product claims.",
+        },
+        {
+          category: "fraud",
+          label: "high",
+          summary: "Should not appear as a photo concern.",
+        },
+      ],
+    });
+    const report = generateReport(baseInput, { seller });
+    const claims = report.visibleConcerns.filter(
+      (item) => item.area === "Seller product claim",
+    );
+    expect(claims.map((item) => item.severity)).toEqual([
+      "high",
+      "high",
+      "low",
+    ]);
+    expect(claims.map((item) => item.finding)).not.toContain(
+      "Should not appear as a photo concern.",
+    );
+    expect(claims.map((item) => item.finding)).not.toContain(
+      "Not enough notes to judge product claims.",
+    );
+  });
+
+  it("falls back to a safe report when a note uses forbidden conclusion words", () => {
+    const report = generateReport(baseInput, {
+      manualNotes: ["Buyer thinks this looks fake."],
+    });
+    expect(report.overallRisk).toBe(SAFE_FALLBACK_REPORT.overallRisk);
+    expect(report.visibleConcerns).toEqual([]);
+    expect(report.safeSummary).toBe(SAFE_FALLBACK_REPORT.safeSummary);
+    expect(containsForbiddenLanguage(report.safeSummary)).toBe(false);
+  });
+
+  it("skips blank manual notes", () => {
+    const report = generateReport(baseInput, { manualNotes: ["  ", ""] });
+    expect(report.visibleConcerns).toEqual([]);
+  });
+});
+
+describe("recommendedPhotosFor", () => {
+  it("falls back to the default six-area checklist when dossier types are unusable", () => {
+    const dossier = modelDossierSeedSchema.parse({
+      id: "odd-photos",
+      brand: "Omega",
+      modelFamily: "Speedmaster",
+      reference: "x",
+      requiredPhotos: ["bezel", "other"],
+    });
+    expect(recommendedPhotosFor(dossier).map((photo) => photo.type)).toEqual([
+      "dial",
+      "caseback",
+      "rehaut",
+      "clasp",
+      "bracelet",
+      "movement",
+    ]);
   });
 });

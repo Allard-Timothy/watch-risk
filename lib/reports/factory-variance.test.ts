@@ -104,4 +104,78 @@ describe("buildFactoryVariance", () => {
       concerns.every((item) => !containsForbiddenLanguage(item.finding)),
     ).toBe(true);
   });
+
+  it("returns every factory defect when no listing reference is supplied", () => {
+    const all = defectsForReference(vsfFactory);
+    expect(all).toHaveLength(vsfFactory.defects.length);
+  });
+
+  it("normalizes reference punctuation when filtering defects", () => {
+    const dotted = defectsForReference(vsfFactory, "116-610 lv");
+    expect(dotted.length).toBeGreaterThan(0);
+    expect(
+      dotted.every((defect) => defect.references.includes("116610LV")),
+    ).toBe(true);
+    expect(
+      dotted.some((defect) => defect.references.includes("126610LN")),
+    ).toBe(false);
+  });
+
+  it("falls back to dossier checkpoints when the factory has no defects for the reference", () => {
+    const emptyFactory = factorySeedSchema.parse({
+      factoryId: "vsf",
+      canonicalName: "VSF",
+      defects: [],
+    });
+    const variance = buildFactoryVariance(
+      ["dial"],
+      lvDossier,
+      emptyFactory,
+      "116610LV",
+    );
+    expect(variance?.items.map((item) => item.lookFor)).toEqual([
+      "date centering",
+      "rehaut alignment",
+      "SEL fit",
+    ]);
+    expect(
+      variance?.items.find((item) => item.lookFor === "date centering")
+        ?.assessment,
+    ).toBe("photo_present");
+    expect(
+      variance?.items.find((item) => item.lookFor === "rehaut alignment")
+        ?.assessment,
+    ).toBe("cannot_assess");
+  });
+
+  it("does not turn variance without a photo type into visible concerns", () => {
+    const factory = factorySeedSchema.parse({
+      factoryId: "vsf",
+      canonicalName: "VSF",
+      defects: [
+        {
+          id: "on-wrist-feel",
+          area: "On-wrist feel",
+          whatBuyersShouldLookFor:
+            "Ask how the bracelet sits after a week of wear.",
+          whatPhotosCannotShow:
+            "Wrist feel cannot be judged from listing photos.",
+          references: ["116610LV"],
+        },
+      ],
+    });
+    const variance = buildFactoryVariance(
+      ["dial"],
+      lvDossier,
+      factory,
+      "116610LV",
+    );
+    expect(variance?.items).toEqual([
+      expect.objectContaining({
+        id: "on-wrist-feel",
+        assessment: "not_tied_to_photo",
+      }),
+    ]);
+    expect(concernsFromFactoryVariance(variance)).toEqual([]);
+  });
 });

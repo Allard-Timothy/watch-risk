@@ -56,6 +56,11 @@ describe("recencyBucket", () => {
     expect(recencyBucket("2023-01-01", now)).toBe("lower");
     expect(recencyBucket("2018-01-01", now)).toBe("historical");
   });
+
+  it("returns undefined for missing or invalid dates", () => {
+    expect(recencyBucket(undefined, now)).toBeUndefined();
+    expect(recencyBucket("not-a-date", now)).toBeUndefined();
+  });
 });
 
 describe("recognitionsByIndependenceGroup", () => {

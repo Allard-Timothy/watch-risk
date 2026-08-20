@@ -19,4 +19,14 @@ describe("report paths", () => {
     expect(activeSavedCaseId(`/reports/${sampleReportMeta.reportId}`)).toBeNull();
     expect(reportBasePath("/")).toBe(SAMPLE_REPORT_PATH);
   });
+
+  it("treats a saved-case report route as the case id and ignores intake routes", () => {
+    expect(activeSavedCaseId("/cases/new")).toBeNull();
+    expect(activeSavedCaseId("/reports/cmssf6f5b0000js3vifvq0o35")).toBe(
+      "cmssf6f5b0000js3vifvq0o35",
+    );
+    expect(reportBasePath("/reports/cmssf6f5b0000js3vifvq0o35")).toBe(
+      reportPath("cmssf6f5b0000js3vifvq0o35"),
+    );
+  });
 });

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   SAFE_FALLBACK_REPORT,
   buyerRiskReportSchema,
+  caseCreateFormSchema,
   caseCreateSchema,
   containsForbiddenLanguage,
   findForbiddenWords,
@@ -83,6 +84,82 @@ describe("caseCreateSchema", () => {
     expect(
       caseCreateSchema.safeParse({ brand: "Rolex", listingUrl: "not-a-url" })
         .success,
+    ).toBe(false);
+  });
+});
+
+describe("buyerRiskReportSchema user-facing fields", () => {
+  const safe = {
+    overallRisk: "medium" as const,
+    confidence: "low" as const,
+    missingEvidence: ["Straight-on dial photo"],
+    visibleConcerns: [],
+    sellerQuestions: ["Can you provide a dial photo in natural light?"],
+    recommendedNextStep: "Request the missing photos before proceeding.",
+    safeSummary: "The submitted photo set is incomplete.",
+  };
+
+  it("rejects forbidden wording in seller questions, next steps, findings, and missing evidence", () => {
+    expect(
+      buyerRiskReportSchema.safeParse({
+        ...safe,
+        sellerQuestions: ["Is this authentic?"],
+      }).success,
+    ).toBe(false);
+    expect(
+      buyerRiskReportSchema.safeParse({
+        ...safe,
+        recommendedNextStep: "This listing passed inspection.",
+      }).success,
+    ).toBe(false);
+    expect(
+      buyerRiskReportSchema.safeParse({
+        ...safe,
+        visibleConcerns: [
+          {
+            area: "Dial",
+            severity: "high",
+            finding: "Looks counterfeit from the photos.",
+            visibleEvidence: "Printing",
+          },
+        ],
+      }).success,
+    ).toBe(false);
+    expect(
+      buyerRiskReportSchema.safeParse({
+        ...safe,
+        missingEvidence: ["Certified papers photo"],
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe("caseCreateFormSchema", () => {
+  it("coerces asking price from a form string and drops blank optional fields", () => {
+    const parsed = caseCreateFormSchema.safeParse({
+      brand: " Rolex ",
+      askingPrice: "4200",
+      listingText: "  ",
+      sellerHandle: "  JTime  ",
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.brand).toBe("Rolex");
+      expect(parsed.data.askingPrice).toBe(4200);
+      expect(parsed.data.listingText).toBeUndefined();
+      expect(parsed.data.sellerHandle).toBe("JTime");
+    }
+  });
+
+  it("rejects a whitespace-only brand and a negative asking price", () => {
+    expect(caseCreateFormSchema.safeParse({ brand: "   " }).success).toBe(
+      false,
+    );
+    expect(
+      caseCreateFormSchema.safeParse({
+        brand: "Rolex",
+        askingPrice: "-1",
+      }).success,
     ).toBe(false);
   });
 });

@@ -100,4 +100,20 @@ describe("filterSellers", () => {
     expect(parseRecognitionStatus("trusted")).toBeUndefined();
     expect(parseRecognitionStatus("full_td")).toBe("full_td");
   });
+
+  it("trims compare ids and recognition filters without inventing defaults for one side", () => {
+    expect(resolveComparePair({ a: " rwi ", b: "  " })).toEqual({
+      communityAId: "rwi",
+      communityBId: "repwatchforum",
+    });
+    expect(resolveComparePair({ a: undefined, b: "rwi" })).toEqual({
+      communityAId: "reptime",
+      communityBId: "rwi",
+    });
+    expect(parseRecognitionStatus("  trusted_seller  ")).toBe("trusted_seller");
+    expect(parseRecognitionStatus("")).toBeUndefined();
+    expect(filterSellers(sellers, {}).map((item) => item.sellerId)).toEqual(
+      sellers.map((item) => item.sellerId),
+    );
+  });
 });

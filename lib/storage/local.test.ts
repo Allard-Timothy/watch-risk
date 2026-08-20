@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   deleteCasePhotoFile,
+  extensionForMime,
+  mimeForStoragePath,
   readCasePhotoFile,
   sanitizeOriginalName,
   writeCasePhotoFile,
@@ -42,5 +44,23 @@ describe("local photo storage", () => {
     await expect(
       writeCasePhotoFile("caseid1", "../secret", TINY_PNG, ".png"),
     ).rejects.toThrow("Invalid storage path");
+  });
+
+  it("rejects path traversal when reading a stored path", async () => {
+    await expect(readCasePhotoFile("../../etc/passwd")).rejects.toThrow(
+      "Invalid storage path",
+    );
+    await expect(readCasePhotoFile("/etc/passwd")).rejects.toThrow(
+      "Invalid storage path",
+    );
+  });
+
+  it("maps known image mime types and rejects unsupported ones", () => {
+    expect(extensionForMime("image/webp")).toBe(".webp");
+    expect(extensionForMime("application/pdf")).toBeNull();
+    expect(mimeForStoragePath("case/img-dial.jpg")).toBe("image/jpeg");
+    expect(mimeForStoragePath("case/img-notes.txt")).toBe(
+      "application/octet-stream",
+    );
   });
 });
