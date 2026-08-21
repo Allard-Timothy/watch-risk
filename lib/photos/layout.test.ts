@@ -26,4 +26,25 @@ describe("heroPhotoLayout", () => {
     expect(layout.secondary?.id).toBe("b");
     expect(layout.tertiary?.id).toBe("c");
   });
+
+  it("does not reuse a labeled hero photo when filling remaining wells", () => {
+    const layout = heroPhotoLayout([
+      { id: "dial", claimedType: "dial", url: "/dial" },
+      { id: "caseback", claimedType: "caseback", url: "/caseback" },
+    ]);
+
+    expect(layout.primary?.id).toBe("dial");
+    expect(layout.secondary?.id).toBe("caseback");
+    expect(layout.tertiary).toBeUndefined();
+  });
+
+  it("leaves unused wells empty when only one photo was uploaded", () => {
+    const layout = heroPhotoLayout([
+      { id: "only", claimedType: "bracelet", url: "/only" },
+    ]);
+
+    expect(layout.primary?.id).toBe("only");
+    expect(layout.secondary).toBeUndefined();
+    expect(layout.tertiary).toBeUndefined();
+  });
 });

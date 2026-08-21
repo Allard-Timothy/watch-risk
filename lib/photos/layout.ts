@@ -29,7 +29,10 @@ export function heroPhotoLayout(photos: readonly ReportPhoto[]): {
   const used = new Set<string>();
   const pick = (type: DetectedPhotoType) => {
     const photo = firstPhotoOfType(photos, type);
-    if (photo) used.add(photo.id);
+    if (!photo || used.has(photo.id)) {
+      return undefined;
+    }
+    used.add(photo.id);
     return photo;
   };
 
