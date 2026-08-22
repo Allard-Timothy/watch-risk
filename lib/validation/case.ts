@@ -33,8 +33,18 @@ export type CaseCreateInput = z.infer<typeof caseCreateSchema>;
  * An unmatched handle is stored with the case and shown as
  * "typed {handle}, no curated match".
  */
+function blankToUndefined(value: unknown): unknown {
+  if (value === "" || value === null || value === undefined) {
+    return undefined;
+  }
+  return value;
+}
+
 export const caseCreateFormSchema = caseCreateSchema.extend({
-  askingPrice: z.coerce.number().nonnegative().finite().optional(),
+  askingPrice: z.preprocess(
+    blankToUndefined,
+    z.coerce.number().nonnegative().finite().optional(),
+  ),
   sellerHandle: optionalTrimmedString,
 });
 export type CaseCreateFormInput = z.infer<typeof caseCreateFormSchema>;
